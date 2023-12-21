@@ -27,6 +27,10 @@ export class InstitucionService implements IInstitucionService {
 	async getAllInstituciones() {
 		return this._institucionRepository.getAll();
 	}
+
+	async getInstitucionById(id: string) {
+		return this._institucionRepository.getById(id);
+	}
 }
 
 class InstitucionServiceError extends Error {

@@ -16,6 +16,10 @@ export class InstitucionRepository implements IInstitucionRepository {
 		return this._client.institucion.findMany();
 	}
 
+	async getById(id: string) {
+		return this._client.institucion.findUnique({ where: { id } });
+	}
+
 	// => ({
 	//   async save(user) {
 	//     const nUser = client.user.create({

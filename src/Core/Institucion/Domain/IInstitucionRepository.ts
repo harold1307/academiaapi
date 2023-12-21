@@ -4,4 +4,5 @@ import type { IInstitucion } from "./IInstitucion";
 export interface IInstitucionRepository {
 	create(data: ICreateInstitucion): Promise<IInstitucion>;
 	getAll(): Promise<IInstitucion[]>;
+	getById(id: string): Promise<IInstitucion | null>;
 }
