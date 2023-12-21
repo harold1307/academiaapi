@@ -4,6 +4,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { IInstitucionRepository } from "../../Domain/IInstitucionRepository";
 import type { ICreateInstitucion } from "../DTOs/CreateInstitucionDTO";
+import type { IUpdateInstitucion } from "../DTOs/UpdateInstitucionDTO";
 
 @injectable()
 export class InstitucionRepository implements IInstitucionRepository {
@@ -18,6 +19,21 @@ export class InstitucionRepository implements IInstitucionRepository {
 
 	async getById(id: string) {
 		return this._client.institucion.findUnique({ where: { id } });
+	}
+
+	async update({
+		id,
+		institucion,
+	}: {
+		id: string;
+		institucion: IUpdateInstitucion;
+	}) {
+		return this._client.institucion.update({
+			where: {
+				id,
+			},
+			data: institucion,
+		});
 	}
 
 	// => ({

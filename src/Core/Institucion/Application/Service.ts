@@ -4,6 +4,7 @@ import { TYPES } from "../../../Main/Inversify/types";
 import type { IInstitucionRepository } from "../Domain/IInstitucionRepository";
 import type { IInstitucionService } from "../Domain/IInstitucionService";
 import { CreateInstitucionDTO } from "../Infraestructure/DTOs/CreateInstitucionDTO";
+import { UpdateInstitucionDTO } from "../Infraestructure/DTOs/UpdateInstitucionDTO";
 
 @injectable()
 export class InstitucionService implements IInstitucionService {
@@ -17,8 +18,13 @@ export class InstitucionService implements IInstitucionService {
 		const validation = dto.validate();
 
 		if (!validation.success) {
-			console.log("Error de validacion de institucion", validation.error);
-			throw new InstitucionServiceError("Esquema de institucion invalido.");
+			console.error(
+				"Error de validacion para crear de institucion",
+				validation.error,
+			);
+			throw new InstitucionServiceError(
+				"Esquema para crear de institucion invalido.",
+			);
 		}
 
 		return this._institucionRepository.create(validation.data);
@@ -30,6 +36,32 @@ export class InstitucionService implements IInstitucionService {
 
 	async getInstitucionById(id: string) {
 		return this._institucionRepository.getById(id);
+	}
+
+	async updateInstitucionById({
+		id,
+		institucion,
+	}: {
+		id: string;
+		institucion: any;
+	}) {
+		const dto = new UpdateInstitucionDTO(institucion);
+		const validation = dto.validate();
+
+		if (!validation.success) {
+			console.error(
+				"Error de validacion para actualizar institucion",
+				JSON.stringify(validation.error),
+			);
+			throw new InstitucionServiceError(
+				"Esquema para actualizar institucion invalido.",
+			);
+		}
+
+		return this._institucionRepository.update({
+			id,
+			institucion: validation.data,
+		});
 	}
 }
 

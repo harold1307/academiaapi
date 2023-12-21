@@ -23,7 +23,7 @@ export async function institucionesCreate(
 
 		ctx.log({ newInstitucion });
 
-		return { body: "Institucion creada con exito", status: 201 };
+		return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
 	} catch (error) {
 		ctx.error(error);
 
