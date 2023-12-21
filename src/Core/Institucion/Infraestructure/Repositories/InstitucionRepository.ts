@@ -12,6 +12,9 @@ export class InstitucionRepository implements IInstitucionRepository {
 	async create(data: ICreateInstitucion) {
 		return this._client.institucion.create({ data });
 	}
+	async getAll() {
+		return this._client.institucion.findMany();
+	}
 
 	// => ({
 	//   async save(user) {

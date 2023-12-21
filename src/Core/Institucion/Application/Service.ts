@@ -12,7 +12,7 @@ export class InstitucionService implements IInstitucionService {
 		private _institucionRepository: IInstitucionRepository,
 	) {}
 
-	createInstitucion(data: any) {
+	async createInstitucion(data: any) {
 		const dto = new CreateInstitucionDTO(data);
 		const validation = dto.validate();
 
@@ -22,6 +22,10 @@ export class InstitucionService implements IInstitucionService {
 		}
 
 		return this._institucionRepository.create(validation.data);
+	}
+
+	async getAllInstituciones() {
+		return this._institucionRepository.getAll();
 	}
 }
 
