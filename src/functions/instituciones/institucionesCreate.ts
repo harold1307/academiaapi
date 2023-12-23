@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {
 	app,
 	type HttpRequest,
@@ -6,8 +5,8 @@ import {
 	type InvocationContext,
 } from "@azure/functions";
 
-import { InstitucionService } from "../../Core/Institucion/Application/Service";
 import { StartupBuilder } from "../../Main/Inversify/Inversify.config";
+import { InstitucionService } from "../../Core/Institucion/Application/Service";
 
 export async function institucionesCreate(
 	req: HttpRequest,

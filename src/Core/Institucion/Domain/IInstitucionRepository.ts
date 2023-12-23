@@ -10,4 +10,5 @@ export interface IInstitucionRepository {
 		id: string;
 		institucion: IUpdateInstitucion;
 	}): Promise<IInstitucion>;
+	deleteById(id: string): Promise<IInstitucion>;
 }

@@ -9,7 +9,7 @@ import { z } from "zod";
 import { StartupBuilder } from "../../Main/Inversify/Inversify.config";
 import { InstitucionService } from "../../Core/Institucion/Application/Service";
 
-export async function institucionesUpdateById(
+export async function institucionesDeleteById(
 	req: HttpRequest,
 	ctx: InvocationContext,
 ): Promise<HttpResponseInit> {
@@ -21,17 +21,22 @@ export async function institucionesUpdateById(
 			throw new Error("El ID es invalido o no ha sido proporcionado.");
 
 		const id = parse.data;
-		const body = await req.json();
 
 		const institucionService = StartupBuilder.resolve(InstitucionService);
 
-		const institucion = await institucionService.updateInstitucionById({
-			id,
-			institucion: body,
-		});
+		const isDeleted = await institucionService.deleteInstitucionById(id);
+
+		if (!isDeleted) {
+			return {
+				jsonBody: {
+					message: "No se ha eliminado la institucion.",
+				},
+				status: 400,
+			};
+		}
 
 		return {
-			jsonBody: { data: institucion, message: "Actualizacion exitosa." },
+			jsonBody: { message: "Institucion eliminada con exito." },
 			status: 200,
 		};
 	} catch (error: any) {
@@ -50,9 +55,9 @@ export async function institucionesUpdateById(
 	}
 }
 
-app.http("institucionesUpdateById", {
-	methods: ["PATCH"],
+app.http("institucionesDeleteById", {
+	methods: ["DELETE"],
 	authLevel: "anonymous",
-	handler: institucionesUpdateById,
+	handler: institucionesDeleteById,
 	route: "instituciones/{id}",
 });

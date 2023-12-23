@@ -1,5 +1,7 @@
-import { Container } from "inversify";
+import "reflect-metadata";
+
 import { type PrismaClient } from "@prisma/client";
+import { Container } from "inversify";
 
 import { InstitucionService } from "../../Core/Institucion/Application/Service";
 import type { IInstitucionRepository } from "../../Core/Institucion/Domain/IInstitucionRepository";

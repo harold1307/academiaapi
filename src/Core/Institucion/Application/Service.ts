@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
+import type { IInstitucion } from "../Domain/IInstitucion";
 import type { IInstitucionRepository } from "../Domain/IInstitucionRepository";
 import type { IInstitucionService } from "../Domain/IInstitucionService";
 import { CreateInstitucionDTO } from "../Infraestructure/DTOs/CreateInstitucionDTO";
@@ -62,6 +63,10 @@ export class InstitucionService implements IInstitucionService {
 			id,
 			institucion: validation.data,
 		});
+	}
+
+	async deleteInstitucionById(id: string): Promise<IInstitucion> {
+		return this._institucionRepository.deleteById(id);
 	}
 }
 

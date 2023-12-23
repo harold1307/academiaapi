@@ -1,15 +1,19 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
-		"target": "es6",
 		"outDir": "dist",
 		"rootDir": ".",
 		"sourceMap": true,
 		"strict": true,
 		"noUncheckedIndexedAccess": true,
 		"allowJs": true,
+		// necesary for inversify -> https://github.com/inversify/InversifyJS
+		"target": "es5",
+		"lib": ["es6"],
+		"moduleResolution": "node",
 		"experimentalDecorators": true,
-		"types": ["reflect-metadata"]
+		"types": ["reflect-metadata"],
+		"emitDecoratorMetadata": true
 	},
 	"exclude": ["node_modules", "dist"],
 	"include": [".eslintrc.cjs", "prettier.config.cjs", "**/*.ts"]

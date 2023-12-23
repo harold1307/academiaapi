@@ -8,4 +8,5 @@ export interface IInstitucionService {
 		id: string;
 		institucion: any;
 	}): Promise<IInstitucion>;
+	deleteInstitucionById(id: string): Promise<IInstitucion>;
 }
