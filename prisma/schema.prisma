@@ -22,14 +22,14 @@ model MallaCurricular {
   cantidadArrastres         Int
   practicasLigadasMaterias  Boolean
   horasPractica             Int
-  registroPracticasDesde    String
+  registroPracticasDesde    Int
   horasVinculacion          Int
-  registroVinculacionDesde  String
-  registroProyectosDesde    String
+  registroVinculacionDesde  Int
+  registroProyectosDesde    Int
   usaNivelacion             Boolean
   plantillasSilabo          Boolean
-  prefilEgreso              String
-  observaciones             String
+  perfilEgreso              String?
+  observaciones             String?
   createdAt                 DateTime     @default(now())
 
   @@map("mallas_curriculares")

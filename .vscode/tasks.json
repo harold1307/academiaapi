@@ -13,13 +13,14 @@
 			"type": "shell",
 			"label": "pnpm build (functions)",
 			"command": "pnpm run build",
-			"dependsOn": "pnpm clean (functions)",
+			"dependsOn": "pnpm install (functions)",
 			"problemMatcher": "$tsc"
 		},
 		{
 			"type": "shell",
 			"label": "pnpm install (functions)",
-			"command": "pnpm install --config.node-linker=hoisted"
+			"command": "pnpm install --config.node-linker=hoisted",
+			"dependsOn": "pnpm clean (functions)"
 		},
 		{
 			"type": "shell",
@@ -36,8 +37,7 @@
 		{
 			"type": "shell",
 			"label": "pnpm clean (functions)",
-			"command": "pnpm run clean",
-			"dependsOn": "pnpm install (functions)"
+			"command": "pnpm run clean"
 		}
 	]
 }
