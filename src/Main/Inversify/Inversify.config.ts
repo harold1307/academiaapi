@@ -14,6 +14,12 @@ import type { IMallaCurricularRepository } from "../../Core/MallaCurricular/Doma
 import type { IMallaCurricularService } from "../../Core/MallaCurricular/Domain/IMallaCurricularService";
 import { MallaCurricularRepository } from "../../Core/MallaCurricular/Infraestructure/Repositories/MallaCurricularRepository";
 
+// Asignatura
+import { AsignaturaService } from "../../Core/Asignatura/Application/Service";
+import type { IAsignaturaRepository } from "../../Core/Asignatura/Domain/IAsignaturaRepository";
+import type { IAsignaturaService } from "../../Core/Asignatura/Domain/IAsignaturaService";
+import { AsignaturaRepository } from "../../Core/Asignatura/Infrastructure/Repositories/AsignaturaRepository";
+
 import { Prisma } from "../Prisma/PrismaClient";
 import { TYPES } from "./types";
 
@@ -36,6 +42,14 @@ StartupBuilder.bind<IMallaCurricularRepository>(TYPES.MallaCurricularRepository)
 	.inSingletonScope();
 StartupBuilder.bind<IMallaCurricularService>(TYPES.MallaCurricularService)
 	.to(MallaCurricularService)
+	.inSingletonScope();
+
+// asignatura
+StartupBuilder.bind<IAsignaturaRepository>(TYPES.AsignaturaRepository)
+	.to(AsignaturaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsignaturaService>(TYPES.AsignaturaService)
+	.to(AsignaturaService)
 	.inSingletonScope();
 
 export { StartupBuilder };
