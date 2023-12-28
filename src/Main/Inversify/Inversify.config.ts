@@ -20,6 +20,12 @@ import type { IAsignaturaRepository } from "../../Core/Asignatura/Domain/IAsigna
 import type { IAsignaturaService } from "../../Core/Asignatura/Domain/IAsignaturaService";
 import { AsignaturaRepository } from "../../Core/Asignatura/Infrastructure/Repositories/AsignaturaRepository";
 
+// curso
+import { CursoService } from "../../Core/Curso/Application/Service";
+import type { ICursoRepository } from "../../Core/Curso/Domain/ICursoRepository";
+import type { ICursoService } from "../../Core/Curso/Domain/ICursoService";
+import { CursoRepository } from "../../Core/Curso/Infrastructure/Repositories/CursoRepository";
+
 import { Prisma } from "../Prisma/PrismaClient";
 import { TYPES } from "./types";
 
@@ -50,6 +56,14 @@ StartupBuilder.bind<IAsignaturaRepository>(TYPES.AsignaturaRepository)
 	.inSingletonScope();
 StartupBuilder.bind<IAsignaturaService>(TYPES.AsignaturaService)
 	.to(AsignaturaService)
+	.inSingletonScope();
+
+// curso
+StartupBuilder.bind<ICursoRepository>(TYPES.CursoRepository)
+	.to(CursoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICursoService>(TYPES.CursoService)
+	.to(CursoService)
 	.inSingletonScope();
 
 export { StartupBuilder };

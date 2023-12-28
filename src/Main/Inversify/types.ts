@@ -6,4 +6,6 @@ export const TYPES = {
 	MallaCurricularService: Symbol.for("MallaCurricularService"),
 	AsignaturaRepository: Symbol.for("AsignaturaRepository"),
 	AsignaturaService: Symbol.for("AsignaturaService"),
+	CursoRepository: Symbol.for("CursoRepository"),
+	CursoService: Symbol.for("CursoService"),
 } as const;
