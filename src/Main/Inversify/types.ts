@@ -8,4 +8,8 @@ export const TYPES = {
 	AsignaturaService: Symbol.for("AsignaturaService"),
 	CursoRepository: Symbol.for("CursoRepository"),
 	CursoService: Symbol.for("CursoService"),
+	CompetenciaRepository: Symbol.for("CompetenciaRepository"),
+	CompetenciaService: Symbol.for("CompetenciaService"),
+	AsignaturaEnMallaRepository: Symbol.for("AsignaturaEnMallaRepository"),
+	AsignaturaEnMallaService: Symbol.for("AsignaturaEnMallaService"),
 } as const;

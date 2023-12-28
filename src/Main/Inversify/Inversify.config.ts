@@ -26,6 +26,18 @@ import type { ICursoRepository } from "../../Core/Curso/Domain/ICursoRepository"
 import type { ICursoService } from "../../Core/Curso/Domain/ICursoService";
 import { CursoRepository } from "../../Core/Curso/Infrastructure/Repositories/CursoRepository";
 
+// competencia
+import { CompetenciaService } from "../../Core/Competencia/Application/Service";
+import type { ICompetenciaRepository } from "../../Core/Competencia/Domain/ICompetenciaRepository";
+import type { ICompetenciaService } from "../../Core/Competencia/Domain/ICompetenciaService";
+import { CompetenciaRepository } from "../../Core/Competencia/Infrastructure/Repositories/CompetenciaRepository";
+
+// asignatura en malla
+import { AsignaturaEnMallaService } from "../../Core/AsignaturaEnMalla/Application/Service";
+import type { IAsignaturaEnMallaRepository } from "../../Core/AsignaturaEnMalla/Domain/IAsignaturaEnMallaRepository";
+import type { IAsignaturaEnMallaService } from "../../Core/AsignaturaEnMalla/Domain/IAsignaturaEnMallaService";
+import { AsignaturaEnMallaRepository } from "../../Core/AsignaturaEnMalla/Infrastructure/Repositories/AsignaturaEnMallaRepository";
+
 import { Prisma } from "../Prisma/PrismaClient";
 import { TYPES } from "./types";
 
@@ -64,6 +76,24 @@ StartupBuilder.bind<ICursoRepository>(TYPES.CursoRepository)
 	.inSingletonScope();
 StartupBuilder.bind<ICursoService>(TYPES.CursoService)
 	.to(CursoService)
+	.inSingletonScope();
+
+// competencia
+StartupBuilder.bind<ICompetenciaRepository>(TYPES.CompetenciaRepository)
+	.to(CompetenciaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICompetenciaService>(TYPES.CompetenciaService)
+	.to(CompetenciaService)
+	.inSingletonScope();
+
+// asignatura en malla
+StartupBuilder.bind<IAsignaturaEnMallaRepository>(
+	TYPES.AsignaturaEnMallaRepository,
+)
+	.to(AsignaturaEnMallaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsignaturaEnMallaService>(TYPES.AsignaturaEnMallaService)
+	.to(AsignaturaEnMallaService)
 	.inSingletonScope();
 
 export { StartupBuilder };
