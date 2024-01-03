@@ -20,7 +20,7 @@ export async function mallasCurricularesGetAll(
 		);
 
 		const mallaCurriculares =
-			await mallaCurricularService.getAllMallasCurriculares();
+			await mallaCurricularService.getAllMallasCurricularesWithAsignaturas();
 
 		return {
 			jsonBody: { data: mallaCurriculares, message: "Solicitud exitosa" },

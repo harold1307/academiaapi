@@ -1,5 +1,1 @@
-import type { AsignaturaEnMalla } from "@prisma/client";
-
-export type IAsignaturaEnMalla = Omit<AsignaturaEnMalla, "createdAt"> & {
-	createdAt: string;
-};
+export type { AsignaturaEnMalla as IAsignaturaEnMalla } from "@prisma/client";

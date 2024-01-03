@@ -13,13 +13,8 @@ export class AsignaturaEnMallaRepository
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
 	async create(data: ICreateAsignaturaEnMalla): Promise<IAsignaturaEnMalla> {
-		const asignaturaEnMalla = await this._client.asignaturaEnMalla.create({
+		return this._client.asignaturaEnMalla.create({
 			data,
 		});
-
-		return {
-			...asignaturaEnMalla,
-			createdAt: asignaturaEnMalla.createdAt.toISOString(),
-		};
 	}
 }

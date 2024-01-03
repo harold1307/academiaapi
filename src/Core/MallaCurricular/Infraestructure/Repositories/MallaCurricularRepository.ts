@@ -25,7 +25,9 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 	}
 
 	async getById(id: string) {
-		return this._client.mallaCurricular.findUnique({ where: { id } });
+		return this._client.mallaCurricular.findUnique({
+			where: { id },
+		});
 	}
 
 	async update({

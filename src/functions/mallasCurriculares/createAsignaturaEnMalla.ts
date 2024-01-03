@@ -4,6 +4,7 @@ import {
 	type HttpResponseInit,
 	type InvocationContext,
 } from "@azure/functions";
+import { $Enums } from "@prisma/client";
 import { z } from "zod";
 import { StartupBuilder } from "../../Main/Inversify/Inversify.config";
 
@@ -66,7 +67,7 @@ export async function createAsignaturaEnMalla(
 			};
 		}
 
-		if (malla.niveles > data.nivel) {
+		if (malla.niveles < data.nivel) {
 			return {
 				jsonBody: { message: "El nivel especificado es mayor a la malla" },
 				status: 400,
@@ -89,10 +90,12 @@ export async function createAsignaturaEnMalla(
 				asignaturaId,
 			);
 
-		await _competenciaService.createCompetenciaForAsignaturaEnMalla(
-			{ nombre: data.competenciaGenerica },
-			asignaturaEnMalla.id,
-		);
+		if (data.competenciaGenerica) {
+			await _competenciaService.createCompetenciaForAsignaturaEnMalla(
+				{ nombre: data.competenciaGenerica },
+				asignaturaEnMalla.id,
+			);
+		}
 
 		return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
 	} catch (error) {
@@ -108,14 +111,14 @@ export async function createAsignaturaEnMalla(
 
 const bodySchema: z.ZodType<
 	Omit<ICreateAsignaturaEnMalla, "mallaId" | "asignaturaId"> & {
-		competenciaGenerica: string;
+		competenciaGenerica: string | null;
 	}
 > = z.object({
 	ejeFormativo: z.string(),
 	nivel: z.number(),
 	areaConocimiento: z.string(),
 	campoFormacion: z.string(),
-	tipoAsignatura: z.string(),
+	tipoAsignatura: z.nativeEnum($Enums.TipoAsignatura),
 	identificacion: z.string(),
 	permiteMatriculacion: z.boolean(),
 	validaCredito: z.boolean(),
@@ -132,11 +135,11 @@ const bodySchema: z.ZodType<
 	creditos: z.number(),
 	noValidaAsistencia: z.boolean(),
 	materiaComun: z.boolean(),
-	objetivos: z.string(),
-	descripcion: z.string(),
-	resultadosAprendizaje: z.string(),
+	objetivos: z.string().nullable(),
+	descripcion: z.string().nullable(),
+	resultadosAprendizaje: z.string().nullable(),
 
-	competenciaGenerica: z.string(),
+	competenciaGenerica: z.string().nullable(),
 });
 
 app.http("createAsignaturaEnMalla", {

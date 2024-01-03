@@ -1,9 +1,11 @@
+import type { $Enums } from "@prisma/client";
+
 export type ICreateAsignaturaEnMalla = {
 	ejeFormativo: string;
 	nivel: number;
 	areaConocimiento: string;
 	campoFormacion: string;
-	tipoAsignatura: string;
+	tipoAsignatura: $Enums.TipoAsignatura;
 	identificacion: string;
 
 	permiteMatriculacion: boolean;
@@ -24,9 +26,9 @@ export type ICreateAsignaturaEnMalla = {
 	noValidaAsistencia: boolean;
 	materiaComun: boolean;
 
-	objetivos: string;
-	descripcion: string;
-	resultadosAprendizaje: string;
+	objetivos: string | null;
+	descripcion: string | null;
+	resultadosAprendizaje: string | null;
 
 	asignaturaId: string;
 	mallaId: string;

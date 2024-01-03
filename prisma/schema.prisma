@@ -21,9 +21,9 @@ model MallaCurricular {
   cantidadOptativasEgreso   Int
   cantidadArrastres         Int
   practicasLigadasMaterias  Boolean
-  horasPractica             Int
+  horasPractica             Float
   registroPracticasDesde    Int
-  horasVinculacion          Int
+  horasVinculacion          Float
   registroVinculacionDesde  Int
   registroProyectosDesde    Int
   usaNivelacion             Boolean
@@ -32,7 +32,7 @@ model MallaCurricular {
   observaciones             String?
   createdAt                 DateTime     @default(now())
 
-  asignaturaEnMalla AsignaturaEnMalla[]
+  asignaturasEnMalla AsignaturaEnMalla[]
 
   @@map("mallas_curriculares")
 }
@@ -54,14 +54,17 @@ model Institucion {
 enum Modalidad {
   VIRTUAL
   PRESENCIAL
+  DUAL
+  EN_LINEA
+  SEMIPRESENCIAL
 
   @@map("modalidad")
 }
 
 enum TipoDuracion {
   HORAS
-  SEMANAS
-  MESES
+  SEMESTRES
+  CREDITOS
   ANOS
 
   @@map("tipo_duracion")
@@ -79,19 +82,19 @@ model Asignatura {
   nombre String
   codigo String?
 
-  asignaturaEnMalla AsignaturaEnMalla[]
+  asignaturasEnMalla AsignaturaEnMalla[]
 
   @@map("asignaturas")
 }
 
 model AsignaturaEnMalla {
-  id               String @id @default(uuid())
+  id               String         @id @default(uuid())
   ejeFormativo     String
   nivel            Int
   // ???????????????????????????????????????????
   areaConocimiento String
   campoFormacion   String
-  tipoAsignatura   String
+  tipoAsignatura   TipoAsignatura
   identificacion   String
   // ???????????????????????????????????????????
 
@@ -103,19 +106,19 @@ model AsignaturaEnMalla {
   requeridaEgreso           Boolean
 
   cantidadMatriculas    Int
-  horasSemanales        Int
-  horasColaborativas    Int
-  horasAsistidasDocente Int
-  horasAutonomas        Int
-  horasPracticas        Int
+  horasSemanales        Float
+  horasColaborativas    Float
+  horasAsistidasDocente Float
+  horasAutonomas        Float
+  horasPracticas        Float
   creditos              Float
 
   noValidaAsistencia Boolean
   materiaComun       Boolean // ???????????????????????????????????????????
 
-  objetivos             String
-  descripcion           String
-  resultadosAprendizaje String
+  objetivos             String?
+  descripcion           String?
+  resultadosAprendizaje String?
 
   competenciaGenerica Competencia?
 
@@ -199,4 +202,66 @@ enum TipoCompetencia {
   GENERICA
 
   @@map("tipo_competencia")
+}
+
+enum TipoAsignatura {
+  PRACTICA
+  TEORICA
+  TEORICA_PRACTICA
+
+  @@map("tipo_asignatura")
+}
+
+// Necessary for Next auth
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires_in        Int?
+  ext_expires_in    Int?
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }

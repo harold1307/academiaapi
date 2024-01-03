@@ -1,3 +1,4 @@
+import type { PrismaClient } from "@prisma/client";
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
@@ -12,6 +13,8 @@ export class MallaCurricularService implements IMallaCurricularService {
 	constructor(
 		@inject(TYPES.MallaCurricularRepository)
 		private _mallaCurricularRepository: IMallaCurricularRepository,
+
+		@inject(TYPES.PrismaClient) private _client: PrismaClient,
 	) {}
 
 	async createMallaCurricular(data: any) {
@@ -35,8 +38,33 @@ export class MallaCurricularService implements IMallaCurricularService {
 		return this._mallaCurricularRepository.getAll();
 	}
 
+	async getAllMallasCurricularesWithAsignaturas() {
+		return this._client.mallaCurricular.findMany({
+			include: {
+				asignaturasEnMalla: {
+					include: {
+						asignatura: true,
+					},
+				},
+			},
+		});
+	}
+
 	async getMallaCurricularById(id: string) {
 		return this._mallaCurricularRepository.getById(id);
+	}
+
+	async getMallaCurricularByIdWithAsignaturas(id: string) {
+		return this._client.mallaCurricular.findUnique({
+			where: { id },
+			include: {
+				asignaturasEnMalla: {
+					include: {
+						asignatura: true,
+					},
+				},
+			},
+		});
 	}
 
 	async updateMallaCurricularById({

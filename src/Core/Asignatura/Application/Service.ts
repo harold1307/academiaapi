@@ -3,7 +3,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../Main/Inversify/types";
 import type { IAsignaturaRepository } from "../Domain/IAsignaturaRepository";
 import type { IAsignaturaService } from "../Domain/IAsignaturaService";
-import type { IAsignatura } from "../Domain/IAsignatura";
+import type { IAsignatura, IAsignaturaWithIsUsed } from "../Domain/IAsignatura";
 import { CreateAsignaturaDTO } from "../Infrastructure/DTOs/CreateAsignaturaDTO";
 import { UpdateAsignaturaDTO } from "../Infrastructure/DTOs/UpdateAsignaturaDTO";
 
@@ -31,7 +31,7 @@ export class AsignaturaService implements IAsignaturaService {
 		return this._asignaturaRepository.create(validation.data);
 	}
 
-	async getAllAsignaturas(): Promise<IAsignatura[]> {
+	async getAllAsignaturas(): Promise<IAsignaturaWithIsUsed[]> {
 		return this._asignaturaRepository.getAll();
 	}
 
