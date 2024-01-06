@@ -4,8 +4,11 @@ import { TYPES } from "../../../Main/Inversify/types";
 import type { ICurso } from "../Domain/ICurso";
 import type { ICursoRepository } from "../Domain/ICursoRepository";
 import type { ICursoService } from "../Domain/ICursoService";
+import { type IVarianteCursoWithCurso } from "../Domain/IVarianteCursoWithCurso";
 import { CreateCursoDTO } from "../Infrastructure/DTOs/CreateCursoDTO";
+import { CreateVarianteCursoDTO } from "../Infrastructure/DTOs/CreateVarianteCursoDTO";
 import { UpdateCursoDTO } from "../Infrastructure/DTOs/UpdateCursoDTO";
+import { type ICursoWithVariantes } from "../Domain/ICursoWithVariantes";
 
 @injectable()
 export class CursoService implements ICursoService {
@@ -33,7 +36,7 @@ export class CursoService implements ICursoService {
 		return this._cursoRepository.getAll();
 	}
 
-	async getCursoById(id: string): Promise<ICurso | null> {
+	async getCursoById(id: string) {
 		return this._cursoRepository.getById(id);
 	}
 
@@ -58,6 +61,33 @@ export class CursoService implements ICursoService {
 			id: params.id,
 			curso: validation.data,
 		});
+	}
+
+	async createVarianteCurso(
+		cursoId: string,
+		data: unknown,
+	): Promise<IVarianteCursoWithCurso> {
+		const dto = new CreateVarianteCursoDTO(data);
+
+		const validation = dto.validate();
+
+		if (!validation.success) {
+			console.error(
+				"Error de validacion para crear variante de curso",
+				JSON.stringify(validation.error, null, 2),
+			);
+			throw new CursoServiceError(
+				"Esquema para crear variante de curso invalido.",
+			);
+		}
+
+		return this._cursoRepository.createVarianteCurso(cursoId, validation.data);
+	}
+
+	getCursoWithAllVarianteCursos(
+		cursoId: string,
+	): Promise<ICursoWithVariantes | null> {
+		return this._cursoRepository.getAllVarianteCursoFromCursoId(cursoId);
 	}
 }
 
