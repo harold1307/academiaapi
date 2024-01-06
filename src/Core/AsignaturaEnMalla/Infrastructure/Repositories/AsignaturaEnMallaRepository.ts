@@ -13,8 +13,29 @@ export class AsignaturaEnMallaRepository
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
 	async create(data: ICreateAsignaturaEnMalla): Promise<IAsignaturaEnMalla> {
-		return this._client.asignaturaEnMalla.create({
+		const asignatura = await this._client.asignaturaEnMalla.create({
 			data,
+			include: {
+				ejeFormativo: true,
+				areaConocimiento: true,
+				campoFormacion: true,
+			},
 		});
+
+		return {
+			...asignatura,
+			areaConocimiento: asignatura.areaConocimiento
+				? {
+						...asignatura.areaConocimiento,
+						enUso: true,
+					}
+				: null,
+			ejeFormativo: asignatura.ejeFormativo
+				? { ...asignatura.ejeFormativo, enUso: true }
+				: null,
+			campoFormacion: asignatura.campoFormacion
+				? { ...asignatura.campoFormacion, enUso: true }
+				: null,
+		};
 	}
 }

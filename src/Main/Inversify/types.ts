@@ -12,4 +12,10 @@ export const TYPES = {
 	CompetenciaService: Symbol.for("CompetenciaService"),
 	AsignaturaEnMallaRepository: Symbol.for("AsignaturaEnMallaRepository"),
 	AsignaturaEnMallaService: Symbol.for("AsignaturaEnMallaService"),
+	EjeFormativoRepository: Symbol.for("EjeFormativoRepository"),
+	EjeFormativoService: Symbol.for("EjeFormativoService"),
+	CampoFormacionRepository: Symbol.for("CampoFormacionRepository"),
+	CampoFormacionService: Symbol.for("CampoFormacionService"),
+	AreaConocimientoRepository: Symbol.for("AreaConocimientoRepository"),
+	AreaConocimientoService: Symbol.for("AreaConocimientoService"),
 } as const;

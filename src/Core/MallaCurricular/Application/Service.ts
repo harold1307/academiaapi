@@ -39,14 +39,35 @@ export class MallaCurricularService implements IMallaCurricularService {
 	}
 
 	async getAllMallasCurricularesWithAsignaturas() {
-		return this._client.mallaCurricular.findMany({
+		const mallas = await this._client.mallaCurricular.findMany({
 			include: {
 				asignaturasEnMalla: {
 					include: {
 						asignatura: true,
+						areaConocimiento: true,
+						ejeFormativo: true,
+						campoFormacion: true,
 					},
 				},
 			},
+		});
+
+		return mallas.map(malla => {
+			return {
+				...malla,
+				asignaturasEnMalla: malla.asignaturasEnMalla.map(a => ({
+					...a,
+					areaConocimiento: a.areaConocimiento
+						? { ...a.areaConocimiento, enUso: true }
+						: null,
+					ejeFormativo: a.ejeFormativo
+						? { ...a.ejeFormativo, enUso: true }
+						: null,
+					campoFormacion: a.campoFormacion
+						? { ...a.campoFormacion, enUso: true }
+						: null,
+				})),
+			};
 		});
 	}
 
@@ -54,17 +75,44 @@ export class MallaCurricularService implements IMallaCurricularService {
 		return this._mallaCurricularRepository.getById(id);
 	}
 
-	async getMallaCurricularByIdWithAsignaturas(id: string) {
-		return this._client.mallaCurricular.findUnique({
+	async getMallaCurricularByIdWithAsignaturas(
+		id: string,
+		filters?: {
+			asignaturas_esAnexo?: boolean;
+		},
+	) {
+		const malla = await this._client.mallaCurricular.findUnique({
 			where: { id },
 			include: {
 				asignaturasEnMalla: {
+					where: { esAnexo: filters?.asignaturas_esAnexo ?? undefined },
 					include: {
 						asignatura: true,
+						areaConocimiento: true,
+						ejeFormativo: true,
+						campoFormacion: true,
 					},
 				},
 			},
 		});
+
+		if (!malla) return null;
+
+		return {
+			...malla,
+			asignaturasEnMalla: malla.asignaturasEnMalla.map(a => ({
+				...a,
+				areaConocimiento: a.areaConocimiento
+					? { ...a.areaConocimiento, enUso: true }
+					: null,
+				ejeFormativo: a.ejeFormativo
+					? { ...a.ejeFormativo, enUso: true }
+					: null,
+				campoFormacion: a.campoFormacion
+					? { ...a.campoFormacion, enUso: true }
+					: null,
+			})),
+		};
 	}
 
 	async updateMallaCurricularById({

@@ -1,13 +1,12 @@
 import { $Enums } from "@prisma/client";
 import { z } from "zod";
 
+import type { ZodInferSchema } from "../../../../types";
 import type { ICreateAsignaturaEnMalla } from "../../Domain/ICreateAsignaturaEnMalla";
 
-const schema: z.ZodType<ICreateAsignaturaEnMalla> = z.object({
-	ejeFormativo: z.string(),
+const schema = z.object<ZodInferSchema<ICreateAsignaturaEnMalla>>({
+	esAnexo: z.boolean(),
 	nivel: z.number(),
-	areaConocimiento: z.string(),
-	campoFormacion: z.string(),
 	tipoAsignatura: z.nativeEnum($Enums.TipoAsignatura),
 	identificacion: z.string(),
 
@@ -35,6 +34,9 @@ const schema: z.ZodType<ICreateAsignaturaEnMalla> = z.object({
 
 	asignaturaId: z.string(),
 	mallaId: z.string(),
+	ejeFormativoId: z.string(),
+	areaConocimientoId: z.string(),
+	campoFormacionId: z.string(),
 });
 
 export class CreateAsignaturaEnMallaDTO {

@@ -88,14 +88,12 @@ model Asignatura {
 }
 
 model AsignaturaEnMalla {
-  id               String         @id @default(uuid())
-  ejeFormativo     String
-  nivel            Int
+  id             String         @id @default(uuid())
+  esAnexo        Boolean        @default(false) // campo de ayuda si la asignatura es un modulo anexo al programa
+  nivel          Int
   // ???????????????????????????????????????????
-  areaConocimiento String
-  campoFormacion   String
-  tipoAsignatura   TipoAsignatura
-  identificacion   String
+  tipoAsignatura TipoAsignatura
+  identificacion String
   // ???????????????????????????????????????????
 
   permiteMatriculacion      Boolean
@@ -124,10 +122,16 @@ model AsignaturaEnMalla {
 
   createdAt DateTime @default(now())
 
-  asignaturaId String
-  asignatura   Asignatura      @relation(fields: [asignaturaId], references: [id])
-  mallaId      String
-  malla        MallaCurricular @relation(fields: [mallaId], references: [id])
+  asignaturaId       String
+  asignatura         Asignatura       @relation(fields: [asignaturaId], references: [id])
+  mallaId            String
+  malla              MallaCurricular  @relation(fields: [mallaId], references: [id])
+  ejeFormativoId     String
+  ejeFormativo       EjeFormativo     @relation(fields: [ejeFormativoId], references: [id])
+  areaConocimientoId String
+  areaConocimiento   AreaConocimiento @relation(fields: [areaConocimientoId], references: [id])
+  campoFormacionId   String
+  campoFormacion     CampoFormacion   @relation(fields: [campoFormacionId], references: [id])
 
   @@map("asignaturas_en_mallas")
 }
@@ -210,6 +214,34 @@ enum TipoAsignatura {
   TEORICA_PRACTICA
 
   @@map("tipo_asignatura")
+}
+
+model EjeFormativo {
+  id     String @id @default(uuid())
+  nombre String
+
+  asignaturasEnMalla AsignaturaEnMalla[]
+
+  @@map("ejes_formativos")
+}
+
+model AreaConocimiento {
+  id     String  @id @default(uuid())
+  nombre String
+  codigo String?
+
+  asignaturasEnMalla AsignaturaEnMalla[]
+
+  @@map("areas_de_conocimiento")
+}
+
+model CampoFormacion {
+  id     String @id @default(uuid())
+  nombre String
+
+  asignaturasEnMalla AsignaturaEnMalla[]
+
+  @@map("campos_de_formacion")
 }
 
 // Necessary for Next auth

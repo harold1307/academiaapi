@@ -13,6 +13,7 @@ import { AsignaturaEnMallaService } from "../../Core/AsignaturaEnMalla/Applicati
 import type { ICreateAsignaturaEnMalla } from "../../Core/AsignaturaEnMalla/Domain/ICreateAsignaturaEnMalla";
 import { CompetenciaService } from "../../Core/Competencia/Application/Service";
 import { MallaCurricularService } from "../../Core/MallaCurricular/Application/Service";
+import type { ZodInferSchema } from "../../types";
 
 const uuid = z.string().uuid();
 
@@ -109,15 +110,15 @@ export async function createAsignaturaEnMalla(
 	}
 }
 
-const bodySchema: z.ZodType<
-	Omit<ICreateAsignaturaEnMalla, "mallaId" | "asignaturaId"> & {
-		competenciaGenerica: string | null;
-	}
-> = z.object({
-	ejeFormativo: z.string(),
+const bodySchema = z.object<
+	ZodInferSchema<
+		Omit<ICreateAsignaturaEnMalla, "mallaId" | "asignaturaId"> & {
+			competenciaGenerica: string | null;
+		}
+	>
+>({
+	esAnexo: z.boolean(),
 	nivel: z.number(),
-	areaConocimiento: z.string(),
-	campoFormacion: z.string(),
 	tipoAsignatura: z.nativeEnum($Enums.TipoAsignatura),
 	identificacion: z.string(),
 	permiteMatriculacion: z.boolean(),
@@ -140,6 +141,9 @@ const bodySchema: z.ZodType<
 	resultadosAprendizaje: z.string().nullable(),
 
 	competenciaGenerica: z.string().nullable(),
+	ejeFormativoId: z.string(),
+	areaConocimientoId: z.string(),
+	campoFormacionId: z.string(),
 });
 
 app.http("createAsignaturaEnMalla", {

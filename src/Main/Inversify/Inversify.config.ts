@@ -38,6 +38,24 @@ import type { IAsignaturaEnMallaRepository } from "../../Core/AsignaturaEnMalla/
 import type { IAsignaturaEnMallaService } from "../../Core/AsignaturaEnMalla/Domain/IAsignaturaEnMallaService";
 import { AsignaturaEnMallaRepository } from "../../Core/AsignaturaEnMalla/Infrastructure/Repositories/AsignaturaEnMallaRepository";
 
+// eje formativo
+import { EjeFormativoService } from "../../Core/EjeFormativo/Application/Service";
+import type { IEjeFormativoRepository } from "../../Core/EjeFormativo/Domain/IEjeFormativoRepository";
+import type { IEjeFormativoService } from "../../Core/EjeFormativo/Domain/IEjeFormativoService";
+import { EjeFormativoRepository } from "../../Core/EjeFormativo/Infrastructure/Repositories/EjeFormativoRepository";
+
+// campo formacion
+import { CampoFormacionService } from "../../Core/CampoFormacion/Application/Service";
+import type { ICampoFormacionRepository } from "../../Core/CampoFormacion/Domain/ICampoFormacionRepository";
+import type { ICampoFormacionService } from "../../Core/CampoFormacion/Domain/ICampoFormacionService";
+import { CampoFormacionRepository } from "../../Core/CampoFormacion/Infrastructure/Repositories/CampoFormacionRepository";
+
+//area conocimiento
+import { AreaConocimientoService } from "../../Core/AreaConocimiento/Application/Service";
+import type { IAreaConocimientoRepository } from "../../Core/AreaConocimiento/Domain/IAreaConocimientoRepository";
+import type { IAreaConocimientoService } from "../../Core/AreaConocimiento/Domain/IAreaConocimientoService";
+import { AreaConocimientoRepository } from "../../Core/AreaConocimiento/Infrastructure/Repositories/AreaConocimientoRepository";
+
 import { Prisma } from "../Prisma/PrismaClient";
 import { TYPES } from "./types";
 
@@ -94,6 +112,32 @@ StartupBuilder.bind<IAsignaturaEnMallaRepository>(
 	.inSingletonScope();
 StartupBuilder.bind<IAsignaturaEnMallaService>(TYPES.AsignaturaEnMallaService)
 	.to(AsignaturaEnMallaService)
+	.inSingletonScope();
+
+// eje formativo
+StartupBuilder.bind<IEjeFormativoRepository>(TYPES.EjeFormativoRepository)
+	.to(EjeFormativoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IEjeFormativoService>(TYPES.EjeFormativoService)
+	.to(EjeFormativoService)
+	.inSingletonScope();
+
+// campo formacion
+StartupBuilder.bind<ICampoFormacionRepository>(TYPES.CampoFormacionRepository)
+	.to(CampoFormacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICampoFormacionService>(TYPES.CampoFormacionService)
+	.to(CampoFormacionService)
+	.inSingletonScope();
+
+// area conocimiento
+StartupBuilder.bind<IAreaConocimientoRepository>(
+	TYPES.AreaConocimientoRepository,
+)
+	.to(AreaConocimientoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAreaConocimientoService>(TYPES.AreaConocimientoService)
+	.to(AreaConocimientoService)
 	.inSingletonScope();
 
 export { StartupBuilder };

@@ -5,8 +5,8 @@ import {
 	type InvocationContext,
 } from "@azure/functions";
 import { z } from "zod";
-
 import { StartupBuilder } from "../../Main/Inversify/Inversify.config";
+
 import { MallaCurricularService } from "../../Core/MallaCurricular/Application/Service";
 
 const uuid = z.string().uuid();
@@ -28,8 +28,16 @@ export async function mallasCurricularesGetByIdWithAsignaturas(
 			MallaCurricularService,
 		);
 
+		const { query } = req;
+
 		const mallaCurricular =
-			await mallaCurricularService.getMallaCurricularByIdWithAsignaturas(id);
+			await mallaCurricularService.getMallaCurricularByIdWithAsignaturas(id, {
+				asignaturas_esAnexo: query.get("asignaturas_esAnexo")
+					? query.get("asignaturas_esAnexo") === "true"
+						? true
+						: false
+					: undefined,
+			});
 
 		return {
 			jsonBody: { data: mallaCurricular, message: "Solicitud exitosa." },

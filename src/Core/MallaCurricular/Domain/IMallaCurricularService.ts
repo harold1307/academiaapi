@@ -23,5 +23,8 @@ export interface IMallaCurricularService {
 	>;
 	getMallaCurricularByIdWithAsignaturas(
 		id: string,
+		filters?: {
+			asignaturas_esAnexo?: boolean;
+		},
 	): Promise<MallaCurricularWithAsignaturas | null>;
 }
