@@ -19,6 +19,7 @@ export type ICreateAsignaturaEnMalla = {
 	horasAsistidasDocente: number;
 	horasAutonomas: number;
 	horasPracticas: number;
+	sumaHoras: boolean;
 	creditos: number;
 
 	noValidaAsistencia: boolean;

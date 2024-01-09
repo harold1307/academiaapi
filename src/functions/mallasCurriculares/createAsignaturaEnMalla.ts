@@ -133,6 +133,7 @@ const bodySchema = z.object<
 	horasAsistidasDocente: z.number(),
 	horasAutonomas: z.number(),
 	horasPracticas: z.number(),
+	sumaHoras: z.boolean(),
 	creditos: z.number(),
 	noValidaAsistencia: z.boolean(),
 	materiaComun: z.boolean(),

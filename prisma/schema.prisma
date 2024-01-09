@@ -109,6 +109,7 @@ model AsignaturaEnMalla {
   horasAsistidasDocente Float
   horasAutonomas        Float
   horasPracticas        Float
+  sumaHoras             Boolean
   creditos              Float
 
   noValidaAsistencia Boolean
