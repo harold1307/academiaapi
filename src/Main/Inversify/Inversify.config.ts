@@ -10,8 +10,10 @@ import type { IInstitucionService } from "../../Core/Institucion/Domain/IInstitu
 import { InstitucionRepository } from "../../Core/Institucion/Infraestructure/Repositories/InstitucionRepository";
 // Malla Curricular
 import { MallaCurricularService } from "../../Core/MallaCurricular/Application/Service";
+import type { ILugarEjecucionRepository } from "../../Core/MallaCurricular/Domain/ILugarEjecucionRepository";
 import type { IMallaCurricularRepository } from "../../Core/MallaCurricular/Domain/IMallaCurricularRepository";
 import type { IMallaCurricularService } from "../../Core/MallaCurricular/Domain/IMallaCurricularService";
+import { LugarEjecucionRepository } from "../../Core/MallaCurricular/Infraestructure/Repositories/LugarEjecucionRepository";
 import { MallaCurricularRepository } from "../../Core/MallaCurricular/Infraestructure/Repositories/MallaCurricularRepository";
 
 // Asignatura
@@ -78,6 +80,9 @@ StartupBuilder.bind<IMallaCurricularRepository>(TYPES.MallaCurricularRepository)
 	.inSingletonScope();
 StartupBuilder.bind<IMallaCurricularService>(TYPES.MallaCurricularService)
 	.to(MallaCurricularService)
+	.inSingletonScope();
+StartupBuilder.bind<ILugarEjecucionRepository>(TYPES.LugarEjecucionRepository)
+	.to(LugarEjecucionRepository)
 	.inSingletonScope();
 
 // asignatura

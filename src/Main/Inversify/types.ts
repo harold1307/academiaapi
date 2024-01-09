@@ -18,4 +18,5 @@ export const TYPES = {
 	CampoFormacionService: Symbol.for("CampoFormacionService"),
 	AreaConocimientoRepository: Symbol.for("AreaConocimientoRepository"),
 	AreaConocimientoService: Symbol.for("AreaConocimientoService"),
+	LugarEjecucionRepository: Symbol.for("LugarEjecucionRepository"),
 } as const;

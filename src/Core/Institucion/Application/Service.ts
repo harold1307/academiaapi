@@ -61,11 +61,19 @@ export class InstitucionService implements IInstitucionService {
 
 		return this._institucionRepository.update({
 			id,
-			institucion: validation.data,
+			data: validation.data,
 		});
 	}
 
 	async deleteInstitucionById(id: string): Promise<IInstitucion> {
+		const institucion = await this._institucionRepository.getById(id);
+
+		if (!institucion)
+			throw new InstitucionServiceError("La institucion no existe");
+
+		if (institucion.enUso)
+			throw new InstitucionServiceError("La institucion esta en uso");
+
 		return this._institucionRepository.deleteById(id);
 	}
 }

@@ -3,7 +3,10 @@ import { z } from "zod";
 
 import type { IInstitucion } from "../../Domain/IInstitucion";
 
-export type ICreateInstitucion = Omit<IInstitucion, "id" | "createdAt">;
+export type ICreateInstitucion = Omit<
+	IInstitucion,
+	"id" | "createdAt" | "enUso"
+>;
 
 const schema: z.ZodType<ICreateInstitucion> = z.object({
 	nombre: z.string(),

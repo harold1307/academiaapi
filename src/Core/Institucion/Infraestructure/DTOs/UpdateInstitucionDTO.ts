@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { IInstitucion } from "../../Domain/IInstitucion";
 
 export type IUpdateInstitucion = Partial<
-	Omit<IInstitucion, "id" | "createdAt">
+	Omit<IInstitucion, "id" | "createdAt" | "enUso">
 >;
 
 const schema: z.ZodType<IUpdateInstitucion> = z.object({

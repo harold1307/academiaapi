@@ -1,1 +1,5 @@
-export type { Institucion as IInstitucion } from "@prisma/client";
+import type { Institucion } from "@prisma/client";
+
+export type IInstitucion = Institucion & {
+	enUso: boolean;
+};

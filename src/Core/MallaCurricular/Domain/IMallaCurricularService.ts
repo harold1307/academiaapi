@@ -1,14 +1,19 @@
 import type { IAsignatura } from "../../Asignatura/Domain/IAsignatura";
 import type { IAsignaturaEnMalla } from "../../AsignaturaEnMalla/Domain/IAsignaturaEnMalla";
+import type { ILugarEjecucion } from "./ILugarEjecucion";
 import type { IMallaCurricular } from "./IMallaCurricular";
 
-type MallaCurricularWithAsignaturas = IMallaCurricular & {
+export type MallaCurricularWithAsignaturas = IMallaCurricular & {
 	asignaturasEnMalla: (IAsignaturaEnMalla & {
 		asignatura: IAsignatura;
 	})[];
 };
 
-export interface IMallaCurricularService {
+export type MallaCurricularWithLugaresEjecucion = IMallaCurricular & {
+	lugaresEjecucion: ILugarEjecucion[];
+};
+
+export type IMallaCurricularService = {
 	createMallaCurricular(data: any): Promise<IMallaCurricular>;
 	getAllMallasCurriculares(): Promise<IMallaCurricular[]>;
 	getMallaCurricularById(id: string): Promise<IMallaCurricular | null>;
@@ -27,4 +32,9 @@ export interface IMallaCurricularService {
 			asignaturas_esAnexo?: boolean;
 		},
 	): Promise<MallaCurricularWithAsignaturas | null>;
-}
+
+	createLugarEjecucion(mallaId: string, data: any): Promise<ILugarEjecucion>;
+	getMallaCurricularByIdWithLugaresEjecucion(
+		id: string,
+	): Promise<MallaCurricularWithLugaresEjecucion | null>;
+};

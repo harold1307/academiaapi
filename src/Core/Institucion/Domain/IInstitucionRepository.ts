@@ -8,7 +8,7 @@ export interface IInstitucionRepository {
 	getById(id: string): Promise<IInstitucion | null>;
 	update(params: {
 		id: string;
-		institucion: IUpdateInstitucion;
+		data: IUpdateInstitucion;
 	}): Promise<IInstitucion>;
 	deleteById(id: string): Promise<IInstitucion>;
 }
