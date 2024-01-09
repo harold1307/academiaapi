@@ -70,4 +70,28 @@ export class AreaConocimientoRepository implements IAreaConocimientoRepository {
 			enUso: _count.asignaturasEnMalla > 0,
 		};
 	}
+
+	async update(params: {
+		id: string;
+		areaConocimiento: Partial<ICreateAreaConocimiento>;
+	}): Promise<IAreaConocimiento> {
+		const eje = await this._client.areaConocimiento.update({
+			where: { id: params.id },
+			data: params.areaConocimiento,
+			include: {
+				_count: {
+					select: {
+						asignaturasEnMalla: true,
+					},
+				},
+			},
+		});
+
+		const { _count, ...rest } = eje;
+
+		return {
+			...rest,
+			enUso: _count.asignaturasEnMalla > 0,
+		};
+	}
 }

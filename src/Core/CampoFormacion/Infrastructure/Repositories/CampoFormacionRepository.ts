@@ -74,4 +74,28 @@ export class CampoFormacionRepository implements ICampoFormacionRepository {
 			enUso: false,
 		};
 	}
+
+	async update(params: {
+		id: string;
+		campoFormacion: Partial<ICreateCampoFormacion>;
+	}): Promise<ICampoFormacion> {
+		const campo = await this._client.campoFormacion.update({
+			where: { id: params.id },
+			data: params.campoFormacion,
+			include: {
+				_count: {
+					select: {
+						asignaturasEnMalla: true,
+					},
+				},
+			},
+		});
+
+		const { _count, ...rest } = campo;
+
+		return {
+			...rest,
+			enUso: _count.asignaturasEnMalla > 0,
+		};
+	}
 }

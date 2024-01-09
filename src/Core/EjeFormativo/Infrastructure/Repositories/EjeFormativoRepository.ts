@@ -77,4 +77,28 @@ export class EjeFormativoRepository implements IEjeFormativoRepository {
 			enUso: false,
 		};
 	}
+
+	async update(params: {
+		id: string;
+		ejeFormativo: Partial<ICreateEjeFormativo>;
+	}): Promise<IEjeFormativo> {
+		const eje = await this._client.ejeFormativo.update({
+			where: { id: params.id },
+			data: params.ejeFormativo,
+			include: {
+				_count: {
+					select: {
+						asignaturasEnMalla: true,
+					},
+				},
+			},
+		});
+
+		const { _count, ...rest } = eje;
+
+		return {
+			...rest,
+			enUso: _count.asignaturasEnMalla > 0,
+		};
+	}
 }

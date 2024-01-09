@@ -5,6 +5,7 @@ import type { ICampoFormacion } from "../Domain/ICampoFormacion";
 import type { ICampoFormacionRepository } from "../Domain/ICampoFormacionRepository";
 import type { ICampoFormacionService } from "../Domain/ICampoFormacionService";
 import { CreateCampoFormacionDTO } from "../Infrastructure/DTOs/CreateCampoFormacionDTO";
+import { UpdateCampoFormacionDTO } from "../Infrastructure/DTOs/UpdateCampoFormacionDTO";
 
 @injectable()
 export class CampoFormacionService implements ICampoFormacionService {
@@ -52,6 +53,41 @@ export class CampoFormacionService implements ICampoFormacionService {
 			);
 
 		return this._campoFormacionRepository.deleteById(id);
+	}
+
+	async updateCampoFormacionById(params: {
+		id: string;
+		campoFormacion: unknown;
+	}): Promise<ICampoFormacion> {
+		const campo = await this._campoFormacionRepository.getById(params.id);
+
+		if (!campo)
+			throw new CampoFormacionServiceError(
+				"El campo de formacion a eliminar no existe",
+			);
+
+		if (campo.enUso)
+			throw new CampoFormacionServiceError(
+				"El campo de formacion a eliminar esta en uso",
+			);
+
+		const dto = new UpdateCampoFormacionDTO(params.campoFormacion);
+		const validation = dto.validate();
+
+		if (!validation.success) {
+			console.error(
+				"Error de validacion para actualizar de campo de formacion",
+				JSON.stringify(validation.error, null, 2),
+			);
+			throw new CampoFormacionServiceError(
+				"Esquema para actualizar campo de formacion invalido.",
+			);
+		}
+
+		return this._campoFormacionRepository.update({
+			id: params.id,
+			campoFormacion: validation.data,
+		});
 	}
 }
 
