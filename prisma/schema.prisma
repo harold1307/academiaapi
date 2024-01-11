@@ -130,8 +130,8 @@ model AsignaturaEnMalla {
   asignatura         Asignatura       @relation(fields: [asignaturaId], references: [id])
   mallaId            String
   malla              MallaCurricular  @relation(fields: [mallaId], references: [id])
-  ejeFormativoId     String
-  ejeFormativo       EjeFormativo     @relation(fields: [ejeFormativoId], references: [id])
+  ejeFormativoId     String?
+  ejeFormativo       EjeFormativo?    @relation(fields: [ejeFormativoId], references: [id])
   areaConocimientoId String
   areaConocimiento   AreaConocimiento @relation(fields: [areaConocimientoId], references: [id])
   campoFormacionId   String

@@ -1,4 +1,11 @@
 import type { IAsignaturaEnMalla } from "./IAsignaturaEnMalla";
+import type { ICreateAnexoAsignaturaEnMalla } from "./ICreateAnexoAsignaturaEnMalla";
+
+export type ICreateAnexoAsignaturaEnMallaParams = {
+	data: ICreateAnexoAsignaturaEnMalla | any;
+	mallaId: string;
+	asignaturaId: string;
+};
 
 export type IAsignaturaEnMallaService = {
 	createAsignaturaEnMalla(
@@ -13,4 +20,7 @@ export type IAsignaturaEnMallaService = {
 	// 	mallaCurricular: any;
 	// }): Promise<IMallaCurricular>;
 	// deleteMallaCurricularById(id: string): Promise<IMallaCurricular>;
+	createAnexoAsignaturaEnMalla(
+		params: ICreateAnexoAsignaturaEnMallaParams,
+	): Promise<IAsignaturaEnMalla>;
 };

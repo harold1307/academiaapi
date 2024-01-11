@@ -15,3 +15,8 @@ export type ZodInferSchema<T extends object> = {
 				| z.ZodPipeline<z.ZodOptional<z.ZodType<any>>, z.ZodType<T[Key]>>
 		: z.ZodType<T[Key]> | z.ZodPipeline<z.ZodType<any>, z.ZodType<T[Key]>>;
 };
+
+export type Prettify<T> = {
+	[K in keyof T]: T[K];
+	// eslint-disable-next-line @typescript-eslint/ban-types
+} & {};

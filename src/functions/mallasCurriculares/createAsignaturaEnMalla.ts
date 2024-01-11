@@ -13,9 +13,7 @@ import { AsignaturaEnMallaService } from "../../Core/AsignaturaEnMalla/Applicati
 import type { ICreateAsignaturaEnMalla } from "../../Core/AsignaturaEnMalla/Domain/ICreateAsignaturaEnMalla";
 import { CompetenciaService } from "../../Core/Competencia/Application/Service";
 import { MallaCurricularService } from "../../Core/MallaCurricular/Application/Service";
-import type { ZodInferSchema } from "../../types";
-
-const uuid = z.string().uuid();
+import type { Prettify, ZodInferSchema } from "../../types";
 
 export async function createAsignaturaEnMalla(
 	req: HttpRequest,
@@ -24,6 +22,16 @@ export async function createAsignaturaEnMalla(
 	try {
 		ctx.log(`Http function processed request for url "${req.url}"`);
 		const body = await req.json();
+
+		const mallaId = req.params.mallaId;
+		const asignaturaId = req.params.asignaturaId;
+
+		if (!mallaId || !asignaturaId) {
+			return {
+				jsonBody: { message: "ID invalido o no ha sido proporcionado" },
+				status: 400,
+			};
+		}
 
 		const bodyVal = bodySchema.safeParse(body);
 
@@ -42,22 +50,6 @@ export async function createAsignaturaEnMalla(
 			AsignaturaEnMallaService,
 		);
 		const _competenciaService = StartupBuilder.resolve(CompetenciaService);
-
-		const validations = [req.params.mallaId, req.params.asignaturaId].map(id =>
-			uuid.safeParse(id),
-		);
-
-		const [mallaVal, asignaturaVal] = validations;
-
-		if (!mallaVal?.success || !asignaturaVal?.success) {
-			return {
-				jsonBody: { message: "ID invalido o no ha sido proporcionado" },
-				status: 400,
-			};
-		}
-
-		const mallaId = mallaVal.data;
-		const asignaturaId = asignaturaVal.data;
 
 		const malla = await _mallaService.getMallaCurricularById(mallaId);
 
@@ -84,21 +76,44 @@ export async function createAsignaturaEnMalla(
 			};
 		}
 
-		const asignaturaEnMalla =
-			await _asignaturaEnMallaService.createAsignaturaEnMalla(
-				data,
-				mallaId,
-				asignaturaId,
-			);
+		let newAsignaturaEnMallaId;
 
-		if (data.competenciaGenerica) {
+		if (data.esAnexo && !data.ejeFormativoId) {
+			const asignaturaEnMalla =
+				await _asignaturaEnMallaService.createAnexoAsignaturaEnMalla({
+					mallaId,
+					asignaturaId,
+					data,
+				});
+
+			newAsignaturaEnMallaId = asignaturaEnMalla.id;
+
+			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+		}
+
+		if (!data.esAnexo && data.ejeFormativoId) {
+			const asignaturaEnMalla =
+				await _asignaturaEnMallaService.createAsignaturaEnMalla(
+					data,
+					mallaId,
+					asignaturaId,
+				);
+
+			newAsignaturaEnMallaId = asignaturaEnMalla.id;
+		}
+
+		if (data.competenciaGenerica && newAsignaturaEnMallaId) {
 			await _competenciaService.createCompetenciaForAsignaturaEnMalla(
 				{ nombre: data.competenciaGenerica },
-				asignaturaEnMalla.id,
+				newAsignaturaEnMallaId,
 			);
 		}
 
-		return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+		if (newAsignaturaEnMallaId) {
+			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+		}
+
+		return { body: "Peticion invalida.", status: 400 };
 	} catch (error) {
 		ctx.error(error);
 
@@ -110,13 +125,18 @@ export async function createAsignaturaEnMalla(
 	}
 }
 
-const bodySchema = z.object<
-	ZodInferSchema<
-		Omit<ICreateAsignaturaEnMalla, "mallaId" | "asignaturaId"> & {
-			competenciaGenerica: string | null;
-		}
-	>
->({
+type Body = Prettify<
+	Omit<
+		ICreateAsignaturaEnMalla,
+		"mallaId" | "asignaturaId" | "esAnexo" | "ejeFormativoId"
+	> & {
+		competenciaGenerica: string | null;
+		esAnexo: boolean;
+		ejeFormativoId: string | null;
+	}
+>;
+
+const bodySchema = z.object<ZodInferSchema<Body>>({
 	esAnexo: z.boolean(),
 	nivel: z.number(),
 	tipoAsignatura: z.nativeEnum($Enums.TipoAsignatura),
@@ -142,7 +162,7 @@ const bodySchema = z.object<
 	resultadosAprendizaje: z.string().nullable(),
 
 	competenciaGenerica: z.string().nullable(),
-	ejeFormativoId: z.string(),
+	ejeFormativoId: z.string().nullable(),
 	areaConocimientoId: z.string(),
 	campoFormacionId: z.string(),
 });

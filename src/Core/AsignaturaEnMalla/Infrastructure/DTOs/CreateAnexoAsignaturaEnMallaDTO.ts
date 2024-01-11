@@ -2,11 +2,11 @@ import { $Enums } from "@prisma/client";
 import { z } from "zod";
 
 import type { ZodInferSchema } from "../../../../types";
-import type { ICreateAsignaturaEnMalla } from "../../Domain/ICreateAsignaturaEnMalla";
+import type { ICreateAnexoAsignaturaEnMalla } from "../../Domain/ICreateAnexoAsignaturaEnMalla";
 
-const schema = z.object<ZodInferSchema<ICreateAsignaturaEnMalla>>({
-	esAnexo: z.literal(false),
-	nivel: z.number(),
+const schema = z.object<ZodInferSchema<ICreateAnexoAsignaturaEnMalla>>({
+	esAnexo: z.literal(true),
+	nivel: z.literal(0),
 	tipoAsignatura: z.nativeEnum($Enums.TipoAsignatura),
 	identificacion: z.string(),
 
@@ -35,13 +35,13 @@ const schema = z.object<ZodInferSchema<ICreateAsignaturaEnMalla>>({
 
 	asignaturaId: z.string(),
 	mallaId: z.string(),
-	ejeFormativoId: z.string(),
+	ejeFormativoId: z.null(),
 	areaConocimientoId: z.string(),
 	campoFormacionId: z.string(),
 });
 
-export class CreateAsignaturaEnMallaDTO {
-	private asignaturaEnMalla: ICreateAsignaturaEnMalla | undefined;
+export class CreateAnexoAsignaturaEnMallaDTO {
+	private anexoAsignaturaEnMalla: ICreateAnexoAsignaturaEnMalla | undefined;
 
 	constructor(private input: any) {}
 
@@ -49,7 +49,7 @@ export class CreateAsignaturaEnMallaDTO {
 		const parse = schema.safeParse(this.input);
 
 		if (parse.success) {
-			this.asignaturaEnMalla = parse.data;
+			this.anexoAsignaturaEnMalla = parse.data;
 		}
 
 		return parse;

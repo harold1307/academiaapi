@@ -3,9 +3,13 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../Main/Inversify/types";
 import type { IAsignaturaEnMalla } from "../Domain/IAsignaturaEnMalla";
 import type { IAsignaturaEnMallaRepository } from "../Domain/IAsignaturaEnMallaRepository";
-import type { IAsignaturaEnMallaService } from "../Domain/IAsignaturaEnMallaService";
+import type {
+	IAsignaturaEnMallaService,
+	ICreateAnexoAsignaturaEnMallaParams,
+} from "../Domain/IAsignaturaEnMallaService";
 import type { ICreateAsignaturaEnMalla } from "../Domain/ICreateAsignaturaEnMalla";
 import { CreateAsignaturaEnMallaDTO } from "../Infrastructure/DTOs/CreateAsignaturaEnMallaDTO";
+import { CreateAnexoAsignaturaEnMallaDTO } from "../Infrastructure/DTOs/CreateAnexoAsignaturaEnMallaDTO";
 
 @injectable()
 export class AsignaturaEnMallaService implements IAsignaturaEnMallaService {
@@ -14,7 +18,7 @@ export class AsignaturaEnMallaService implements IAsignaturaEnMallaService {
 		private _asignaturaEnMallaRepository: IAsignaturaEnMallaRepository,
 	) {}
 
-	async createAsignaturaEnMalla(
+	createAsignaturaEnMalla(
 		data: any,
 		mallaId: string,
 		asignaturaId: string,
@@ -34,6 +38,32 @@ export class AsignaturaEnMallaService implements IAsignaturaEnMallaService {
 
 			throw new AsignaturaEnMallaServiceError(
 				"Error en la validacion del body de la peticion",
+			);
+		}
+
+		return this._asignaturaEnMallaRepository.create(validation.data);
+	}
+
+	createAnexoAsignaturaEnMalla({
+		asignaturaId,
+		data,
+		mallaId,
+	}: ICreateAnexoAsignaturaEnMallaParams): Promise<IAsignaturaEnMalla> {
+		const dto = new CreateAnexoAsignaturaEnMallaDTO({
+			...data,
+			asignaturaId,
+			mallaId,
+		});
+		const validation = dto.validate();
+
+		if (!validation.success) {
+			console.error(
+				"Error en la validacion del esquema para crear anexo de asignatura en malla.",
+				JSON.stringify(validation.error, null, 2),
+			);
+
+			throw new AsignaturaEnMallaServiceError(
+				"Error en la validacion del esquema para crear anexo de asignatura en malla.",
 			);
 		}
 

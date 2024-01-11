@@ -1,7 +1,7 @@
 import type { $Enums } from "@prisma/client";
 
 export type ICreateAsignaturaEnMalla = {
-	esAnexo: boolean;
+	esAnexo: false;
 	nivel: number;
 	tipoAsignatura: $Enums.TipoAsignatura;
 	identificacion: string;
