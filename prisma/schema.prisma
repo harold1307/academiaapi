@@ -185,6 +185,13 @@ model VarianteCurso {
   codigoBase  String
   descripcion String
 
+  fechaAprobacion       DateTime
+  registroDesdeOtraSede Boolean
+  costoPorMateria       Boolean
+  cumpleRequisitosMalla Boolean
+  pasarRecord           Boolean
+  aprobarCursoPrevio    Boolean
+
   // registro
   registroExterno Boolean // permite registro externo en la pagina de la institucion
   registroInterno Boolean

@@ -13,6 +13,12 @@ const schema = z.object<ZodInferSchema<ICreateVarianteCurso>>({
 	verificarEdad: z.boolean(),
 	edadMinima: z.number().nullable(),
 	edadMaxima: z.number().nullable(),
+	fechaAprobacion: z.string().datetime(),
+	registroDesdeOtraSede: z.boolean(),
+	costoPorMateria: z.boolean(),
+	cumpleRequisitosMalla: z.boolean(),
+	pasarRecord: z.boolean(),
+	aprobarCursoPrevio: z.boolean(),
 });
 
 export class CreateVarianteCursoDTO {

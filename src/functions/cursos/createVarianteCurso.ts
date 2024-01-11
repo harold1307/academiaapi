@@ -5,7 +5,6 @@ import {
 	type InvocationContext,
 } from "@azure/functions";
 import { z } from "zod";
-
 import { StartupBuilder } from "../../Main/Inversify/Inversify.config";
 
 import { CursoService } from "../../Core/Curso/Application/Service";
@@ -23,6 +22,12 @@ const bodySchema = z
 		verificarEdad: z.boolean(),
 		edadMinima: z.number().nullable(),
 		edadMaxima: z.number().nullable(),
+		fechaAprobacion: z.string().datetime(),
+		registroDesdeOtraSede: z.boolean(),
+		costoPorMateria: z.boolean(),
+		cumpleRequisitosMalla: z.boolean(),
+		pasarRecord: z.boolean(),
+		aprobarCursoPrevio: z.boolean(),
 	})
 	.superRefine(({ verificarEdad, edadMaxima, edadMinima }, ctx) => {
 		if (!verificarEdad && (edadMaxima !== null || edadMinima !== null)) {
