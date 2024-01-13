@@ -8,53 +8,136 @@ import type { ICurso } from "../../Domain/ICurso";
 import type { ICursoRepository } from "../../Domain/ICursoRepository";
 import type { ICursoWithVariantes } from "../../Domain/ICursoWithVariantes";
 import type { IUpdateCurso } from "../../Domain/IUpdateCurso";
+import type { IVarianteCursoWithCurso } from "../../Domain/IVarianteCursoWithCurso";
 
 @injectable()
 export class CursoRepository implements ICursoRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
-	getAll(): Promise<ICurso[]> {
-		return this._client.curso.findMany();
+	async getAll(): Promise<ICurso[]> {
+		const cursos = await this._client.curso.findMany({
+			include: {
+				_count: {
+					select: {
+						variantes: true,
+					},
+				},
+			},
+		});
+
+		return cursos.map(({ _count, ...c }) => ({
+			...c,
+			variantesCount: _count.variantes,
+		}));
 	}
 
-	getById(id: string) {
-		return this._client.curso.findUnique({
+	async getById(id: string): Promise<ICursoWithVariantes | null> {
+		const curso = await this._client.curso.findUnique({
 			where: { id },
 			include: { variantes: true },
 		});
-	}
 
-	deleteById(id: string): Promise<ICurso> {
-		return this._client.curso.delete({ where: { id } });
-	}
+		if (!curso) return null;
 
-	create(data: ICreateCurso): Promise<ICurso> {
-		return this._client.curso.create({ data });
+		return {
+			...curso,
+			variantesCount: curso.variantes.length,
+		};
 	}
-
-	update(params: { id: string; curso: IUpdateCurso }): Promise<ICurso> {
-		return this._client.curso.update({
-			where: { id: params.id },
-			data: params.curso,
-		});
-	}
-
-	createVarianteCurso(cursoId: string, data: ICreateVarianteCurso) {
-		return this._client.varianteCurso.create({
-			data: { ...data, cursoId },
+	async deleteById(id: string): Promise<ICurso> {
+		const curso = await this._client.curso.delete({
+			where: { id },
 			include: {
-				curso: true,
+				_count: {
+					select: {
+						variantes: true,
+					},
+				},
 			},
 		});
+
+		const { _count, ...rest } = curso;
+
+		return {
+			...rest,
+			variantesCount: _count.variantes,
+		};
 	}
 
-	getAllVarianteCursoFromCursoId(
+	async create(data: ICreateCurso): Promise<ICurso> {
+		const curso = await this._client.curso.create({ data });
+
+		return {
+			...curso,
+			variantesCount: 0,
+		};
+	}
+
+	async update(params: { id: string; curso: IUpdateCurso }): Promise<ICurso> {
+		const curso = await this._client.curso.update({
+			where: { id: params.id },
+			data: params.curso,
+			include: {
+				_count: {
+					select: {
+						variantes: true,
+					},
+				},
+			},
+		});
+
+		const { _count, ...rest } = curso;
+
+		return {
+			...rest,
+			variantesCount: _count.variantes,
+		};
+	}
+
+	async createVarianteCurso(
+		cursoId: string,
+		data: ICreateVarianteCurso,
+	): Promise<IVarianteCursoWithCurso> {
+		const variante = await this._client.varianteCurso.create({
+			data: { ...data, cursoId },
+			include: {
+				curso: {
+					include: {
+						_count: {
+							select: {
+								variantes: true,
+							},
+						},
+					},
+				},
+			},
+		});
+
+		const { _count, ...rest } = variante.curso;
+
+		return {
+			...variante,
+			curso: {
+				...rest,
+				variantesCount: _count.variantes,
+			},
+		};
+	}
+
+	async getAllVarianteCursoFromCursoId(
 		cursoId: string,
 	): Promise<ICursoWithVariantes | null> {
-		return this._client.curso.findUnique({
+		const curso = await this._client.curso.findUnique({
 			where: { id: cursoId },
 			include: {
 				variantes: true,
 			},
 		});
+
+		if (!curso) return null;
+
+		return {
+			...curso,
+			variantesCount: curso.variantes.length,
+		};
 	}
 }

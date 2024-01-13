@@ -24,9 +24,13 @@ import { AsignaturaRepository } from "../../Core/Asignatura/Infrastructure/Repos
 
 // curso
 import { CursoService } from "../../Core/Curso/Application/Service";
+import type { IAsignaturaEnVarianteCursoRepository } from "../../Core/Curso/Domain/IAsignaturaEnVarianteCursoRepository";
 import type { ICursoRepository } from "../../Core/Curso/Domain/ICursoRepository";
 import type { ICursoService } from "../../Core/Curso/Domain/ICursoService";
+import type { IVarianteCursoRepository } from "../../Core/Curso/Domain/IVarianteCursoRepository";
+import { AsignaturaEnVarianteCursoRepository } from "../../Core/Curso/Infrastructure/Repositories/AsignaturaEnVarianteCursoRepository";
 import { CursoRepository } from "../../Core/Curso/Infrastructure/Repositories/CursoRepository";
+import { VarianteCursoRepository } from "../../Core/Curso/Infrastructure/Repositories/VarianteCursoRepository";
 
 // competencia
 import { CompetenciaService } from "../../Core/Competencia/Application/Service";
@@ -99,6 +103,14 @@ StartupBuilder.bind<ICursoRepository>(TYPES.CursoRepository)
 	.inSingletonScope();
 StartupBuilder.bind<ICursoService>(TYPES.CursoService)
 	.to(CursoService)
+	.inSingletonScope();
+StartupBuilder.bind<IVarianteCursoRepository>(TYPES.VarianteCursoRepository)
+	.to(VarianteCursoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsignaturaEnVarianteCursoRepository>(
+	TYPES.AsignaturaEnVarianteCursoRepository,
+)
+	.to(AsignaturaEnVarianteCursoRepository)
 	.inSingletonScope();
 
 // competencia

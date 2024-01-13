@@ -24,9 +24,9 @@ export class AsignaturaRepository implements IAsignaturaRepository {
 			},
 		});
 
-		return asignaturas.map(a => ({
+		return asignaturas.map(({ _count, ...a }) => ({
 			...a,
-			enUso: !!a._count.asignaturasEnMalla,
+			enUso: _count.asignaturasEnMalla > 0,
 		}));
 	}
 

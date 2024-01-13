@@ -4,4 +4,5 @@ export interface ICurso {
 	nombre: string;
 	certificado: string | null;
 	alias: string | null;
+	variantesCount: number;
 }

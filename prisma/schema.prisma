@@ -85,7 +85,8 @@ model Asignatura {
   nombre String
   codigo String?
 
-  asignaturasEnMalla AsignaturaEnMalla[]
+  asignaturasEnMalla         AsignaturaEnMalla[]
+  asignaturasEnVarianteCurso AsignaturaEnVarianteCurso[]
 
   @@map("asignaturas")
 }
@@ -140,6 +141,28 @@ model AsignaturaEnMalla {
   @@map("asignaturas_en_mallas")
 }
 
+model AsignaturaEnVarianteCurso {
+  id String @id @default(uuid())
+
+  validaCredito         Boolean
+  validaPromedio        Boolean
+  horasColaborativas    Float
+  horasAsistidasDocente Float
+  horasAutonomas        Float
+  horasPracticas        Float
+  sumaHoras             Boolean
+  creditos              Float
+  requeridoAprobar      Boolean
+  asistenciaAprobar     Int
+
+  asignaturaId    String
+  asignatura      Asignatura    @relation(fields: [asignaturaId], references: [id])
+  varianteCursoId String
+  varianteCurso   VarianteCurso @relation(fields: [varianteCursoId], references: [id])
+
+  @@map("asignaturas_en_variantes_curso")
+}
+
 model LugarEjecucion {
   id     String  @id @default(uuid())
   codigo String?
@@ -180,7 +203,8 @@ model Curso {
 
 // pagina 47
 model VarianteCurso {
-  id          String @id @default(uuid())
+  id          String  @id @default(uuid())
+  estado      Boolean @default(true)
   nombre      String
   codigoBase  String
   descripcion String
@@ -203,8 +227,9 @@ model VarianteCurso {
   edadMinima    Int?
   edadMaxima    Int?
 
-  cursoId String
-  curso   Curso  @relation(fields: [cursoId], references: [id])
+  cursoId                    String
+  curso                      Curso                       @relation(fields: [cursoId], references: [id])
+  asignaturasEnVarianteCurso AsignaturaEnVarianteCurso[]
 
   @@map("variantes_de_cursos")
 }

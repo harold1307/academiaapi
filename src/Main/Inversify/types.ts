@@ -19,4 +19,8 @@ export const TYPES = {
 	AreaConocimientoRepository: Symbol.for("AreaConocimientoRepository"),
 	AreaConocimientoService: Symbol.for("AreaConocimientoService"),
 	LugarEjecucionRepository: Symbol.for("LugarEjecucionRepository"),
+	AsignaturaEnVarianteCursoRepository: Symbol.for(
+		"AsignaturaEnVarianteCursoRepository",
+	),
+	VarianteCursoRepository: Symbol.for("VarianteCursoRepository"),
 } as const;
