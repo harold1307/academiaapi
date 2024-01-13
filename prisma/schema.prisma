@@ -9,7 +9,7 @@ datasource db {
 }
 
 model MallaCurricular {
-  id                        String       @id @default(uuid())
+  id                        String              @id @default(uuid())
   modalidad                 Modalidad
   tituloObtenido            String
   tipoDuracion              TipoDuracion
@@ -28,30 +28,256 @@ model MallaCurricular {
   registroProyectosDesde    Int
   usaNivelacion             Boolean
   plantillasSilabo          Boolean
-  perfilEgreso              String?
   observaciones             String?
-  createdAt                 DateTime     @default(now())
-
-  asignaturasEnMalla AsignaturaEnMalla[]
-  lugaresEjecucion   LugarEjecucion[]
+  createdAt                 DateTime            @default(now())
+  perfilEgreso              String?
+  asignaturasEnMalla        AsignaturaEnMalla[]
+  lugaresEjecucion          LugarEjecucion[]
 
   @@map("mallas_curriculares")
 }
 
 model Institucion {
-  id        String          @id @default(uuid())
-  nombre    String
-  tipo      TipoInstitucion
-  pais      String
-  provincia String
-  canton    String
-  codigo    String
-  titulos   Titulo[]
-  createdAt DateTime        @default(now())
-
+  id               String           @id @default(uuid())
+  nombre           String
+  tipo             TipoInstitucion
+  pais             String
+  provincia        String
+  canton           String
+  codigo           String
+  createdAt        DateTime         @default(now())
   lugaresEjecucion LugarEjecucion[]
+  titulos          Titulo[]
 
   @@map("instituciones")
+}
+
+model Asignatura {
+  id                         String                      @id @default(uuid())
+  nombre                     String
+  codigo                     String?
+  asignaturasEnMalla         AsignaturaEnMalla[]
+  asignaturasEnVarianteCurso AsignaturaEnVarianteCurso[]
+
+  @@map("asignaturas")
+}
+
+model AsignaturaEnMalla {
+  id                        String           @id @default(uuid())
+  nivel                     Int
+  tipoAsignatura            TipoAsignatura
+  identificacion            String
+  permiteMatriculacion      Boolean
+  validaCredito             Boolean
+  validaPromedio            Boolean
+  costoEnMatricula          Boolean
+  practicasPreProfesionales Boolean
+  requeridaEgreso           Boolean
+  cantidadMatriculas        Int
+  horasSemanales            Float
+  horasColaborativas        Float
+  horasAsistidasDocente     Float
+  horasAutonomas            Float
+  horasPracticas            Float
+  creditos                  Float
+  noValidaAsistencia        Boolean
+  materiaComun              Boolean
+  objetivos                 String?
+  descripcion               String?
+  resultadosAprendizaje     String?
+  createdAt                 DateTime         @default(now())
+  asignaturaId              String
+  mallaId                   String
+  areaConocimientoId        String
+  campoFormacionId          String
+  ejeFormativoId            String?
+  esAnexo                   Boolean          @default(false)
+  sumaHoras                 Boolean
+  areaConocimiento          AreaConocimiento @relation(fields: [areaConocimientoId], references: [id])
+  asignatura                Asignatura       @relation(fields: [asignaturaId], references: [id])
+  campoFormacion            CampoFormacion   @relation(fields: [campoFormacionId], references: [id])
+  ejeFormativo              EjeFormativo?    @relation(fields: [ejeFormativoId], references: [id])
+  malla                     MallaCurricular  @relation(fields: [mallaId], references: [id])
+  competenciaGenerica       Competencia?
+
+  @@index([areaConocimientoId], map: "asignaturas_en_mallas_areaConocimientoId_fkey")
+  @@index([asignaturaId], map: "asignaturas_en_mallas_asignaturaId_fkey")
+  @@index([campoFormacionId], map: "asignaturas_en_mallas_campoFormacionId_fkey")
+  @@index([ejeFormativoId], map: "asignaturas_en_mallas_ejeFormativoId_fkey")
+  @@index([mallaId], map: "asignaturas_en_mallas_mallaId_fkey")
+  @@map("asignaturas_en_mallas")
+}
+
+model AsignaturaEnVarianteCurso {
+  id                    String        @id @default(uuid())
+  validaCredito         Boolean
+  validaPromedio        Boolean
+  horasColaborativas    Float
+  horasAsistidasDocente Float
+  horasAutonomas        Float
+  horasPracticas        Float
+  sumaHoras             Boolean
+  creditos              Float
+  requeridoAprobar      Boolean
+  asistenciaAprobar     Int
+  asignaturaId          String
+  varianteCursoId       String
+  asignatura            Asignatura    @relation(fields: [asignaturaId], references: [id])
+  varianteCurso         VarianteCurso @relation(fields: [varianteCursoId], references: [id])
+
+  @@index([asignaturaId], map: "asignaturas_en_variantes_curso_asignaturaId_fkey")
+  @@index([varianteCursoId], map: "asignaturas_en_variantes_curso_varianteCursoId_fkey")
+  @@map("asignaturas_en_variantes_curso")
+}
+
+model LugarEjecucion {
+  id            String          @id @default(uuid())
+  codigo        String?
+  mallaId       String
+  institucionId String
+  institucion   Institucion     @relation(fields: [institucionId], references: [id])
+  malla         MallaCurricular @relation(fields: [mallaId], references: [id])
+
+  @@index([institucionId], map: "lugares_ejecucion_institucionId_fkey")
+  @@index([mallaId], map: "lugares_ejecucion_mallaId_fkey")
+  @@map("lugares_ejecucion")
+}
+
+model Titulo {
+  id            String       @id @default(uuid())
+  nombre        String
+  institucionId String?
+  institucion   Institucion? @relation(fields: [institucionId], references: [id])
+
+  @@index([institucionId], map: "titulos_institucionId_fkey")
+  @@map("titulos")
+}
+
+model Curso {
+  id          String          @id @default(uuid())
+  estado      Boolean         @default(true)
+  nombre      String
+  certificado String?
+  alias       String?
+  variantes   VarianteCurso[]
+
+  @@map("cursos")
+}
+
+model VarianteCurso {
+  id                    String                      @id @default(uuid())
+  nombre                String
+  codigoBase            String
+  descripcion           String
+  registroExterno       Boolean
+  registroInterno       Boolean
+  verificarSesion       Boolean
+  verificarEdad         Boolean
+  edadMinima            Int?
+  edadMaxima            Int?
+  cursoId               String
+  aprobarCursoPrevio    Boolean
+  costoPorMateria       Boolean
+  cumpleRequisitosMalla Boolean
+  fechaAprobacion       DateTime
+  pasarRecord           Boolean
+  registroDesdeOtraSede Boolean
+  estado                Boolean                     @default(true)
+  asignaturas           AsignaturaEnVarianteCurso[]
+  curso                 Curso                       @relation(fields: [cursoId], references: [id])
+
+  @@index([cursoId], map: "variantes_de_cursos_cursoId_fkey")
+  @@map("variantes_de_cursos")
+}
+
+model Competencia {
+  id                  String             @id @default(uuid())
+  tipo                TipoCompetencia
+  nombre              String
+  asignaturaEnMallaId String?            @unique
+  asignaturaEnMalla   AsignaturaEnMalla? @relation(fields: [asignaturaEnMallaId], references: [id], onUpdate: SetNull)
+
+  @@map("competencias")
+}
+
+model EjeFormativo {
+  id                 String              @id @default(uuid())
+  nombre             String
+  asignaturasEnMalla AsignaturaEnMalla[]
+
+  @@map("ejes_formativos")
+}
+
+model AreaConocimiento {
+  id                 String              @id @default(uuid())
+  nombre             String
+  codigo             String?
+  asignaturasEnMalla AsignaturaEnMalla[]
+
+  @@map("areas_de_conocimiento")
+}
+
+model CampoFormacion {
+  id                 String              @id @default(uuid())
+  nombre             String
+  asignaturasEnMalla AsignaturaEnMalla[]
+
+  @@map("campos_de_formacion")
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  expires_in        Int?
+  ext_expires_in    Int?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId], map: "accounts_userId_fkey")
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "sessions_userId_fkey")
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }
 
 enum Modalidad {
@@ -80,175 +306,6 @@ enum TipoInstitucion {
   @@map("tipo_institucion")
 }
 
-model Asignatura {
-  id     String  @id @default(uuid())
-  nombre String
-  codigo String?
-
-  asignaturasEnMalla         AsignaturaEnMalla[]
-  asignaturasEnVarianteCurso AsignaturaEnVarianteCurso[]
-
-  @@map("asignaturas")
-}
-
-model AsignaturaEnMalla {
-  id             String         @id @default(uuid())
-  esAnexo        Boolean        @default(false) // campo de ayuda si la asignatura es un modulo anexo al programa
-  nivel          Int
-  // ???????????????????????????????????????????
-  tipoAsignatura TipoAsignatura
-  identificacion String
-  // ???????????????????????????????????????????
-
-  permiteMatriculacion      Boolean
-  validaCredito             Boolean
-  validaPromedio            Boolean
-  costoEnMatricula          Boolean
-  practicasPreProfesionales Boolean
-  requeridaEgreso           Boolean
-
-  cantidadMatriculas    Int
-  horasSemanales        Float
-  horasColaborativas    Float
-  horasAsistidasDocente Float
-  horasAutonomas        Float
-  horasPracticas        Float
-  sumaHoras             Boolean
-  creditos              Float
-
-  noValidaAsistencia Boolean
-  materiaComun       Boolean // ???????????????????????????????????????????
-
-  objetivos             String?
-  descripcion           String?
-  resultadosAprendizaje String?
-
-  competenciaGenerica Competencia?
-
-  createdAt DateTime @default(now())
-
-  asignaturaId       String
-  asignatura         Asignatura       @relation(fields: [asignaturaId], references: [id])
-  mallaId            String
-  malla              MallaCurricular  @relation(fields: [mallaId], references: [id])
-  ejeFormativoId     String?
-  ejeFormativo       EjeFormativo?    @relation(fields: [ejeFormativoId], references: [id])
-  areaConocimientoId String
-  areaConocimiento   AreaConocimiento @relation(fields: [areaConocimientoId], references: [id])
-  campoFormacionId   String
-  campoFormacion     CampoFormacion   @relation(fields: [campoFormacionId], references: [id])
-
-  @@map("asignaturas_en_mallas")
-}
-
-model AsignaturaEnVarianteCurso {
-  id String @id @default(uuid())
-
-  validaCredito         Boolean
-  validaPromedio        Boolean
-  horasColaborativas    Float
-  horasAsistidasDocente Float
-  horasAutonomas        Float
-  horasPracticas        Float
-  sumaHoras             Boolean
-  creditos              Float
-  requeridoAprobar      Boolean
-  asistenciaAprobar     Int
-
-  asignaturaId    String
-  asignatura      Asignatura    @relation(fields: [asignaturaId], references: [id])
-  varianteCursoId String
-  varianteCurso   VarianteCurso @relation(fields: [varianteCursoId], references: [id])
-
-  @@map("asignaturas_en_variantes_curso")
-}
-
-model LugarEjecucion {
-  id     String  @id @default(uuid())
-  codigo String?
-
-  mallaId       String
-  malla         MallaCurricular @relation(fields: [mallaId], references: [id])
-  institucionId String
-  institucion   Institucion     @relation(fields: [institucionId], references: [id])
-
-  @@map("lugares_ejecucion")
-}
-
-model Titulo {
-  id     String @id @default(uuid())
-  nombre String
-
-  institucionId String?
-  institucion   Institucion? @relation(fields: [institucionId], references: [id], onDelete: SetNull)
-
-  @@map("titulos")
-}
-
-// pagina 45
-// falta adicionar carreras - pagina 49
-// falta asignaturas - pagina 49
-// falta costos - pagina 49
-model Curso {
-  id          String  @id @default(uuid())
-  estado      Boolean @default(true)
-  nombre      String
-  certificado String?
-  alias       String?
-
-  variantes VarianteCurso[]
-
-  @@map("cursos")
-}
-
-// pagina 47
-model VarianteCurso {
-  id          String  @id @default(uuid())
-  estado      Boolean @default(true)
-  nombre      String
-  codigoBase  String
-  descripcion String
-
-  fechaAprobacion       DateTime
-  registroDesdeOtraSede Boolean
-  costoPorMateria       Boolean
-  cumpleRequisitosMalla Boolean
-  pasarRecord           Boolean
-  aprobarCursoPrevio    Boolean
-
-  // registro
-  registroExterno Boolean // permite registro externo en la pagina de la institucion
-  registroInterno Boolean
-
-  // verificar sesion y edad
-  verificarSesion Boolean
-
-  verificarEdad Boolean
-  edadMinima    Int?
-  edadMaxima    Int?
-
-  cursoId                    String
-  curso                      Curso                       @relation(fields: [cursoId], references: [id])
-  asignaturasEnVarianteCurso AsignaturaEnVarianteCurso[]
-
-  @@map("variantes_de_cursos")
-}
-
-// cuando es generica el estado es null ya que
-// no interesa si esta en uso cuando es generica
-model Competencia {
-  id     String          @id @default(uuid())
-  tipo   TipoCompetencia
-  nombre String
-
-  asignaturaEnMallaId String?            @unique
-  asignaturaEnMalla   AsignaturaEnMalla? @relation(fields: [asignaturaEnMallaId], references: [id], onDelete: SetNull, onUpdate: SetNull)
-
-  // mallaCurricularId String [ref: > malla_curricular.id, null]
-  // carreraId String [ref: > carrera.id, null]
-  @@map("competencias")
-}
-
 enum TipoCompetencia {
   ESPECIFICA
   GENERICA
@@ -262,86 +319,4 @@ enum TipoAsignatura {
   TEORICA_PRACTICA
 
   @@map("tipo_asignatura")
-}
-
-model EjeFormativo {
-  id     String @id @default(uuid())
-  nombre String
-
-  asignaturasEnMalla AsignaturaEnMalla[]
-
-  @@map("ejes_formativos")
-}
-
-model AreaConocimiento {
-  id     String  @id @default(uuid())
-  nombre String
-  codigo String?
-
-  asignaturasEnMalla AsignaturaEnMalla[]
-
-  @@map("areas_de_conocimiento")
-}
-
-model CampoFormacion {
-  id     String @id @default(uuid())
-  nombre String
-
-  asignaturasEnMalla AsignaturaEnMalla[]
-
-  @@map("campos_de_formacion")
-}
-
-// Necessary for Next auth
-model Account {
-  id                String  @id @default(uuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expires_in        Int?
-  ext_expires_in    Int?
-
-  @@unique([provider, providerAccountId])
-  @@map("accounts")
-}
-
-model Session {
-  id           String   @id @default(uuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
-}
-
-model User {
-  id            String    @id @default(uuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-
-  @@map("users")
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@id([identifier, token])
-  @@unique([identifier, token])
-  @@map("verification_tokens")
 }

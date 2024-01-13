@@ -24,7 +24,7 @@ export class VarianteCursoRepository implements IVarianteCursoRepository {
 		return this._client.varianteCurso.findUnique({
 			where: { id },
 			include: {
-				asignaturasEnVarianteCurso: true,
+				asignaturas: true,
 			},
 		});
 	}
