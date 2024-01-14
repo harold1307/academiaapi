@@ -3,12 +3,10 @@ import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreateCurso } from "../../Domain/ICreateCurso";
-import { type ICreateVarianteCurso } from "../../Domain/ICreateVarianteCurso";
 import type { ICurso } from "../../Domain/ICurso";
 import type { ICursoRepository } from "../../Domain/ICursoRepository";
 import type { ICursoWithVariantes } from "../../Domain/ICursoWithVariantes";
 import type { IUpdateCurso } from "../../Domain/IUpdateCurso";
-import type { IVarianteCursoWithCurso } from "../../Domain/IVarianteCursoWithCurso";
 
 @injectable()
 export class CursoRepository implements ICursoRepository {
@@ -90,36 +88,6 @@ export class CursoRepository implements ICursoRepository {
 		return {
 			...rest,
 			variantesCount: _count.variantes,
-		};
-	}
-
-	async createVarianteCurso(
-		cursoId: string,
-		data: ICreateVarianteCurso,
-	): Promise<IVarianteCursoWithCurso> {
-		const variante = await this._client.varianteCurso.create({
-			data: { ...data, cursoId },
-			include: {
-				curso: {
-					include: {
-						_count: {
-							select: {
-								variantes: true,
-							},
-						},
-					},
-				},
-			},
-		});
-
-		const { _count, ...rest } = variante.curso;
-
-		return {
-			...variante,
-			curso: {
-				...rest,
-				variantesCount: _count.variantes,
-			},
 		};
 	}
 

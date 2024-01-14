@@ -6,7 +6,7 @@ import {
 } from "@azure/functions";
 import { StartupBuilder } from "../../Main/Inversify/Inversify.config";
 
-import { CursoService } from "../../Core/Curso/Application/Service";
+import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
 
 export async function variantesCursoUpdateById(
 	req: HttpRequest,
@@ -25,9 +25,9 @@ export async function variantesCursoUpdateById(
 
 		const body = await req.json();
 
-		const _cursoService = StartupBuilder.resolve(CursoService);
+		const _varianteCursoService = StartupBuilder.resolve(VarianteCursoService);
 
-		const curso = await _cursoService.updateVarianteCurso({
+		const curso = await _varianteCursoService.updateVarianteCurso({
 			id: varianteCursoId,
 			data: body,
 		});

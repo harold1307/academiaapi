@@ -23,4 +23,8 @@ export const TYPES = {
 		"AsignaturaEnVarianteCursoRepository",
 	),
 	VarianteCursoRepository: Symbol.for("VarianteCursoRepository"),
+	VarianteCursoService: Symbol.for("VarianteCursoService"),
+	AsignaturaEnVarianteCursoService: Symbol.for(
+		"AsignaturaEnVarianteCursoService",
+	),
 } as const;

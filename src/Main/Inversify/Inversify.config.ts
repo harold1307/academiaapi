@@ -23,14 +23,14 @@ import type { IAsignaturaService } from "../../Core/Asignatura/Domain/IAsignatur
 import { AsignaturaRepository } from "../../Core/Asignatura/Infrastructure/Repositories/AsignaturaRepository";
 
 // curso
+import type { IAsignaturaEnVarianteCursoRepository } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoRepository";
+import { AsignaturaEnVarianteCursoRepository } from "../../Core/AsignaturaEnVarianteCurso/Infrastructure/Repositories/AsignaturaEnVarianteCursoRepository";
 import { CursoService } from "../../Core/Curso/Application/Service";
-import type { IAsignaturaEnVarianteCursoRepository } from "../../Core/Curso/Domain/IAsignaturaEnVarianteCursoRepository";
 import type { ICursoRepository } from "../../Core/Curso/Domain/ICursoRepository";
 import type { ICursoService } from "../../Core/Curso/Domain/ICursoService";
-import type { IVarianteCursoRepository } from "../../Core/Curso/Domain/IVarianteCursoRepository";
-import { AsignaturaEnVarianteCursoRepository } from "../../Core/Curso/Infrastructure/Repositories/AsignaturaEnVarianteCursoRepository";
 import { CursoRepository } from "../../Core/Curso/Infrastructure/Repositories/CursoRepository";
-import { VarianteCursoRepository } from "../../Core/Curso/Infrastructure/Repositories/VarianteCursoRepository";
+import type { IVarianteCursoRepository } from "../../Core/VarianteCurso/Domain/IVarianteCursoRepository";
+import { VarianteCursoRepository } from "../../Core/VarianteCurso/Infrastructure/Repositories/VarianteCursoRepository";
 
 // competencia
 import { CompetenciaService } from "../../Core/Competencia/Application/Service";
@@ -62,6 +62,10 @@ import type { IAreaConocimientoRepository } from "../../Core/AreaConocimiento/Do
 import type { IAreaConocimientoService } from "../../Core/AreaConocimiento/Domain/IAreaConocimientoService";
 import { AreaConocimientoRepository } from "../../Core/AreaConocimiento/Infrastructure/Repositories/AreaConocimientoRepository";
 
+import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
+import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
+import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
+import type { IVarianteCursoService } from "../../Core/VarianteCurso/Domain/IVarianteCursoService";
 import { Prisma } from "../Prisma/PrismaClient";
 import { TYPES } from "./types";
 
@@ -107,10 +111,18 @@ StartupBuilder.bind<ICursoService>(TYPES.CursoService)
 StartupBuilder.bind<IVarianteCursoRepository>(TYPES.VarianteCursoRepository)
 	.to(VarianteCursoRepository)
 	.inSingletonScope();
+StartupBuilder.bind<IVarianteCursoService>(TYPES.VarianteCursoService)
+	.to(VarianteCursoService)
+	.inSingletonScope();
 StartupBuilder.bind<IAsignaturaEnVarianteCursoRepository>(
 	TYPES.AsignaturaEnVarianteCursoRepository,
 )
 	.to(AsignaturaEnVarianteCursoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsignaturaEnVarianteCursoService>(
+	TYPES.AsignaturaEnVarianteCursoService,
+)
+	.to(AsignaturaEnVarianteCursoService)
 	.inSingletonScope();
 
 // competencia

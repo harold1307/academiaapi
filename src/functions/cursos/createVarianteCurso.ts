@@ -7,8 +7,8 @@ import {
 import { z } from "zod";
 import { StartupBuilder } from "../../Main/Inversify/Inversify.config";
 
-import { CursoService } from "../../Core/Curso/Application/Service";
-import type { ICreateVarianteCurso } from "../../Core/Curso/Domain/ICreateVarianteCurso";
+import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
+import type { ICreateVarianteCurso } from "../../Core/VarianteCurso/Domain/ICreateVarianteCurso";
 import type { ZodInferSchema } from "../../types";
 
 const bodySchema = z
@@ -110,9 +110,12 @@ export async function createVarianteCurso(
 			};
 		}
 
-		const cursoService = StartupBuilder.resolve(CursoService);
+		const _varianteCursoService = StartupBuilder.resolve(VarianteCursoService);
 
-		const varianteCurso = await cursoService.createVarianteCurso(cursoId, data);
+		const varianteCurso = await _varianteCursoService.createVarianteCurso({
+			cursoId,
+			data,
+		});
 
 		ctx.log({ varianteCurso });
 

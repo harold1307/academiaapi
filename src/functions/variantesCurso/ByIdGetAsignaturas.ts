@@ -6,7 +6,7 @@ import {
 } from "@azure/functions";
 import { StartupBuilder } from "../../Main/Inversify/Inversify.config";
 
-import { CursoService } from "../../Core/Curso/Application/Service";
+import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
 
 export async function byIdGetAsignaturas(
 	req: HttpRequest,
@@ -26,10 +26,12 @@ export async function byIdGetAsignaturas(
 			};
 		}
 
-		const _cursoService = StartupBuilder.resolve(CursoService);
+		const _varianteCursoService = StartupBuilder.resolve(VarianteCursoService);
 
 		const varianteCurso =
-			await _cursoService.getVarianteCursoWithAsignaturasById(varianteCursoId);
+			await _varianteCursoService.getVarianteCursoWithAsignaturasById(
+				varianteCursoId,
+			);
 
 		return {
 			jsonBody: { data: varianteCurso, message: "Solicitud exitosa." },

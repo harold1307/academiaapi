@@ -1,6 +1,6 @@
+import type { PrismaClient } from "@prisma/client";
 import { inject, injectable } from "inversify";
 
-import type { PrismaClient } from "@prisma/client";
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { IAsignaturaEnVarianteCurso } from "../../Domain/IAsignaturaEnVarianteCurso";
 import type { IAsignaturaEnVarianteCursoRepository } from "../../Domain/IAsignaturaEnVarianteCursoRepository";

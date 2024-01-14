@@ -2,7 +2,7 @@ import type { PrismaClient } from "@prisma/client";
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../../Main/Inversify/types";
-import { type ICampoFormacion } from "../../Domain/ICampoFormacion";
+import type { ICampoFormacion } from "../../Domain/ICampoFormacion";
 import type { ICampoFormacionRepository } from "../../Domain/ICampoFormacionRepository";
 import type { ICreateCampoFormacion } from "../../Domain/ICreateCampoFormacion";
 

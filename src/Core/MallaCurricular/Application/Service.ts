@@ -2,7 +2,7 @@ import type { PrismaClient } from "@prisma/client";
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
-import { type ILugarEjecucion } from "../Domain/ILugarEjecucion";
+import type { ILugarEjecucion } from "../Domain/ILugarEjecucion";
 import type { ILugarEjecucionRepository } from "../Domain/ILugarEjecucionRepository";
 import type { IMallaCurricular } from "../Domain/IMallaCurricular";
 import type { IMallaCurricularRepository } from "../Domain/IMallaCurricularRepository";
