@@ -53,6 +53,12 @@ export class VarianteCursoRepository implements IVarianteCursoRepository {
 		});
 	}
 
+	deleteById(id: string): Promise<IVarianteCurso> {
+		return this._client.varianteCurso.delete({
+			where: { id },
+		});
+	}
+
 	withAsignaturasGetById(
 		id: string,
 	): Promise<IVarianteCursoWithAsignaturas | null> {

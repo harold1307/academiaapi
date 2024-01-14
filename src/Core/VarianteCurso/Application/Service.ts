@@ -71,6 +71,24 @@ export class VarianteCursoService implements IVarianteCursoService {
 		});
 	}
 
+	async deleteVarianteCurso(id: string): Promise<IVarianteCurso> {
+		const varianteWithAsignaturas =
+			await this._varianteCursoRepository.withAsignaturasGetById(id);
+
+		if (!varianteWithAsignaturas)
+			throw new VarianteCursoServiceError("La variante de curso no existe");
+
+		if (varianteWithAsignaturas.estado)
+			throw new VarianteCursoServiceError("La asignatura esta activada");
+
+		if (varianteWithAsignaturas.asignaturas.length > 0)
+			throw new VarianteCursoServiceError(
+				"La variante de curso tiene asignaturas enlazadas",
+			);
+
+		return this._varianteCursoRepository.deleteById(id);
+	}
+
 	getVarianteCursoWithAsignaturasById(
 		id: string,
 	): Promise<IVarianteCursoWithAsignaturas | null> {
