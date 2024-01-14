@@ -39,12 +39,25 @@ export class CursoService implements ICursoService {
 	}
 
 	async deleteCursoById(id: string): Promise<ICurso> {
+		const curso = await this._cursoRepository.getById(id);
+
+		if (!curso) throw new CursoServiceError("El curso no existe.");
+
+		if (curso.variantesCount)
+			throw new CursoServiceError("El curso tiene variantes enlazadas.");
+
 		return this._cursoRepository.deleteById(id);
 	}
 
 	async updateCursoById(params: { id: string; curso: any }): Promise<ICurso> {
-		const dto = new UpdateCursoDTO(params.curso);
+		const curso = await this._cursoRepository.getById(params.id);
 
+		if (!curso) throw new CursoServiceError("El curso no existe");
+
+		if (curso.variantesCount > 0)
+			throw new CursoServiceError("El curso tiene variantes enlazadas.");
+
+		const dto = new UpdateCursoDTO(params.curso);
 		const validation = dto.validate();
 
 		if (!validation.success) {
