@@ -1,6 +1,7 @@
 import type { IAsignaturaEnVarianteCurso } from "./IAsignaturaEnVarianteCurso";
 import type { ICurso } from "./ICurso";
 import type { ICursoWithVariantes } from "./ICursoWithVariantes";
+import type { IVarianteCurso } from "./IVarianteCurso";
 import type { IVarianteCursoWithAsignaturas } from "./IVarianteCursoWithAsignaturas";
 import type { IVarianteCursoWithCurso } from "./IVarianteCursoWithCurso";
 
@@ -8,6 +9,11 @@ export type ICreateAsignaturaEnVarianteCursoParams = {
 	asignaturaId: string;
 	varianteCursoId: string;
 	data: object;
+};
+
+export type IUpdateVarianteCursoByIdParams = {
+	id: string;
+	data: any;
 };
 
 export type ICursoService = {
@@ -21,6 +27,9 @@ export type ICursoService = {
 		cursoId: string,
 		data: unknown,
 	): Promise<IVarianteCursoWithCurso>;
+	updateVarianteCurso(
+		params: IUpdateVarianteCursoByIdParams,
+	): Promise<IVarianteCurso>;
 	getCursoWithAllVarianteCursos(
 		cursoId: string,
 	): Promise<ICursoWithVariantes | null>;

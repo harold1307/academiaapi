@@ -9,8 +9,9 @@ import type { ICursoRepository } from "../Domain/ICursoRepository";
 import type {
 	ICreateAsignaturaEnVarianteCursoParams,
 	ICursoService,
+	IUpdateVarianteCursoByIdParams,
 } from "../Domain/ICursoService";
-import { type ICursoWithVariantes } from "../Domain/ICursoWithVariantes";
+import type { ICursoWithVariantes } from "../Domain/ICursoWithVariantes";
 import type { IVarianteCursoRepository } from "../Domain/IVarianteCursoRepository";
 import type { IVarianteCursoWithAsignaturas } from "../Domain/IVarianteCursoWithAsignaturas";
 import type { IVarianteCursoWithCurso } from "../Domain/IVarianteCursoWithCurso";
@@ -18,6 +19,8 @@ import { CreateAsignaturaEnVarianteCurso } from "../Infrastructure/DTOs/CreateAs
 import { CreateCursoDTO } from "../Infrastructure/DTOs/CreateCursoDTO";
 import { CreateVarianteCursoDTO } from "../Infrastructure/DTOs/CreateVarianteCursoDTO";
 import { UpdateCursoDTO } from "../Infrastructure/DTOs/UpdateCursoDTO";
+import { type IVarianteCurso } from "../Domain/IVarianteCurso";
+import { UpdateVarianteCursoDTO } from "../Infrastructure/DTOs/UpdateVarianteCursoDTO";
 
 @injectable()
 export class CursoService implements ICursoService {
@@ -144,6 +147,34 @@ export class CursoService implements ICursoService {
 		id: string,
 	): Promise<IVarianteCursoWithAsignaturas | null> {
 		return this._varianteCursoRepository.withAsignaturasGetById(id);
+	}
+
+	async updateVarianteCurso({
+		id,
+		data,
+	}: IUpdateVarianteCursoByIdParams): Promise<IVarianteCurso> {
+		const varianteCurso = await this._varianteCursoRepository.getById(id);
+
+		if (!varianteCurso)
+			throw new CursoServiceError("La variante de curso no existe");
+
+		const dto = new UpdateVarianteCursoDTO(data);
+		const validation = dto.validate();
+
+		if (!validation.success) {
+			console.error(
+				"Error de validacion para actualizar variante de curso",
+				JSON.stringify(validation.error, null, 2),
+			);
+			throw new CursoServiceError(
+				"Esquema para actualizar variante de curso invalido.",
+			);
+		}
+
+		return this._varianteCursoRepository.updateById({
+			id,
+			data: validation.data,
+		});
 	}
 }
 

@@ -3,7 +3,10 @@ import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { IVarianteCurso } from "../../Domain/IVarianteCurso";
-import type { IVarianteCursoRepository } from "../../Domain/IVarianteCursoRepository";
+import type {
+	IUpdateVarianteCursoByIdParams,
+	IVarianteCursoRepository,
+} from "../../Domain/IVarianteCursoRepository";
 import type { IVarianteCursoWithAsignaturas } from "../../Domain/IVarianteCursoWithAsignaturas";
 
 @injectable()
@@ -26,6 +29,16 @@ export class VarianteCursoRepository implements IVarianteCursoRepository {
 			include: {
 				asignaturas: true,
 			},
+		});
+	}
+
+	updateById({
+		id,
+		data,
+	}: IUpdateVarianteCursoByIdParams): Promise<IVarianteCurso> {
+		return this._client.varianteCurso.update({
+			where: { id },
+			data,
 		});
 	}
 }
