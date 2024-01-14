@@ -1,5 +1,11 @@
 # API REST Node.js 18 para Azure Functions con DDD
 
+Este repositorio esta inspirado en:
+
+- https://github.com/mgomezarr/AzureFunctions-Nodejs-DependencyInjection
+
+- https://github.com/Bryan-Herrera-DEV/node-ts-ddd-prisma-backend
+
 ## Introduccion
 
 Esta API REST representa una aplicación basada en Node.js 18 que utiliza Azure Functions para proporcionar una arquitectura serverless altamente escalable. La aplicación sigue los principios de Domain-Driven Design (DDD), que permite organizar el código de manera clara y modular en torno a los dominios específicos del negocio.
