@@ -10,7 +10,6 @@ const schema = z.object<ZodInferSchema<ICreateVarianteCurso>>({
 	registroExterno: z.boolean(),
 	registroInterno: z.boolean(),
 	verificarSesion: z.boolean(),
-	verificarEdad: z.boolean(),
 	edadMinima: z.number().nullable(),
 	edadMaxima: z.number().nullable(),
 	fechaAprobacion: z.string().datetime(),

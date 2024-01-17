@@ -1,0 +1,5 @@
+- [] Implementar programas en CursoEscuela
+- [] Implementar programas en VarianteCurso
+- [] Implementar sesiones en CursoEscuela
+- [] Implementar sesiones en VarianteCurso
+- [] Implementar modelo evaluativo en CursoEscuela
