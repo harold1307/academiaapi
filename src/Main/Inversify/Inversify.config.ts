@@ -68,6 +68,19 @@ import type { IModalidadRepository } from "../../Core/Modalidad/Domain/IModalida
 import type { IModalidadService } from "../../Core/Modalidad/Domain/IModalidadService";
 import { ModalidadRepository } from "../../Core/Modalidad/Infrastructure/Repositories/ModalidadRepository";
 
+// curso escuela
+import { CursoEscuelaService } from "../../Core/CursoEscuela/Application/Service";
+import type { ICursoEscuelaRepository } from "../../Core/CursoEscuela/Domain/ICursoEscuelaRepository";
+import type { ICursoEscuelaService } from "../../Core/CursoEscuela/Domain/ICursoEscuelaService";
+import { CursoEscuelaRepository } from "../../Core/CursoEscuela/Infrastructure/Repositories/CursoEscuelaRepository";
+
+//paralelo
+
+import { ParaleloService } from "../../Core/Paralelo/Application/Service";
+import type { IParaleloRepository } from "../../Core/Paralelo/Domain/IParaleloRepository";
+import type { IParaleloService } from "../../Core/Paralelo/Domain/IParaleloService";
+import { ParaleloRepository } from "../../Core/Paralelo/Infrastructure/Repositories/ParaleloRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -181,6 +194,22 @@ StartupBuilder.bind<IModalidadRepository>(TYPES.ModalidadRepository)
 	.inSingletonScope();
 StartupBuilder.bind<IModalidadService>(TYPES.ModalidadService)
 	.to(ModalidadService)
+	.inSingletonScope();
+
+// curso escuela
+StartupBuilder.bind<ICursoEscuelaRepository>(TYPES.CursoEscuelaRepository)
+	.to(CursoEscuelaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICursoEscuelaService>(TYPES.CursoEscuelaService)
+	.to(CursoEscuelaService)
+	.inSingletonScope();
+
+// paralelos
+StartupBuilder.bind<IParaleloRepository>(TYPES.ParaleloRepository)
+	.to(ParaleloRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IParaleloService>(TYPES.ParaleloService)
+	.to(ParaleloService)
 	.inSingletonScope();
 
 export { StartupBuilder };

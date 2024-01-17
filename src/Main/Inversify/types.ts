@@ -29,4 +29,8 @@ export const TYPES = {
 	),
 	ModalidadRepository: Symbol.for("ModalidadRepository"),
 	ModalidadService: Symbol.for("ModalidadService"),
+	CursoEscuelaRepository: Symbol.for("CursoEscuelaRepository"),
+	CursoEscuelaService: Symbol.for("CursoEscuelaService"),
+	ParaleloRepository: Symbol.for("ParaleloRepository"),
+	ParaleloService: Symbol.for("ParaleloService"),
 } as const;
