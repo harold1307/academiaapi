@@ -1,5 +1,18 @@
-- [] Implementar programas en CursoEscuela
-- [] Implementar programas en VarianteCurso
-- [] Implementar sesiones en CursoEscuela
-- [] Implementar sesiones en VarianteCurso
-- [] Implementar modelo evaluativo en CursoEscuela
+# TODO
+
+## CursoEscuela
+
+- [] Implementar metodo PATCH
+- [] Implementar programas
+- [] Implementar sesiones
+- [] Implementar modelo evaluativo
+- [] Implementar creacion mediante plantilla Curso
+
+## VarianteCurso
+
+- [] Implementar programas
+- [] Implementar sesiones
+
+## Paralelo
+
+- [] Implementar metodo PATCH
