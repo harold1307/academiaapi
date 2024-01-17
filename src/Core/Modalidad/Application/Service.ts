@@ -43,7 +43,14 @@ export class ModalidadService implements IModalidadService {
 		return this._modalidadRepository.getById(id);
 	}
 
-	deleteModalidadById(id: string): Promise<IModalidad> {
+	async deleteModalidadById(id: string): Promise<IModalidad> {
+		const modalidad = await this._modalidadRepository.getById(id);
+
+		if (!modalidad) throw new ModalidadServiceError("La modalidad no existe");
+
+		if (modalidad.enUso)
+			throw new ModalidadServiceError("La modalidad esta en uso");
+
 		return this._modalidadRepository.deleteById(id);
 	}
 

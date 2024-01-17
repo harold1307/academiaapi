@@ -1,3 +1,3 @@
 import type { IModalidad } from "./IModalidad";
 
-export type ICreateModalidad = IModalidad;
+export type ICreateModalidad = Omit<IModalidad, "enUso">;

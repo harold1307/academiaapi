@@ -13,25 +13,79 @@ import type {
 export class ModalidadRepository implements IModalidadRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	getAll(): Promise<IModalidad[]> {
-		return this._client.modalidad.findMany();
+	async getAll(): Promise<IModalidad[]> {
+		const modalidades = await this._client.modalidad.findMany({
+			include: {
+				mallas: {
+					take: 1,
+				},
+			},
+		});
+
+		return modalidades.map(({ mallas, ...rest }) => ({
+			...rest,
+			enUso: mallas.length > 0,
+		}));
 	}
 
-	getById(id: string): Promise<IModalidad | null> {
-		return this._client.modalidad.findUnique({ where: { nombre: id } });
+	async getById(id: string): Promise<IModalidad | null> {
+		const modalidad = await this._client.modalidad.findUnique({
+			where: { nombre: id },
+			include: {
+				mallas: {
+					take: 1,
+				},
+			},
+		});
+
+		if (!modalidad) return null;
+
+		const { mallas, ...rest } = modalidad;
+
+		return {
+			...rest,
+			enUso: mallas.length > 0,
+		};
 	}
 
-	deleteById(id: string): Promise<IModalidad> {
-		return this._client.modalidad.delete({ where: { nombre: id } });
+	async deleteById(id: string): Promise<IModalidad> {
+		const modalidad = await this._client.modalidad.delete({
+			where: { nombre: id },
+		});
+
+		return {
+			...modalidad,
+			enUso: false,
+		};
 	}
 
-	create(data: ICreateModalidad): Promise<IModalidad> {
-		return this._client.modalidad.create({
+	async create(data: ICreateModalidad): Promise<IModalidad> {
+		const modalidad = await this._client.modalidad.create({
 			data,
 		});
+
+		return {
+			...modalidad,
+			enUso: false,
+		};
 	}
 
-	update({ data, id }: IUpdateModalidadParams): Promise<IModalidad> {
-		return this._client.modalidad.update({ where: { nombre: id }, data });
+	async update({ data, id }: IUpdateModalidadParams): Promise<IModalidad> {
+		const modalidad = await this._client.modalidad.update({
+			where: { nombre: id },
+			data,
+			include: {
+				mallas: {
+					take: 1,
+				},
+			},
+		});
+
+		const { mallas, ...rest } = modalidad;
+
+		return {
+			...rest,
+			enUso: mallas.length > 0,
+		};
 	}
 }
