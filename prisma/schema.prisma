@@ -163,13 +163,28 @@ model CursoEscuela {
   paralelo   Paralelo @relation(fields: [paraleloId], references: [nombre])
 
   tema                String
-  observaciones       String
-  departamento        String
+  observaciones       String?
+  departamento        String?
   fechaInicio         DateTime
   fechaFin            DateTime
   fechaLimiteRegistro DateTime
   diasLimitePago      Int
   nivel               Int
+  cupos               Int?
+  evaluaProfesor      Boolean
+  matriculaConDeuda   Boolean
+  legalizarMatriculas Boolean
+
+  registroExterno       Boolean
+  registroInterno       Boolean
+  verificarSesion       Boolean
+  registroDesdeOtraSede Boolean
+  edadMinima            Int?
+  edadMaxima            Int?
+  costoPorMateria       Boolean
+  cumpleRequisitosMalla Boolean
+  pasarRecord           Boolean
+  aprobarCursoPrevio    Boolean
 
   plantillaId String?
   plantilla   VarianteCurso? @relation(fields: [plantillaId], references: [id])
@@ -204,7 +219,6 @@ model VarianteCurso {
   registroExterno       Boolean
   registroInterno       Boolean
   verificarSesion       Boolean
-  verificarEdad         Boolean
   edadMinima            Int?
   edadMaxima            Int?
   cursoId               String
@@ -214,7 +228,7 @@ model VarianteCurso {
   fechaAprobacion       DateTime
   pasarRecord           Boolean
   registroDesdeOtraSede Boolean
-  estado                Boolean                     @default(true)
+  estado                Boolean                     @default(false)
   asignaturas           AsignaturaEnVarianteCurso[]
   curso                 Curso                       @relation(fields: [cursoId], references: [id], onDelete: Cascade)
   cursoEscuelas         CursoEscuela[]
