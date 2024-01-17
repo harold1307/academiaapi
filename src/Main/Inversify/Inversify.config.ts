@@ -62,6 +62,12 @@ import type { IAreaConocimientoRepository } from "../../Core/AreaConocimiento/Do
 import type { IAreaConocimientoService } from "../../Core/AreaConocimiento/Domain/IAreaConocimientoService";
 import { AreaConocimientoRepository } from "../../Core/AreaConocimiento/Infrastructure/Repositories/AreaConocimientoRepository";
 
+// modalidad
+import { ModalidadService } from "../../Core/Modalidad/Application/Service";
+import type { IModalidadRepository } from "../../Core/Modalidad/Domain/IModalidadRepository";
+import type { IModalidadService } from "../../Core/Modalidad/Domain/IModalidadService";
+import { ModalidadRepository } from "../../Core/Modalidad/Infrastructure/Repositories/ModalidadRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -167,6 +173,14 @@ StartupBuilder.bind<IAreaConocimientoRepository>(
 	.inSingletonScope();
 StartupBuilder.bind<IAreaConocimientoService>(TYPES.AreaConocimientoService)
 	.to(AreaConocimientoService)
+	.inSingletonScope();
+
+// modalidad
+StartupBuilder.bind<IModalidadRepository>(TYPES.ModalidadRepository)
+	.to(ModalidadRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IModalidadService>(TYPES.ModalidadService)
+	.to(ModalidadService)
 	.inSingletonScope();
 
 export { StartupBuilder };

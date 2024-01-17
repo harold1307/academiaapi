@@ -27,4 +27,6 @@ export const TYPES = {
 	AsignaturaEnVarianteCursoService: Symbol.for(
 		"AsignaturaEnVarianteCursoService",
 	),
+	ModalidadRepository: Symbol.for("ModalidadRepository"),
+	ModalidadService: Symbol.for("ModalidadService"),
 } as const;
