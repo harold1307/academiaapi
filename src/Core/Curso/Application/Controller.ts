@@ -98,10 +98,10 @@ export class CursoController implements ICursoController {
 			ctx.error(error);
 
 			if (error instanceof SyntaxError) {
-				return { body: "Peticion invalida.", status: 400 };
+				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
 			}
 
-			return { body: "Error", status: 500 };
+			return { jsonBody: { message: "Error" }, status: 500 };
 		}
 	}
 

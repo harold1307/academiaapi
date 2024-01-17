@@ -13,7 +13,7 @@ app.get("modalidadesGetAll", {
 app.get("modalidadesGetById", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.modalidadesGetById(req, ctx),
-	route: "modalidades/{id}",
+	route: "modalidades/{modalidadId}",
 });
 
 app.post("modalidadesCreate", {
@@ -25,11 +25,11 @@ app.post("modalidadesCreate", {
 app.deleteRequest("modalidadesDeleteById", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.modalidadesDeleteById(req, ctx),
-	route: "modalidades/{id}",
+	route: "modalidades/{modalidadId}",
 });
 
 app.patch("modalidadesUpdateById", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.modalidadesUpdateById(req, ctx),
-	route: "modalidades/{id}",
+	route: "modalidades/{modalidadId}",
 });

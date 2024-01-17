@@ -55,9 +55,9 @@ export class ModalidadController implements IModalidadController {
 	): Promise<HttpResponseInit> {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
-			const id = req.params.id;
+			const modalidadId = req.params.modalidadId;
 
-			if (!id) {
+			if (!modalidadId) {
 				return {
 					jsonBody: {
 						message: "ID invalido o no identificado",
@@ -66,7 +66,8 @@ export class ModalidadController implements IModalidadController {
 				};
 			}
 
-			const modalidades = await this._modalidadService.getModalidadById(id);
+			const modalidades =
+				await this._modalidadService.getModalidadById(modalidadId);
 
 			return {
 				jsonBody: { data: modalidades, message: "Solicitud exitosa" },
@@ -130,9 +131,9 @@ export class ModalidadController implements IModalidadController {
 	): Promise<HttpResponseInit> {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
-			const id = req.params.id;
+			const modalidadId = req.params.modalidadId;
 
-			if (!id) {
+			if (!modalidadId) {
 				return {
 					jsonBody: {
 						message: "ID invalido o no identificado",
@@ -155,7 +156,7 @@ export class ModalidadController implements IModalidadController {
 			}
 
 			const modalidades = await this._modalidadService.updateModalidadById({
-				id,
+				id: modalidadId,
 				data: bodyVal.data,
 			});
 
@@ -181,9 +182,9 @@ export class ModalidadController implements IModalidadController {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 
-			const id = req.params.id;
+			const modalidadId = req.params.modalidadId;
 
-			if (!id) {
+			if (!modalidadId) {
 				return {
 					jsonBody: {
 						message: "ID invalido o no identificado",
@@ -192,7 +193,7 @@ export class ModalidadController implements IModalidadController {
 				};
 			}
 
-			await this._modalidadService.deleteModalidadById(id);
+			await this._modalidadService.deleteModalidadById(modalidadId);
 
 			return {
 				jsonBody: { message: "Solicitud exitosa" },
