@@ -10,7 +10,8 @@ datasource db {
 
 model MallaCurricular {
   id                        String              @id @default(uuid())
-  modalidad                 Modalidad
+  modalidadId               String
+  modalidad                 Modalidad           @relation(fields: [modalidadId], references: [nombre])
   tituloObtenido            String
   tipoDuracion              TipoDuracion
   fechaAprobacion           DateTime
@@ -123,7 +124,7 @@ model AsignaturaEnVarianteCurso {
   asignaturaId          String
   varianteCursoId       String
   asignatura            Asignatura    @relation(fields: [asignaturaId], references: [id])
-  varianteCurso         VarianteCurso @relation(fields: [varianteCursoId], references: [id])
+  varianteCurso         VarianteCurso @relation(fields: [varianteCursoId], references: [id], onDelete: Cascade)
 
   @@index([asignaturaId], map: "asignaturas_en_variantes_curso_asignaturaId_fkey")
   @@index([varianteCursoId], map: "asignaturas_en_variantes_curso_varianteCursoId_fkey")
@@ -151,6 +152,37 @@ model Titulo {
 
   @@index([institucionId], map: "titulos_institucionId_fkey")
   @@map("titulos")
+}
+
+model CursoEscuela {
+  id     String  @id @default(uuid())
+  nombre String
+  codigo String?
+
+  paraleloId String
+  paralelo   Paralelo @relation(fields: [paraleloId], references: [nombre])
+
+  tema                String
+  observaciones       String
+  departamento        String
+  fechaInicio         DateTime
+  fechaFin            DateTime
+  fechaLimiteRegistro DateTime
+  diasLimitePago      Int
+  nivel               Int
+
+  plantillaId String?
+  plantilla   VarianteCurso? @relation(fields: [plantillaId], references: [id])
+
+  @@map("curso_escuelas")
+}
+
+model Paralelo {
+  nombre String @id
+
+  cursoEscuelas CursoEscuela[]
+
+  @@map("paralelos")
 }
 
 model Curso {
@@ -184,7 +216,8 @@ model VarianteCurso {
   registroDesdeOtraSede Boolean
   estado                Boolean                     @default(true)
   asignaturas           AsignaturaEnVarianteCurso[]
-  curso                 Curso                       @relation(fields: [cursoId], references: [id])
+  curso                 Curso                       @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  cursoEscuelas         CursoEscuela[]
 
   @@index([cursoId], map: "variantes_de_cursos_cursoId_fkey")
   @@map("variantes_de_cursos")
@@ -223,6 +256,32 @@ model CampoFormacion {
   asignaturasEnMalla AsignaturaEnMalla[]
 
   @@map("campos_de_formacion")
+}
+
+model ModeloContrato {
+  id             String  @id @default(uuid())
+  estado         Boolean
+  nombre         String
+  descripcion    String
+  paraProfesores Boolean
+  archivoUrl     String  @db.Text
+
+  @@map("modelos_contrato")
+}
+
+model Grupo {
+  nombre String @id
+
+  @@map("grupos")
+}
+
+model Modalidad {
+  nombre String  @id
+  alias  String?
+
+  mallas MallaCurricular[]
+
+  @@map("modalidades")
 }
 
 model Account {
@@ -278,16 +337,6 @@ model VerificationToken {
   @@id([identifier, token])
   @@unique([identifier, token])
   @@map("verification_tokens")
-}
-
-enum Modalidad {
-  VIRTUAL
-  PRESENCIAL
-  DUAL
-  EN_LINEA
-  SEMIPRESENCIAL
-
-  @@map("modalidad")
 }
 
 enum TipoDuracion {

@@ -1,4 +1,4 @@
-import { Modalidad, TipoDuracion } from "@prisma/client";
+import { TipoDuracion } from "@prisma/client";
 import { z } from "zod";
 
 import type { IMallaCurricular } from "../../Domain/IMallaCurricular";
@@ -21,7 +21,7 @@ const schema: z.ZodType<
 	z.ZodTypeDef,
 	ICreateMallaCurricularInput
 > = z.object({
-	modalidad: z.nativeEnum(Modalidad),
+	modalidadId: z.string(),
 	tituloObtenido: z.string(),
 	tipoDuracion: z.nativeEnum(TipoDuracion),
 	fechaAprobacion: z
