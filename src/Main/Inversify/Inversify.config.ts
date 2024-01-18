@@ -8,6 +8,7 @@ import { InstitucionService } from "../../Core/Institucion/Application/Service";
 import type { IInstitucionRepository } from "../../Core/Institucion/Domain/IInstitucionRepository";
 import type { IInstitucionService } from "../../Core/Institucion/Domain/IInstitucionService";
 import { InstitucionRepository } from "../../Core/Institucion/Infraestructure/Repositories/InstitucionRepository";
+
 // Malla Curricular
 import { MallaCurricularService } from "../../Core/MallaCurricular/Application/Service";
 import type { ILugarEjecucionRepository } from "../../Core/MallaCurricular/Domain/ILugarEjecucionRepository";
@@ -74,12 +75,17 @@ import type { ICursoEscuelaRepository } from "../../Core/CursoEscuela/Domain/ICu
 import type { ICursoEscuelaService } from "../../Core/CursoEscuela/Domain/ICursoEscuelaService";
 import { CursoEscuelaRepository } from "../../Core/CursoEscuela/Infrastructure/Repositories/CursoEscuelaRepository";
 
-//paralelo
-
+// paralelo
 import { ParaleloService } from "../../Core/Paralelo/Application/Service";
 import type { IParaleloRepository } from "../../Core/Paralelo/Domain/IParaleloRepository";
 import type { IParaleloService } from "../../Core/Paralelo/Domain/IParaleloService";
 import { ParaleloRepository } from "../../Core/Paralelo/Infrastructure/Repositories/ParaleloRepository";
+
+// sesiones
+import { SesionService } from "../../Core/Sesion/Application/Service";
+import type { ISesionRepository } from "../../Core/Sesion/Domain/ISesionRepository";
+import type { ISesionService } from "../../Core/Sesion/Domain/ISesionService";
+import { SesionRepository } from "../../Core/Sesion/Infrastructure/Repositories/SesionRepository";
 
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
@@ -210,6 +216,14 @@ StartupBuilder.bind<IParaleloRepository>(TYPES.ParaleloRepository)
 	.inSingletonScope();
 StartupBuilder.bind<IParaleloService>(TYPES.ParaleloService)
 	.to(ParaleloService)
+	.inSingletonScope();
+
+// sesiones
+StartupBuilder.bind<ISesionRepository>(TYPES.SesionRepository)
+	.to(SesionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ISesionService>(TYPES.SesionService)
+	.to(SesionService)
 	.inSingletonScope();
 
 export { StartupBuilder };

@@ -16,3 +16,8 @@
 ## Paralelo
 
 - [] Implementar metodo PATCH
+
+## Sesion
+
+- [] Implementar metodo PATCH
+- [] Implementar conexion con Turno

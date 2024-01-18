@@ -33,4 +33,6 @@ export const TYPES = {
 	CursoEscuelaService: Symbol.for("CursoEscuelaService"),
 	ParaleloRepository: Symbol.for("ParaleloRepository"),
 	ParaleloService: Symbol.for("ParaleloService"),
+	SesionRepository: Symbol.for("SesionRepository"),
+	SesionService: Symbol.for("SesionService"),
 } as const;
