@@ -9,6 +9,7 @@
 		"prestart": "npm run clean && npm run build",
 		"start": "func start",
 		"test": "echo \"No tests yet...\"",
+		"create:modulo": "pnpm dlx hygen modulo new",
 		"db:pull": "prisma db pull",
 		"db:studio": "prisma studio --browser none",
 		"postinstall": "prisma generate"
