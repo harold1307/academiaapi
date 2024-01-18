@@ -47,7 +47,8 @@ export class VarianteCursoService implements IVarianteCursoService {
 		id,
 		data,
 	}: IUpdateVarianteCursoByIdParams): Promise<IVarianteCurso> {
-		const varianteCurso = await this._varianteCursoRepository.getById(id);
+		const varianteCurso =
+			await this._varianteCursoRepository.withAsignaturasGetById(id);
 
 		if (!varianteCurso)
 			throw new VarianteCursoServiceError("La variante de curso no existe");
@@ -62,6 +63,12 @@ export class VarianteCursoService implements IVarianteCursoService {
 			);
 			throw new VarianteCursoServiceError(
 				"Esquema para actualizar variante de curso invalido.",
+			);
+		}
+
+		if (!varianteCurso.asignaturas.length && !!validation.data.estado) {
+			throw new VarianteCursoServiceError(
+				"La variante de curso necesita asignaturas para poder habilitarse",
 			);
 		}
 

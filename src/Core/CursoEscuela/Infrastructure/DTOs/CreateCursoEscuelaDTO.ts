@@ -7,6 +7,7 @@ const schema = z.object<ZodInferSchema<ICreateCursoEscuela>>({
 	nombre: z.string(),
 	codigo: z.string().nullable(),
 	paraleloId: z.string(),
+	sesionId: z.string(),
 	tema: z.string(),
 	observaciones: z.string().nullable(),
 	departamento: z.string().nullable(),

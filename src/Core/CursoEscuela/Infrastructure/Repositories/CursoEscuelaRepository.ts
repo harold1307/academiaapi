@@ -1,10 +1,11 @@
-import type { PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaClient } from "@prisma/client";
+import type { DefaultArgs } from "@prisma/client/runtime/library";
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../../Main/Inversify/types";
+import type { ICreateCursoEscuela } from "../../Domain/ICreateCursoEscuela";
 import type { ICursoEscuela } from "../../Domain/ICursoEscuela";
 import type { ICursoEscuelaRepository } from "../../Domain/ICursoEscuelaRepository";
-import type { ICreateCursoEscuela } from "../../Domain/ICreateCursoEscuela";
 
 @injectable()
 export class CursoEscuelaRepository implements ICursoEscuelaRepository {
@@ -25,6 +26,7 @@ export class CursoEscuelaRepository implements ICursoEscuelaRepository {
 	create({
 		paraleloId,
 		plantillaId,
+		sesionId,
 		...rest
 	}: ICreateCursoEscuela): Promise<ICursoEscuela> {
 		return this._client.cursoEscuela.create({
@@ -33,6 +35,11 @@ export class CursoEscuelaRepository implements ICursoEscuelaRepository {
 				paralelo: {
 					connect: {
 						nombre: paraleloId,
+					},
+				},
+				sesion: {
+					connect: {
+						id: sesionId,
 					},
 				},
 				...(plantillaId
@@ -46,5 +53,21 @@ export class CursoEscuelaRepository implements ICursoEscuelaRepository {
 					: {}),
 			},
 		});
+	}
+
+	transaction(
+		tx: (
+			prisma: Omit<
+				PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+				| "$transaction"
+				| "$connect"
+				| "$disconnect"
+				| "$on"
+				| "$use"
+				| "$extends"
+			>,
+		) => Promise<ICursoEscuela>,
+	): Promise<ICursoEscuela> {
+		return this._client.$transaction(tx);
 	}
 }
