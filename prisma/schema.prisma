@@ -49,6 +49,7 @@ model Institucion {
   createdAt        DateTime         @default(now())
   lugaresEjecucion LugarEjecucion[]
   titulos          Titulo[]
+  sesiones         Sesion[]
 
   @@map("instituciones")
 }
@@ -161,6 +162,8 @@ model CursoEscuela {
 
   paraleloId String
   paralelo   Paralelo @relation(fields: [paraleloId], references: [nombre])
+  sesionId   String
+  sesion     Sesion   @relation(fields: [sesionId], references: [id])
 
   tema                String
   observaciones       String?
@@ -297,6 +300,27 @@ model Modalidad {
   mallas MallaCurricular[]
 
   @@map("modalidades")
+}
+
+model Sesion {
+  id     String      @id @default(uuid())
+  estado Boolean     @default(false)
+  nombre String
+  sedeId String
+  sede   Institucion @relation(fields: [sedeId], references: [id])
+  alias  String?
+
+  lunes     Boolean
+  martes    Boolean
+  miercoles Boolean
+  jueves    Boolean
+  viernes   Boolean
+  sabado    Boolean
+  domingo   Boolean
+
+  cursoEscuelas CursoEscuela[]
+
+  @@map("sesiones")
 }
 
 model Account {
