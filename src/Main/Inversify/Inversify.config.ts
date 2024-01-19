@@ -87,6 +87,12 @@ import type { ISesionRepository } from "../../Core/Sesion/Domain/ISesionReposito
 import type { ISesionService } from "../../Core/Sesion/Domain/ISesionService";
 import { SesionRepository } from "../../Core/Sesion/Infrastructure/Repositories/SesionRepository";
 
+// turnos
+import { TurnoService } from "../../Core/Turno/Application/Service";
+import type { ITurnoRepository } from "../../Core/Turno/Domain/ITurnoRepository";
+import type { ITurnoService } from "../../Core/Turno/Domain/ITurnoService";
+import { TurnoRepository } from "../../Core/Turno/Infrastructure/Repositories/TurnoRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -224,6 +230,14 @@ StartupBuilder.bind<ISesionRepository>(TYPES.SesionRepository)
 	.inSingletonScope();
 StartupBuilder.bind<ISesionService>(TYPES.SesionService)
 	.to(SesionService)
+	.inSingletonScope();
+
+// turnos
+StartupBuilder.bind<ITurnoRepository>(TYPES.TurnoRepository)
+	.to(TurnoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ITurnoService>(TYPES.TurnoService)
+	.to(TurnoService)
 	.inSingletonScope();
 
 export { StartupBuilder };

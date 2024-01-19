@@ -4,25 +4,16 @@ import type {
 	InvocationContext,
 } from "@azure/functions";
 
-export type ISesionController = {
-	sesionesCreate(
+export type ITurnoController = {
+	turnosGetAll(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	sesionesDeleteById(
+	turnosGetById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	sesionesGetAll(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-	sesionesGetById(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-
-	sesionesCreateTurno(
+	turnosDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;

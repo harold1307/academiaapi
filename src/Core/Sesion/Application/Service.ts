@@ -38,7 +38,7 @@ export class SesionService implements ISesionService {
 
 		if (!validation.success) {
 			console.error(
-				"Error de validacion para paralelo",
+				"Error de validacion para crear sesion",
 				JSON.stringify(validation.error, null, 2),
 			);
 			throw new SesionServiceError("Esquema para crear sesion invalido");

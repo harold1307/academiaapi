@@ -20,4 +20,9 @@
 ## Sesion
 
 - [] Implementar metodo PATCH
-- [] Implementar conexion con Turno
+- [x] Implementar conexion con Turno
+
+## Turno
+
+- [] Implementar metodo PATCH
+- [] Implementar logica de exclusion para eliminar un Turno

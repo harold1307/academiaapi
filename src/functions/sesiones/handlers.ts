@@ -32,3 +32,9 @@ app.deleteRequest("sesionesDeleteById", {
 // 	handler: (req, ctx) => controller.sesionesUpdateById(req, ctx),
 // 	route: "sesiones/{sesionId}",
 // });
+
+app.post("sesionesCreateTurno", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.sesionesCreateTurno(req, ctx),
+	route: "sesiones/{sesionId}/turnos",
+});
