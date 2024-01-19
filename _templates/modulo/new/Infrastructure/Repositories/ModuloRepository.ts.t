@@ -15,7 +15,7 @@ export class <%= name %>Repository implements I<%= name %>Repository {
   getAll(): Promise<I<%= name %>[]> {
     
   }
-  getById(id: string): Promise<I<%= name %>>{
+  getById(id: string): Promise<I<%= name %> | null>{
 
   }
   deleteById(id: string): Promise<I<%= name %>>{
@@ -25,7 +25,7 @@ export class <%= name %>Repository implements I<%= name %>Repository {
   // create(data: ICreate<%= name %>): Promise<I<%= name %>>; {
 
   // }
-  // update(params: IUpdate<%= name %>Params): Promise<I<%= name %>>; {
+  // update(params: IUpdate<%= name %>Params): Promise<I<%= name %>> {
 
   // }
 }

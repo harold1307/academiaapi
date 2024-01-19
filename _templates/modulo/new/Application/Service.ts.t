@@ -32,6 +32,6 @@ class <%= name %>ServiceError extends Error {
   constructor(message: string){
     super();
     this.message = message;
-    this.name = "<%= name %>Service"
+    this.name = "<%= name %>ServiceError"
   }
 }
