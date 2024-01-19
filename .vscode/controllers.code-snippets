@@ -17,24 +17,24 @@
 		"body": [
 			"try {",
 			"	ctx.log(`Http function processed request for url '${req.url}'`);",
+			" ",
 			"	const body = await req.json();",
-
+			" ",
 			"	const bodyVal = createBodySchema.safeParse(body);",
-
+			" ",
 			"	if (!bodyVal.success) {",
 			"		return {",
 			"			jsonBody: 'Peticion invalida',",
 			"			status: 400,",
 			"		};",
 			"	}",
-
+			" ",
 			"	const new${1:Modulo} = await this._${1:modulo}Service.create${1:Modulo}(bodyVal.data);",
-
+			" ",
 			"	ctx.log({ new${1:Modulo} });",
-
+			" ",
 			"	return { jsonBody: { message: 'Creacion exitosa.' }, status: 201 };",
 			"} catch (error: any) {",
-
 			"	return ErrorHandler.handle({ ctx, error })",
 			"}"
 		],
@@ -45,9 +45,9 @@
 		"body": [
 			"try {",
 			"	ctx.log(`Http function processed request for url '${req.url}'`);",
-
+			" ",
 			"	const ${1:modulo} = await this._${1:modulo}Service.getAll${1:Modulo}();",
-
+			" ",
 			"	return {",
 			"		jsonBody: { data: ${1:modulo}, message: 'Solicitud exitosa' },",
 			"		status: 200,",
