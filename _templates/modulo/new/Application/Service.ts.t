@@ -4,9 +4,9 @@ to: src/Core/<%= name %>/Application/Service.ts
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
-import type { I<%= name %> } from "../Domain/I<%= name %>.ts"
-import type { I<%= name %>Repository } from "../Domain/I<%= name %>Repository.ts"
-import type { I<%= name %>Service } from "../Domain/I<%= name %>Service.ts"
+import type { I<%= name %> } from "../Domain/I<%= name %>"
+import type { I<%= name %>Repository } from "../Domain/I<%= name %>Repository"
+import type { I<%= name %>Service } from "../Domain/I<%= name %>Service"
 
 @injectable()
 export class <%= name %>Service implements I<%= name %>Service {
@@ -26,4 +26,12 @@ export class <%= name %>Service implements I<%= name %>Service {
 
   // create<%= name %>(data: ICreate<%= name %>): Promise<I<%= name %>> {}
 	// update<%= name %>ById(params: IUpdate<%= name %>Params): Promise<I<%= name %>> {}
+}
+
+class <%= name %>ServiceError extends Error {
+  constructor(message: string){
+    super();
+    this.message = message;
+    this.name = "<%= name %>Service"
+  }
 }

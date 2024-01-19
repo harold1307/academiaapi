@@ -1,7 +1,7 @@
 ---
 to: src/Core/<%= name %>/Domain/I<%= name %>Service.ts
 ---
-import type { I<%= name %> } from "./I<%= name %>.ts"
+import type { I<%= name %> } from "./I<%= name %>"
 
 export type I<%= name %>Service = {
   // create<%= name %>(data: ICreate<%= name %>): Promise<I<%= name %>>;
