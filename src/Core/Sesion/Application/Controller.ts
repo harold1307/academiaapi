@@ -6,12 +6,12 @@ import {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
 import type { ICreateSesion } from "../Domain/ICreateSesion";
 import type { ISesionController } from "../Domain/ISesionController";
 import type { ISesionService } from "../Domain/ISesionService";
 import { SesionService } from "./Service";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export class SesionController implements ISesionController {
 	private _sesionService: ISesionService;
@@ -34,13 +34,7 @@ export class SesionController implements ISesionController {
 				status: 200,
 			};
 		} catch (error) {
-			ctx.error(error);
-
-			if (error instanceof SyntaxError) {
-				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
-			}
-
-			return { jsonBody: { message: "Error" }, status: 500 };
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 
@@ -68,14 +62,7 @@ export class SesionController implements ISesionController {
 				status: 200,
 			};
 		} catch (error: any) {
-			ctx.error(error);
-
-			return {
-				jsonBody: {
-					message: error.message,
-				},
-				status: 500,
-			};
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 
@@ -102,17 +89,7 @@ export class SesionController implements ISesionController {
 
 			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
 		} catch (error: any) {
-			ctx.error(error);
-
-			if (error instanceof SyntaxError) {
-				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
-			}
-
-			if (error instanceof PrismaClientKnownRequestError) {
-				return { jsonBody: { message: error.meta?.cause }, status: 500 };
-			}
-
-			return { jsonBody: { message: error.message }, status: 500 };
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 
@@ -140,18 +117,7 @@ export class SesionController implements ISesionController {
 				status: 200,
 			};
 		} catch (error: any) {
-			ctx.error(error);
-
-			if (error instanceof SyntaxError) {
-				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
-			}
-
-			return {
-				jsonBody: {
-					message: error.message,
-				},
-				status: 500,
-			};
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 }

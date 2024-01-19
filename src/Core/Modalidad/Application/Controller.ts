@@ -6,6 +6,7 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { IModalidadController } from "../Domain/IModalidadController";
 import type { IModalidadService } from "../Domain/IModalidadService";
 import { ModalidadService } from "./Service";
@@ -39,13 +40,7 @@ export class ModalidadController implements IModalidadController {
 				status: 200,
 			};
 		} catch (error) {
-			ctx.error(error);
-
-			if (error instanceof SyntaxError) {
-				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
-			}
-
-			return { jsonBody: { message: "Error" }, status: 500 };
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 
@@ -74,13 +69,7 @@ export class ModalidadController implements IModalidadController {
 				status: 200,
 			};
 		} catch (error) {
-			ctx.error(error);
-
-			if (error instanceof SyntaxError) {
-				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
-			}
-
-			return { jsonBody: { message: "Error" }, status: 500 };
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 
@@ -115,13 +104,7 @@ export class ModalidadController implements IModalidadController {
 				status: 200,
 			};
 		} catch (error) {
-			ctx.error(error);
-
-			if (error instanceof SyntaxError) {
-				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
-			}
-
-			return { jsonBody: { message: "Error" }, status: 500 };
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 
@@ -165,13 +148,7 @@ export class ModalidadController implements IModalidadController {
 				status: 200,
 			};
 		} catch (error) {
-			ctx.error(error);
-
-			if (error instanceof SyntaxError) {
-				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
-			}
-
-			return { jsonBody: { message: "Error" }, status: 500 };
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 
@@ -200,13 +177,7 @@ export class ModalidadController implements IModalidadController {
 				status: 200,
 			};
 		} catch (error) {
-			ctx.error(error);
-
-			if (error instanceof SyntaxError) {
-				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
-			}
-
-			return { jsonBody: { message: "Error" }, status: 500 };
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 }

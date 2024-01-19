@@ -6,6 +6,7 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
 import type { ICreateCursoEscuela } from "../Domain/ICreateCursoEscuela";
 import type { ICursoEscuelaController } from "../Domain/ICursoEscuelaController";
@@ -33,13 +34,7 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 				status: 200,
 			};
 		} catch (error) {
-			ctx.error(error);
-
-			if (error instanceof SyntaxError) {
-				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
-			}
-
-			return { jsonBody: { message: "Error" }, status: 500 };
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 
@@ -68,14 +63,7 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 				status: 200,
 			};
 		} catch (error: any) {
-			ctx.error(error);
-
-			return {
-				jsonBody: {
-					message: error.message,
-				},
-				status: 500,
-			};
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 
@@ -109,13 +97,7 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 
 			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
 		} catch (error) {
-			ctx.error(error);
-
-			if (error instanceof SyntaxError) {
-				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
-			}
-
-			return { jsonBody: { message: "Error" }, status: 500 };
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 
@@ -143,18 +125,7 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 				status: 200,
 			};
 		} catch (error: any) {
-			ctx.error(error);
-
-			if (error instanceof SyntaxError) {
-				return { jsonBody: { message: "Peticion invalida." }, status: 400 };
-			}
-
-			return {
-				jsonBody: {
-					message: error.message,
-				},
-				status: 500,
-			};
+			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 }
