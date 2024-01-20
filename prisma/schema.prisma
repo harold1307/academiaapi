@@ -60,6 +60,7 @@ model Asignatura {
   codigo                     String?
   asignaturasEnMalla         AsignaturaEnMalla[]
   asignaturasEnVarianteCurso AsignaturaEnVarianteCurso[]
+  asignaturasEnCursoEscuela  AsignaturaEnCursoEscuela[]
 
   @@map("asignaturas")
 }
@@ -192,7 +193,33 @@ model CursoEscuela {
   plantillaId String?
   plantilla   VarianteCurso? @relation(fields: [plantillaId], references: [id])
 
+  asignaturas AsignaturaEnCursoEscuela[]
+
   @@map("curso_escuelas")
+}
+
+model AsignaturaEnCursoEscuela {
+  id String @id @default(uuid())
+
+  validaCredito         Boolean
+  validaPromedio        Boolean
+  horasColaborativas    Float
+  horasAsistidasDocente Float
+  horasAutonomas        Float
+  horasPracticas        Float
+  sumaHoras             Boolean
+  creditos              Float
+  requeridoAprobar      Boolean
+  asistenciaAprobar     Int
+
+  asignaturaId   String
+  asignatura     Asignatura   @relation(fields: [asignaturaId], references: [id])
+  cursoEscuelaId String
+  cursoEscuela   CursoEscuela @relation(fields: [cursoEscuelaId], references: [id])
+  profesorId     String?
+  profesor       User?        @relation(fields: [profesorId], references: [id])
+
+  @@map("asignatura_en_curso_escuela")
 }
 
 model Paralelo {
@@ -378,6 +405,8 @@ model User {
   image         String?   @db.Text
   accounts      Account[]
   sessions      Session[]
+
+  asignaturasEnCursoEscuelas AsignaturaEnCursoEscuela[]
 
   @@map("users")
 }
