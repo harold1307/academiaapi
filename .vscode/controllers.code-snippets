@@ -12,8 +12,8 @@
 	// 	],
 	// 	"description": "Log output to console"
 	// }
-	"POST Endpoint Controller": {
-		"prefix": "pec",
+	"CREATE Endpoint Controller": {
+		"prefix": "cec",
 		"body": [
 			"try {",
 			"	ctx.log(`Http function processed request for url '${req.url}'`);",
@@ -24,7 +24,7 @@
 			" ",
 			"	if (!bodyVal.success) {",
 			"		return {",
-			"			jsonBody: 'Peticion invalida',",
+			"			jsonBody: { message: 'Peticion invalida' },",
 			"			status: 400,",
 			"		};",
 			"	}",
@@ -38,10 +38,10 @@
 			"	return ErrorHandler.handle({ ctx, error })",
 			"}"
 		],
-		"description": "Create a POST Endpoint Controller."
+		"description": "Create a CREATE action Endpoint Controller."
 	},
-	"GET Endpoint Controller": {
-		"prefix": "gec",
+	"GET ALL Endpoint Controller": {
+		"prefix": "gaec",
 		"body": [
 			"try {",
 			"	ctx.log(`Http function processed request for url '${req.url}'`);",
@@ -56,6 +56,108 @@
 			"	return ErrorHandler.handle({ ctx, error })",
 			"}"
 		],
-		"description": "Create a GET Endpoint Controller."
+		"description": "Create a GET ALL action Endpoint Controller."
+	},
+	"GET BY ID Endpoint Controller": {
+		"prefix": "gbiec",
+		"body": [
+			"try {",
+			"	ctx.log(`Http function processed request for url '${req.url}'`);",
+			"	const ${1:modulo}Id = req.params.${1:modulo}Id;",
+			" ",
+			"	if (!${1:modulo}Id) {",
+			"		return {",
+			"			jsonBody: {",
+			"				message: 'El ID es invalido o no ha sido proporcionado',",
+			"			},",
+			"			status: 400,",
+			"		};",
+			"	}",
+			" ",
+			"	const ${1:modulo}es =",
+			"		await this._${1:modulo}Service.get${1:modulo}ById(${1:modulo}Id);",
+			" ",
+			"	return {",
+			"		jsonBody: { data: ${1:modulo}es, message: 'Solicitud exitosa' },",
+			"		status: 200,",
+			"	};",
+			"} catch (error) {",
+			"	return ErrorHandler.handle({ ctx, error });",
+			"}"
+		],
+		"description": "Create a GET BY ID action Endpoint Controller."
+	},
+	"UPDATE BY ID Endpoint Controller": {
+		"prefix": "ubiec",
+		"body": [
+			"try {",
+			"	ctx.log(`Http function processed request for url '${req.url}'`);",
+			"	const ${1:modulo}Id = req.params.${1:modulo}Id;",
+			" ",
+			"	if (!${1:modulo}Id) {",
+			"		return {",
+			"			jsonBody: {",
+			"				message: 'El ID es invalido o no ha sido proporcionado',",
+			"			},",
+			"			status: 400,",
+			"		};",
+			"	}",
+			" ",
+			"	const body = await req.json();",
+			" ",
+			"	const bodyVal = updateBodySchema.safeParse(body);",
+			" ",
+			"	if (!bodyVal.success) {",
+			"		return {",
+			"			jsonBody: {",
+			"				message: 'Peticion invalida',",
+			"				status: 400,",
+			"			},",
+			"		};",
+			"	}",
+			" ",
+			"	const ${1:modulo}es = await this._${1:modulo}Service.update${1:modulo}ById({",
+			"		id: ${1:modulo}Id,",
+			"		data: bodyVal.data,",
+			"	});",
+			" ",
+			"	return {",
+			"		jsonBody: { data: ${1:modulo}es, message: 'Solicitud exitosa' },",
+			"		status: 200,",
+			"	};",
+			"} catch (error) {",
+			"	return ErrorHandler.handle({ ctx, error });",
+			"}"
+		],
+		"description": "Create a UPDATE BY ID action Endpoint Controller."
+	},
+	"DELETE BY ID Endpoint Controller": {
+		"prefix": "dbiec",
+		"body": [
+			"try {",
+			"	ctx.log(`Http function processed request for url '${req.url}'`);",
+			" ",
+			"	const ${1:modulo}Id = req.params.${1:modulo}Id;",
+			" ",
+			"	if (!${1:modulo}Id) {",
+			"		return {",
+			"			jsonBody: {",
+			"				message: 'El ID es invalido o no ha sido proporcionado',",
+			"			},",
+			"			status: 400,",
+			"		};",
+			"	}",
+			" ",
+			"	await this._${1:modulo}Service.delete${1:modulo}ById(${1:modulo}Id);",
+			" ",
+			"	return {",
+			"		jsonBody: { message: 'Solicitud exitosa' },",
+			"		status: 200,",
+			"	};",
+			"} catch (error) {",
+			"	return ErrorHandler.handle({ ctx, error });",
+			"}"
+		],
+		"description": "Create a DELETE BY ID action Endpoint Controller."
 	}
 }
