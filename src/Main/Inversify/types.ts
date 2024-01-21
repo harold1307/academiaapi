@@ -37,4 +37,10 @@ export const TYPES = {
 	SesionService: Symbol.for("SesionService"),
 	TurnoRepository: Symbol.for("TurnoRepository"),
 	TurnoService: Symbol.for("TurnoService"),
+	AsignaturaEnCursoEscuelaRepository: Symbol.for(
+		"AsignaturaEnCursoEscuelaRepository",
+	),
+	AsignaturaEnCursoEscuelaService: Symbol.for(
+		"AsignaturaEnCursoEscuelaService",
+	),
 } as const;

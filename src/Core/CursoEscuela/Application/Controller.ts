@@ -8,6 +8,11 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { AsignaturaService } from "../../Asignatura/Application/Service";
+import type { IAsignaturaService } from "../../Asignatura/Domain/IAsignaturaService";
+import { AsignaturaEnCursoEscuelaService } from "../../AsignaturaEnCursoEscuela/Application/Service";
+import type { IAsignaturaEnCursoEscuelaService } from "../../AsignaturaEnCursoEscuela/Domain/IAsignaturaEnCursoEscuelaService";
+import type { ICreateAsignaturaEnCursoEscuela } from "../../AsignaturaEnCursoEscuela/Domain/ICreateAsignaturaEnCursoEscuela";
 import type { ICreateCursoEscuela } from "../Domain/ICreateCursoEscuela";
 import type { ICursoEscuelaController } from "../Domain/ICursoEscuelaController";
 import type { ICursoEscuelaService } from "../Domain/ICursoEscuelaService";
@@ -15,9 +20,15 @@ import { CursoEscuelaService } from "./Service";
 
 export class CursoEscuelaController implements ICursoEscuelaController {
 	private _cursoEscuelaService: ICursoEscuelaService;
+	private _asignaturaEnCursoEscuelaService: IAsignaturaEnCursoEscuelaService;
+	private _asignaturaService: IAsignaturaService;
 
 	constructor() {
 		this._cursoEscuelaService = StartupBuilder.resolve(CursoEscuelaService);
+		this._asignaturaEnCursoEscuelaService = StartupBuilder.resolve(
+			AsignaturaEnCursoEscuelaService,
+		);
+		this._asignaturaService = StartupBuilder.resolve(AsignaturaService);
 	}
 
 	async cursoEscuelasGetAll(
@@ -128,7 +139,93 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async cursoEscuelasCreateAsignatura(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const cursoEscuelaId = req.params.cursoEscuelaId;
+			const asignaturaId = req.params.asignaturaId;
+
+			if (!cursoEscuelaId || !asignaturaId) {
+				return {
+					jsonBody: {
+						message: "El ID es invalido o no ha sido proporcionado.",
+					},
+					status: 400,
+				};
+			}
+
+			const cursoEscuela =
+				await this._cursoEscuelaService.getCursoEscuelaById(cursoEscuelaId);
+
+			if (!cursoEscuela) {
+				return {
+					jsonBody: {
+						message: "El curso escuela no existe",
+					},
+					status: 400,
+				};
+			}
+
+			const asignatura =
+				await this._asignaturaService.getAsignaturaById(asignaturaId);
+
+			if (!asignatura) {
+				return {
+					jsonBody: {
+						message: "La asignatura no existe",
+					},
+					status: 400,
+				};
+			}
+
+			const body = await req.json();
+			const bodyVal = createAsignaturaBodySchema.safeParse(body);
+
+			if (!bodyVal.success) {
+				return {
+					jsonBody: { message: "Peticion invalida" },
+					status: 400,
+				};
+			}
+
+			const { data } = bodyVal;
+
+			const newAsignaturaEnCursoEscuela =
+				await this._asignaturaEnCursoEscuelaService.createAsignaturaEnCursoEscuela(
+					{ ...data, cursoEscuelaId, asignaturaId },
+				);
+
+			ctx.log({ newAsignaturaEnCursoEscuela });
+
+			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
+
+const createAsignaturaBodySchema = z.object<
+	ZodInferSchema<
+		Omit<ICreateAsignaturaEnCursoEscuela, "cursoEscuelaId" | "asignaturaId">
+	>
+>({
+	validaCredito: z.boolean(),
+	validaPromedio: z.boolean(),
+	horasColaborativas: z.number(),
+	horasAsistidasDocente: z.number(),
+	horasAutonomas: z.number(),
+	horasPracticas: z.number(),
+	sumaHoras: z.boolean(),
+	creditos: z.number(),
+	requeridoAprobar: z.boolean(),
+	asistenciaAprobar: z.number(),
+	profesorId: z.string().nullable(),
+});
 
 const createBodySchema = z.object<
 	ZodInferSchema<

@@ -93,6 +93,12 @@ import type { ITurnoRepository } from "../../Core/Turno/Domain/ITurnoRepository"
 import type { ITurnoService } from "../../Core/Turno/Domain/ITurnoService";
 import { TurnoRepository } from "../../Core/Turno/Infrastructure/Repositories/TurnoRepository";
 
+// asignaturas en curso escuela
+import { AsignaturaEnCursoEscuelaRepository } from "../../Core/AsignaturaEnCursoEscuela/Infrastructure/Repositories/AsignaturaEnCursoEscuelaRepository";
+import type { IAsignaturaEnCursoEscuelaRepository } from "../../Core/AsignaturaEnCursoEscuela/Domain/IAsignaturaEnCursoEscuelaRepository";
+import type { IAsignaturaEnCursoEscuelaService } from "../../Core/AsignaturaEnCursoEscuela/Domain/IAsignaturaEnCursoEscuelaService";
+import { AsignaturaEnCursoEscuelaService } from "../../Core/AsignaturaEnCursoEscuela/Application/Service";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -238,6 +244,18 @@ StartupBuilder.bind<ITurnoRepository>(TYPES.TurnoRepository)
 	.inSingletonScope();
 StartupBuilder.bind<ITurnoService>(TYPES.TurnoService)
 	.to(TurnoService)
+	.inSingletonScope();
+
+// asignaturas en curso escuela
+StartupBuilder.bind<IAsignaturaEnCursoEscuelaRepository>(
+	TYPES.AsignaturaEnCursoEscuelaRepository,
+)
+	.to(AsignaturaEnCursoEscuelaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsignaturaEnCursoEscuelaService>(
+	TYPES.AsignaturaEnCursoEscuelaService,
+)
+	.to(AsignaturaEnCursoEscuelaService)
 	.inSingletonScope();
 
 export { StartupBuilder };

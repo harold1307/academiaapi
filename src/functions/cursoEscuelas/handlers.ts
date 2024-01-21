@@ -32,3 +32,10 @@ app.deleteRequest("cursoEscuelasDeleteById", {
 // 	handler: (req, ctx) => controller.cursoEscuelasUpdateById(req, ctx),
 // 	route: "curso-escuelas/{cursoEscuelaId}",
 // });
+
+// asignaturas
+app.post("cursoEscuelasCreateAsignatura", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.cursoEscuelasCreateAsignatura(req, ctx),
+	route: "curso-escuelas/{cursoEscuelaId}/asignaturas/{asignaturaId}",
+});

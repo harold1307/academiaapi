@@ -4,29 +4,20 @@ import type {
 	InvocationContext,
 } from "@azure/functions";
 
-export type ICursoEscuelaController = {
-	cursoEscuelasCreate(
+export type IAsignaturaEnCursoEscuelaController = {
+	asignaturasEnCursoEscuelasGetAll(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	cursoEscuelasDeleteById(
+	asignaturasEnCursoEscuelasGetById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	cursoEscuelasGetAll(
+	asignaturasEnCursoEscuelasUpdateById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	cursoEscuelasGetById(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-	// cursoEscuelasUpdateById(
-	// 	req: HttpRequest,
-	// 	ctx: InvocationContext,
-	// ): Promise<HttpResponseInit>;
-
-	cursoEscuelasCreateAsignatura(
+	asignaturasEnCursoEscuelasDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;

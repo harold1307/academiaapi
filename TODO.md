@@ -11,7 +11,10 @@
 ## VarianteCurso
 
 - [] Implementar programas
-- [] Implementar sesiones
+
+## Asignatura En Variante Curso
+
+- [] Implementar modelo evaluativo
 
 ## Paralelo
 
@@ -26,3 +29,8 @@
 
 - [] Implementar metodo PATCH
 - [] Implementar logica de exclusion para eliminar un Turno
+
+## Asignatura En Curso Escuela
+
+- [] Implementar logica de exclusion para crear, actualizar y eliminar
+- [] Implementar modelo evaluativo
