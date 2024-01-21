@@ -342,6 +342,54 @@ model Turno {
   @@map("turnos")
 }
 
+model AlternativaEvaluacion {
+  id     String @id @default(uuid())
+  nombre String
+  codigo String
+
+  camposModeloEvaluativo CampoModeloEvaluativo[]
+
+  @@map("alternativas_evaluacion")
+}
+
+model CampoModeloEvaluativo {
+  id                      String  @id @default(uuid())
+  codigo                  String
+  ordenActa               Int
+  notaMaxima              Float
+  notaMinima              Float
+  decimales               Int
+  campoDependiente        Boolean
+  actualizaEstado         Boolean
+  actualizaEstadoNegativo Boolean
+  determinaEstadoFinal    Boolean
+  defineMaximos           Boolean
+
+  alternativaId      String
+  alternativa        AlternativaEvaluacion @relation(fields: [alternativaId], references: [id])
+  modeloEvaluativoId String
+  modeloEvaluativo   ModeloEvaluativo      @relation(fields: [modeloEvaluativoId], references: [id])
+
+  @@map("campos_modelo_evaluativo")
+}
+
+model ModeloEvaluativo {
+  id                              String  @id @default(uuid())
+  nombre                          String
+  notaMaxima                      Float
+  notaAprobatoria                 Float
+  notaRecuperacion                Float
+  porcentajeAsistenciaAprobatoria Int
+  decimalesNotaFinal              Int
+  defineMaximos                   Boolean
+  camposActualizanEstado          Boolean
+  observaciones                   String?
+
+  campos CampoModeloEvaluativo[]
+
+  @@map("modelos_evaluativos")
+}
+
 model Sesion {
   id     String      @id @default(uuid())
   estado Boolean     @default(false)
