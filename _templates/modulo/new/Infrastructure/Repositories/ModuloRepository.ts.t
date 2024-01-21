@@ -22,7 +22,7 @@ export class <%= name %>Repository implements I<%= name %>Repository {
 
   }
 
-  // create(data: ICreate<%= name %>): Promise<I<%= name %>>; {
+  // create(data: ICreate<%= name %>): Promise<I<%= name %>> {
 
   // }
   // update(params: IUpdate<%= name %>Params): Promise<I<%= name %>> {
