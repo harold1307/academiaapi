@@ -94,10 +94,16 @@ import type { ITurnoService } from "../../Core/Turno/Domain/ITurnoService";
 import { TurnoRepository } from "../../Core/Turno/Infrastructure/Repositories/TurnoRepository";
 
 // asignaturas en curso escuela
-import { AsignaturaEnCursoEscuelaRepository } from "../../Core/AsignaturaEnCursoEscuela/Infrastructure/Repositories/AsignaturaEnCursoEscuelaRepository";
+import { AsignaturaEnCursoEscuelaService } from "../../Core/AsignaturaEnCursoEscuela/Application/Service";
 import type { IAsignaturaEnCursoEscuelaRepository } from "../../Core/AsignaturaEnCursoEscuela/Domain/IAsignaturaEnCursoEscuelaRepository";
 import type { IAsignaturaEnCursoEscuelaService } from "../../Core/AsignaturaEnCursoEscuela/Domain/IAsignaturaEnCursoEscuelaService";
-import { AsignaturaEnCursoEscuelaService } from "../../Core/AsignaturaEnCursoEscuela/Application/Service";
+import { AsignaturaEnCursoEscuelaRepository } from "../../Core/AsignaturaEnCursoEscuela/Infrastructure/Repositories/AsignaturaEnCursoEscuelaRepository";
+
+// alternativas de evaluacion
+import { AlternativaEvaluacionService } from "../../Core/AlternativaEvaluacion/Application/Service";
+import type { IAlternativaEvaluacionRepository } from "../../Core/AlternativaEvaluacion/Domain/IAlternativaEvaluacionRepository";
+import type { IAlternativaEvaluacionService } from "../../Core/AlternativaEvaluacion/Domain/IAlternativaEvaluacionService";
+import { AlternativaEvaluacionRepository } from "../../Core/AlternativaEvaluacion/Infrastructure/Repositories/AlternativaEvaluacionRepository";
 
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
@@ -256,6 +262,18 @@ StartupBuilder.bind<IAsignaturaEnCursoEscuelaService>(
 	TYPES.AsignaturaEnCursoEscuelaService,
 )
 	.to(AsignaturaEnCursoEscuelaService)
+	.inSingletonScope();
+
+// alternativas de evaluacion
+StartupBuilder.bind<IAlternativaEvaluacionRepository>(
+	TYPES.AlternativaEvaluacionRepository,
+)
+	.to(AlternativaEvaluacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAlternativaEvaluacionService>(
+	TYPES.AlternativaEvaluacionService,
+)
+	.to(AlternativaEvaluacionService)
 	.inSingletonScope();
 
 export { StartupBuilder };
