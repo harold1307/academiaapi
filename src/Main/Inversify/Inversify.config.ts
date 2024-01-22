@@ -105,6 +105,12 @@ import type { IAlternativaEvaluacionRepository } from "../../Core/AlternativaEva
 import type { IAlternativaEvaluacionService } from "../../Core/AlternativaEvaluacion/Domain/IAlternativaEvaluacionService";
 import { AlternativaEvaluacionRepository } from "../../Core/AlternativaEvaluacion/Infrastructure/Repositories/AlternativaEvaluacionRepository";
 
+// modelos evaluativos
+import { ModeloEvaluativoService } from "../../Core/ModeloEvaluativo/Application/Service";
+import type { IModeloEvaluativoRepository } from "../../Core/ModeloEvaluativo/Domain/IModeloEvaluativoRepository";
+import type { IModeloEvaluativoService } from "../../Core/ModeloEvaluativo/Domain/IModeloEvaluativoService";
+import { ModeloEvaluativoRepository } from "../../Core/ModeloEvaluativo/Infrastructure/Repositories/ModeloEvaluativoRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -274,6 +280,16 @@ StartupBuilder.bind<IAlternativaEvaluacionService>(
 	TYPES.AlternativaEvaluacionService,
 )
 	.to(AlternativaEvaluacionService)
+	.inSingletonScope();
+
+// modelos evaluativos
+StartupBuilder.bind<IModeloEvaluativoRepository>(
+	TYPES.ModeloEvaluativoRepository,
+)
+	.to(ModeloEvaluativoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IModeloEvaluativoService>(TYPES.ModeloEvaluativoService)
+	.to(ModeloEvaluativoService)
 	.inSingletonScope();
 
 export { StartupBuilder };
