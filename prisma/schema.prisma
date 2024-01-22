@@ -375,6 +375,7 @@ model CampoModeloEvaluativo {
 
 model ModeloEvaluativo {
   id                              String  @id @default(uuid())
+  estado                          Boolean @default(false)
   nombre                          String
   notaMaxima                      Float
   notaAprobatoria                 Float
