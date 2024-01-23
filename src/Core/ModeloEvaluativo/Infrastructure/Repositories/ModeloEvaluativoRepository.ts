@@ -14,36 +14,25 @@ export class ModeloEvaluativoRepository implements IModeloEvaluativoRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
 	async getAll(): Promise<IModeloEvaluativo[]> {
-		const modelos = await this._client.modeloEvaluativo.findMany({
-			include: {
-				campos: {
-					take: 1,
-				},
-			},
-		});
+		const modelos = await this._client.modeloEvaluativo.findMany();
 
-		return modelos.map(({ campos, ...rest }) => ({
+		return modelos.map(({ ...rest }) => ({
 			...rest,
-			enUso: campos.length > 0,
+			enUso: false,
 		}));
 	}
 	async getById(id: string): Promise<IModeloEvaluativo | null> {
 		const modelo = await this._client.modeloEvaluativo.findUnique({
 			where: { id },
-			include: {
-				campos: {
-					take: 1,
-				},
-			},
 		});
 
 		if (!modelo) return null;
 
-		const { campos, ...rest } = modelo;
+		const { ...rest } = modelo;
 
 		return {
 			...rest,
-			enUso: campos.length > 0,
+			enUso: false,
 		};
 	}
 	async deleteById(id: string): Promise<IModeloEvaluativo> {
@@ -72,18 +61,13 @@ export class ModeloEvaluativoRepository implements IModeloEvaluativoRepository {
 		const modelo = await this._client.modeloEvaluativo.update({
 			where: { id },
 			data,
-			include: {
-				campos: {
-					take: 1,
-				},
-			},
 		});
 
-		const { campos, ...rest } = modelo;
+		const { ...rest } = modelo;
 
 		return {
 			...rest,
-			enUso: campos.length > 0,
+			enUso: false,
 		};
 	}
 }

@@ -34,3 +34,7 @@
 
 - [] Implementar logica de exclusion para crear, actualizar y eliminar
 - [] Implementar modelo evaluativo
+
+## Modelo Evaluativo
+
+- [] Implementar campo enUso al dominio, este campo no es afectado por la logica de evaluacion ni los campos de modelo evaluativo
