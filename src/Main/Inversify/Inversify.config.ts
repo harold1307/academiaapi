@@ -111,6 +111,12 @@ import type { IModeloEvaluativoRepository } from "../../Core/ModeloEvaluativo/Do
 import type { IModeloEvaluativoService } from "../../Core/ModeloEvaluativo/Domain/IModeloEvaluativoService";
 import { ModeloEvaluativoRepository } from "../../Core/ModeloEvaluativo/Infrastructure/Repositories/ModeloEvaluativoRepository";
 
+// campos de modelos evaluativos
+import { CampoModeloEvaluativoService } from "../../Core/CampoModeloEvaluativo/Application/Service";
+import type { ICampoModeloEvaluativoRepository } from "../../Core/CampoModeloEvaluativo/Domain/ICampoModeloEvaluativoRepository";
+import type { ICampoModeloEvaluativoService } from "../../Core/CampoModeloEvaluativo/Domain/ICampoModeloEvaluativoService";
+import { CampoModeloEvaluativoRepository } from "../../Core/CampoModeloEvaluativo/Infrastructure/Repositories/CampoModeloEvaluativoRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -290,6 +296,18 @@ StartupBuilder.bind<IModeloEvaluativoRepository>(
 	.inSingletonScope();
 StartupBuilder.bind<IModeloEvaluativoService>(TYPES.ModeloEvaluativoService)
 	.to(ModeloEvaluativoService)
+	.inSingletonScope();
+
+// campos de modelos evaluativos
+StartupBuilder.bind<ICampoModeloEvaluativoRepository>(
+	TYPES.CampoModeloEvaluativoRepository,
+)
+	.to(CampoModeloEvaluativoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICampoModeloEvaluativoService>(
+	TYPES.CampoModeloEvaluativoService,
+)
+	.to(CampoModeloEvaluativoService)
 	.inSingletonScope();
 
 export { StartupBuilder };

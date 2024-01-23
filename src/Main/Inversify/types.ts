@@ -49,4 +49,8 @@ export const TYPES = {
 	AlternativaEvaluacionService: Symbol.for("AlternativaEvaluacionService"),
 	ModeloEvaluativoRepository: Symbol.for("ModeloEvaluativoRepository"),
 	ModeloEvaluativoService: Symbol.for("ModeloEvaluativoService"),
+	CampoModeloEvaluativoRepository: Symbol.for(
+		"CampoModeloEvaluativoRepository",
+	),
+	CampoModeloEvaluativoService: Symbol.for("CampoModeloEvaluativoService"),
 } as const;

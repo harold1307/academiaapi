@@ -4,29 +4,20 @@ import type {
 	InvocationContext,
 } from "@azure/functions";
 
-export type IModeloEvaluativoController = {
-	modelosEvaluativosCreate(
+export type ICampoModeloEvaluativoController = {
+	camposModelosEvaluativosGetById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	modelosEvaluativosDeleteById(
+	camposModelosEvaluativosGetAll(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	modelosEvaluativosGetAll(
+	camposModelosEvaluativosUpdateById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	modelosEvaluativosGetById(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-	modelosEvaluativosUpdateById(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-
-	modelosEvaluativosCreateCampo(
+	camposModelosEvaluativosDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;

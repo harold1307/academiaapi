@@ -8,18 +8,31 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { CampoModeloEvaluativoService } from "../../CampoModeloEvaluativo/Application/Service";
+import type { ICampoModeloEvaluativoService } from "../../CampoModeloEvaluativo/Domain/ICampoModeloEvaluativoService";
 import type { ICreateModeloEvaluativo } from "../Domain/ICreateModeloEvaluativo";
 import type { IModeloEvaluativoController } from "../Domain/IModeloEvaluativoController";
 import type { IModeloEvaluativoService } from "../Domain/IModeloEvaluativoService";
 import type { IUpdateModeloEvaluativo } from "../Domain/IUpdateModeloEvaluativo";
 import { ModeloEvaluativoService } from "./Service";
+import type { ICreateCampoModeloEvaluativo } from "../../CampoModeloEvaluativo/Domain/ICreateCampoModeloEvaluativo";
+import type { IAlternativaEvaluacionService } from "../../AlternativaEvaluacion/Domain/IAlternativaEvaluacionService";
+import { AlternativaEvaluacionService } from "../../AlternativaEvaluacion/Application/Service";
 
 export class ModeloEvaluativoController implements IModeloEvaluativoController {
 	private _modeloEvaluativoService: IModeloEvaluativoService;
+	private _campoModeloEvaluativoService: ICampoModeloEvaluativoService;
+	private _alternativaEvaluacionService: IAlternativaEvaluacionService;
 
 	constructor() {
 		this._modeloEvaluativoService = StartupBuilder.resolve(
 			ModeloEvaluativoService,
+		);
+		this._campoModeloEvaluativoService = StartupBuilder.resolve(
+			CampoModeloEvaluativoService,
+		);
+		this._alternativaEvaluacionService = StartupBuilder.resolve(
+			AlternativaEvaluacionService,
 		);
 	}
 
@@ -177,7 +190,96 @@ export class ModeloEvaluativoController implements IModeloEvaluativoController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async modelosEvaluativosCreateCampo(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const modeloEvaluativoId = req.params.modeloEvaluativoId;
+			const alternativaEvaluacionId = req.params.alternativaEvaluacionId;
+
+			if (!modeloEvaluativoId || !alternativaEvaluacionId) {
+				return {
+					jsonBody: {
+						message: "El ID es invalido o no ha sido proporcionado",
+					},
+					status: 400,
+				};
+			}
+
+			const modeloEvaluativo =
+				await this._modeloEvaluativoService.getModeloEvaluativoById(
+					modeloEvaluativoId,
+				);
+
+			if (!modeloEvaluativo) {
+				return {
+					jsonBody: {
+						message: "El modelo evaluativo no existe",
+					},
+					status: 400,
+				};
+			}
+
+			const alternativa =
+				await this._alternativaEvaluacionService.getAlternativaEvaluacionById(
+					alternativaEvaluacionId,
+				);
+
+			if (!alternativa) {
+				return {
+					jsonBody: {
+						message: "La alternativa de evaluacion no existe",
+					},
+					status: 400,
+				};
+			}
+
+			const body = await req.json();
+			const bodyVal = createCampoBodySchema.safeParse(body);
+
+			if (!bodyVal.success) {
+				return {
+					jsonBody: { message: "Peticion invalida" },
+					status: 400,
+				};
+			}
+
+			const newCampoModeloEvaluativo =
+				await this._campoModeloEvaluativoService.createCampoModeloEvaluativo({
+					...bodyVal.data,
+					alternativaId: alternativaEvaluacionId,
+					modeloEvaluativoId,
+				});
+
+			ctx.log({ newCampoModeloEvaluativo });
+
+			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
+
+const createCampoBodySchema = z.object<
+	ZodInferSchema<
+		Omit<ICreateCampoModeloEvaluativo, "alternativaId" | "modeloEvaluativoId">
+	>
+>({
+	codigo: z.string(),
+	ordenActa: z.number(),
+	notaMaxima: z.number(),
+	notaMinima: z.number(),
+	decimales: z.number(),
+	campoDependiente: z.boolean(),
+	actualizaEstado: z.boolean(),
+	actualizaEstadoNegativo: z.boolean(),
+	determinaEstadoFinal: z.boolean(),
+	defineMaximos: z.boolean(),
+});
 
 const createBodySchema = z.object<ZodInferSchema<ICreateModeloEvaluativo>>({
 	nombre: z.string(),

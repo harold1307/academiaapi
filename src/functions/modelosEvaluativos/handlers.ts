@@ -32,3 +32,11 @@ app.patch("modelosEvaluativosUpdateById", {
 	handler: (req, ctx) => controller.modelosEvaluativosUpdateById(req, ctx),
 	route: "modelos-evaluativos/{modeloEvaluativoId}",
 });
+
+// campos
+app.post("modelosEvaluativosCreateCampo", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.modelosEvaluativosCreateCampo(req, ctx),
+	route:
+		"modelos-evaluativos/{modeloEvaluativoId}/alternativas-evaluacion/{alternativaEvaluacionId}",
+});
