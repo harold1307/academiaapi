@@ -33,6 +33,7 @@ export class AsignaturaEnCursoEscuelaRepository
 		profesorId,
 		asignaturaId,
 		cursoEscuelaId,
+		modeloEvaluativoId,
 		...data
 	}: ICreateAsignaturaEnCursoEscuela): Promise<IAsignaturaEnCursoEscuela> {
 		return this._client.asignaturaEnCursoEscuela.create({
@@ -41,18 +42,24 @@ export class AsignaturaEnCursoEscuelaRepository
 				asignatura: { connect: { id: asignaturaId } },
 				cursoEscuela: { connect: { id: cursoEscuelaId } },
 				...(profesorId ? { profesor: { connect: { id: profesorId } } } : {}),
+				...(modeloEvaluativoId
+					? { modeloEvaluativo: { connect: { id: modeloEvaluativoId } } }
+					: {}),
 			},
 		});
 	}
 	update({
 		id,
-		data: { profesorId, asignaturaId, ...data },
+		data: { profesorId, asignaturaId, modeloEvaluativoId, ...data },
 	}: IUpdateAsignaturaEnCursoEscuelaParams): Promise<IAsignaturaEnCursoEscuela> {
 		return this._client.asignaturaEnCursoEscuela.update({
 			where: { id },
 			data: {
 				...data,
 				...(profesorId ? { profesor: { connect: { id: profesorId } } } : {}),
+				...(modeloEvaluativoId
+					? { modeloEvaluativo: { connect: { id: modeloEvaluativoId } } }
+					: {}),
 				...(asignaturaId
 					? { asignatura: { connect: { id: asignaturaId } } }
 					: {}),

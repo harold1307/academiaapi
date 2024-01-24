@@ -17,6 +17,7 @@ const schema = z.object<ZodInferSchema<ICreateAsignaturaEnCursoEscuela>>({
 	asignaturaId: z.string(),
 	cursoEscuelaId: z.string(),
 	profesorId: z.string().nullable(),
+	modeloEvaluativoId: z.string().nullable(),
 });
 
 export class CreateAsignaturaEnCursoEscuelaDTO {

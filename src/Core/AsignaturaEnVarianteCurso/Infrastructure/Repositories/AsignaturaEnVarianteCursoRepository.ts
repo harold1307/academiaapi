@@ -15,6 +15,7 @@ export class AsignaturaEnVarianteCursoRepository
 	create({
 		asignaturaId,
 		varianteCursoId,
+		modeloEvaluativoId,
 		...data
 	}: ICreateAsignaturaEnVarianteCurso): Promise<IAsignaturaEnVarianteCurso> {
 		return this._client.asignaturaEnVarianteCurso.create({
@@ -30,6 +31,9 @@ export class AsignaturaEnVarianteCursoRepository
 						id: varianteCursoId,
 					},
 				},
+				...(modeloEvaluativoId
+					? { modeloEvaluativo: { connect: { id: modeloEvaluativoId } } }
+					: {}),
 			},
 		});
 	}

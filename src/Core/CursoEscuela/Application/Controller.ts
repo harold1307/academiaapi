@@ -225,6 +225,7 @@ const createAsignaturaBodySchema = z.object<
 	requeridoAprobar: z.boolean(),
 	asistenciaAprobar: z.number(),
 	profesorId: z.string().nullable(),
+	modeloEvaluativoId: z.string().nullable(),
 });
 
 const createBodySchema = z.object<

@@ -16,6 +16,7 @@ const schema = z.object<ZodInferSchema<ICreateAsignaturaEnVarianteCurso>>({
 	asistenciaAprobar: z.number(),
 	asignaturaId: z.string(),
 	varianteCursoId: z.string(),
+	modeloEvaluativoId: z.string().nullable(),
 });
 
 export class CreateAsignaturaEnVarianteCurso {
