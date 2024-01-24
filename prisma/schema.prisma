@@ -112,7 +112,7 @@ model AsignaturaEnMalla {
 }
 
 model AsignaturaEnVarianteCurso {
-  id                    String        @id @default(uuid())
+  id                    String  @id @default(uuid())
   validaCredito         Boolean
   validaPromedio        Boolean
   horasColaborativas    Float
@@ -123,10 +123,13 @@ model AsignaturaEnVarianteCurso {
   creditos              Float
   requeridoAprobar      Boolean
   asistenciaAprobar     Int
-  asignaturaId          String
-  varianteCursoId       String
-  asignatura            Asignatura    @relation(fields: [asignaturaId], references: [id])
-  varianteCurso         VarianteCurso @relation(fields: [varianteCursoId], references: [id], onDelete: Cascade)
+
+  asignaturaId       String
+  varianteCursoId    String
+  asignatura         Asignatura        @relation(fields: [asignaturaId], references: [id])
+  varianteCurso      VarianteCurso     @relation(fields: [varianteCursoId], references: [id], onDelete: Cascade)
+  modeloEvaluativoId String?
+  modeloEvaluativo   ModeloEvaluativo? @relation(fields: [modeloEvaluativoId], references: [id])
 
   @@index([asignaturaId], map: "asignaturas_en_variantes_curso_asignaturaId_fkey")
   @@index([varianteCursoId], map: "asignaturas_en_variantes_curso_varianteCursoId_fkey")
@@ -212,12 +215,14 @@ model AsignaturaEnCursoEscuela {
   requeridoAprobar      Boolean
   asistenciaAprobar     Int
 
-  asignaturaId   String
-  asignatura     Asignatura   @relation(fields: [asignaturaId], references: [id])
-  cursoEscuelaId String
-  cursoEscuela   CursoEscuela @relation(fields: [cursoEscuelaId], references: [id])
-  profesorId     String?
-  profesor       User?        @relation(fields: [profesorId], references: [id])
+  asignaturaId       String
+  asignatura         Asignatura        @relation(fields: [asignaturaId], references: [id])
+  cursoEscuelaId     String
+  cursoEscuela       CursoEscuela      @relation(fields: [cursoEscuelaId], references: [id])
+  profesorId         String?
+  profesor           User?             @relation(fields: [profesorId], references: [id])
+  modeloEvaluativoId String?
+  modeloEvaluativo   ModeloEvaluativo? @relation(fields: [modeloEvaluativoId], references: [id])
 
   @@map("asignatura_en_curso_escuela")
 }
@@ -386,7 +391,9 @@ model ModeloEvaluativo {
   camposActualizanEstado          Boolean
   observaciones                   String?
 
-  campos CampoModeloEvaluativo[]
+  campos                     CampoModeloEvaluativo[]
+  asignaturasEnVarianteCurso AsignaturaEnVarianteCurso[]
+  asignaturasEnCursoEscuela  AsignaturaEnCursoEscuela[]
 
   @@map("modelos_evaluativos")
 }
