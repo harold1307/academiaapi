@@ -257,6 +257,7 @@ export class VarianteCursoController implements IVarianteCursoController {
 			if (!varianteCurso) {
 				return {
 					jsonBody: { message: "La variante de curso no existe" },
+					status: 400,
 				};
 			}
 
