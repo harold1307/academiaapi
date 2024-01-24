@@ -5,7 +5,6 @@
 - [] Implementar metodo PATCH
 - [] Implementar programas
 - [] Implementar sesiones
-- [] Implementar modelo evaluativo
 - [] Implementar creacion mediante plantilla Curso
 
 ## VarianteCurso
@@ -14,7 +13,7 @@
 
 ## Asignatura En Variante Curso
 
-- [] Implementar modelo evaluativo
+- [x] Implementar modelo evaluativo
 
 ## Paralelo
 

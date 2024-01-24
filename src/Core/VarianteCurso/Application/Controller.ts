@@ -8,12 +8,16 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { AsignaturaService } from "../../Asignatura/Application/Service";
+import type { IAsignaturaService } from "../../Asignatura/Domain/IAsignaturaService";
 import { AsignaturaEnVarianteCursoService } from "../../AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import type { ICreateAsignaturaEnVarianteCurso } from "../../AsignaturaEnVarianteCurso/Domain/ICreateAsignaturaEnVarianteCurso";
 import { CursoEscuelaService } from "../../CursoEscuela/Application/Service";
 import type { ICreateCursoEscuela } from "../../CursoEscuela/Domain/ICreateCursoEscuela";
 import type { ICursoEscuelaService } from "../../CursoEscuela/Domain/ICursoEscuelaService";
+import { ModeloEvaluativoService } from "../../ModeloEvaluativo/Application/Service";
+import type { IModeloEvaluativoService } from "../../ModeloEvaluativo/Domain/IModeloEvaluativoService";
 import type { IVarianteCursoController } from "../Domain/IVarianteCursoController";
 import type { IVarianteCursoService } from "../Domain/IVarianteCursoService";
 import { VarianteCursoService } from "./Service";
@@ -22,6 +26,8 @@ export class VarianteCursoController implements IVarianteCursoController {
 	private _varianteCursoService: IVarianteCursoService;
 	private _asignaturaEnVarianteCursoService: IAsignaturaEnVarianteCursoService;
 	private _cursoEscuelaService: ICursoEscuelaService;
+	private _asignaturaService: IAsignaturaService;
+	private _modeloEvaluativoService: IModeloEvaluativoService;
 
 	constructor() {
 		this._varianteCursoService = StartupBuilder.resolve(VarianteCursoService);
@@ -29,6 +35,10 @@ export class VarianteCursoController implements IVarianteCursoController {
 			AsignaturaEnVarianteCursoService,
 		);
 		this._cursoEscuelaService = StartupBuilder.resolve(CursoEscuelaService);
+		this._asignaturaService = StartupBuilder.resolve(AsignaturaService);
+		this._modeloEvaluativoService = StartupBuilder.resolve(
+			ModeloEvaluativoService,
+		);
 	}
 
 	async variantesCursoUpdateById(
@@ -112,6 +122,30 @@ export class VarianteCursoController implements IVarianteCursoController {
 				};
 			}
 
+			const variante =
+				await this._varianteCursoService.getVarianteCursoWithAsignaturasById(
+					varianteCursoId,
+				);
+
+			if (!variante) {
+				return {
+					jsonBody: { message: "La variante de curso no existe" },
+					status: 400,
+				};
+			}
+
+			const asignatura =
+				await this._asignaturaService.getAsignaturaById(asignaturaId);
+
+			if (!asignatura) {
+				return {
+					jsonBody: {
+						message: "La asignatura no existe",
+					},
+					status: 400,
+				};
+			}
+
 			const bodyVal = byIdCreateAsignaturaBodySchema.safeParse(body);
 
 			if (!bodyVal.success) {
@@ -122,6 +156,20 @@ export class VarianteCursoController implements IVarianteCursoController {
 			}
 
 			const { data } = bodyVal;
+
+			if (data.modeloEvaluativoId) {
+				const modelo =
+					await this._modeloEvaluativoService.getModeloEvaluativoById(
+						data.modeloEvaluativoId,
+					);
+
+				if (!modelo) {
+					return {
+						jsonBody: { message: "El modelo evaluativo no existe" },
+						status: 400,
+					};
+				}
+			}
 
 			const newAsignaturaEnVarianteCurso =
 				await this._asignaturaEnVarianteCursoService.createAsignaturaEnVarianteCurso(
@@ -245,6 +293,7 @@ const byIdCreateAsignaturaBodySchema = z.object<
 	creditos: z.number(),
 	requeridoAprobar: z.boolean(),
 	asistenciaAprobar: z.number(),
+	modeloEvaluativoId: z.string().nullable(),
 });
 
 const createByCursoBodySchema = z.object<
