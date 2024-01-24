@@ -32,7 +32,7 @@
 ## Asignatura En Curso Escuela
 
 - [] Implementar logica de exclusion para crear, actualizar y eliminar
-- [] Implementar modelo evaluativo
+- [x] Implementar modelo evaluativo
 
 ## Modelo Evaluativo
 

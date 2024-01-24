@@ -13,6 +13,8 @@ import type { IAsignaturaService } from "../../Asignatura/Domain/IAsignaturaServ
 import { AsignaturaEnCursoEscuelaService } from "../../AsignaturaEnCursoEscuela/Application/Service";
 import type { IAsignaturaEnCursoEscuelaService } from "../../AsignaturaEnCursoEscuela/Domain/IAsignaturaEnCursoEscuelaService";
 import type { ICreateAsignaturaEnCursoEscuela } from "../../AsignaturaEnCursoEscuela/Domain/ICreateAsignaturaEnCursoEscuela";
+import { ModeloEvaluativoService } from "../../ModeloEvaluativo/Application/Service";
+import type { IModeloEvaluativoService } from "../../ModeloEvaluativo/Domain/IModeloEvaluativoService";
 import type { ICreateCursoEscuela } from "../Domain/ICreateCursoEscuela";
 import type { ICursoEscuelaController } from "../Domain/ICursoEscuelaController";
 import type { ICursoEscuelaService } from "../Domain/ICursoEscuelaService";
@@ -22,6 +24,7 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 	private _cursoEscuelaService: ICursoEscuelaService;
 	private _asignaturaEnCursoEscuelaService: IAsignaturaEnCursoEscuelaService;
 	private _asignaturaService: IAsignaturaService;
+	private _modeloEvaluativoService: IModeloEvaluativoService;
 
 	constructor() {
 		this._cursoEscuelaService = StartupBuilder.resolve(CursoEscuelaService);
@@ -29,6 +32,9 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 			AsignaturaEnCursoEscuelaService,
 		);
 		this._asignaturaService = StartupBuilder.resolve(AsignaturaService);
+		this._modeloEvaluativoService = StartupBuilder.resolve(
+			ModeloEvaluativoService,
+		);
 	}
 
 	async cursoEscuelasGetAll(
@@ -194,6 +200,20 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 			}
 
 			const { data } = bodyVal;
+
+			if (data.modeloEvaluativoId) {
+				const modelo =
+					await this._modeloEvaluativoService.getModeloEvaluativoById(
+						data.modeloEvaluativoId,
+					);
+
+				if (!modelo) {
+					return {
+						jsonBody: { message: "El modelo evaluativo no existe" },
+						status: 400,
+					};
+				}
+			}
 
 			const newAsignaturaEnCursoEscuela =
 				await this._asignaturaEnCursoEscuelaService.createAsignaturaEnCursoEscuela(
