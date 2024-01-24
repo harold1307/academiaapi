@@ -19,12 +19,18 @@ import type { ICreateCursoEscuela } from "../Domain/ICreateCursoEscuela";
 import type { ICursoEscuelaController } from "../Domain/ICursoEscuelaController";
 import type { ICursoEscuelaService } from "../Domain/ICursoEscuelaService";
 import { CursoEscuelaService } from "./Service";
+import type { ISesionService } from "../../Sesion/Domain/ISesionService";
+import { SesionService } from "../../Sesion/Application/Service";
+import type { IParaleloService } from "../../Paralelo/Domain/IParaleloService";
+import { ParaleloService } from "../../Paralelo/Application/Service";
 
 export class CursoEscuelaController implements ICursoEscuelaController {
 	private _cursoEscuelaService: ICursoEscuelaService;
 	private _asignaturaEnCursoEscuelaService: IAsignaturaEnCursoEscuelaService;
 	private _asignaturaService: IAsignaturaService;
 	private _modeloEvaluativoService: IModeloEvaluativoService;
+	private _sesionService: ISesionService;
+	private _paraleloService: IParaleloService;
 
 	constructor() {
 		this._cursoEscuelaService = StartupBuilder.resolve(CursoEscuelaService);
@@ -35,6 +41,8 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 		this._modeloEvaluativoService = StartupBuilder.resolve(
 			ModeloEvaluativoService,
 		);
+		this._sesionService = StartupBuilder.resolve(SesionService);
+		this._paraleloService = StartupBuilder.resolve(ParaleloService);
 	}
 
 	async cursoEscuelasGetAll(
@@ -102,11 +110,33 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 				};
 			}
 
+			const { data } = bodyVal;
+
+			const sesion = await this._sesionService.getSesionById(data.sesionId);
+
+			if (!sesion) {
+				return {
+					jsonBody: { message: "La sesion no existe." },
+					status: 400,
+				};
+			}
+
+			const paralelo = await this._paraleloService.getParaleloById(
+				data.paraleloId,
+			);
+
+			if (!paralelo) {
+				return {
+					jsonBody: { message: "El paralelo no existe." },
+					status: 400,
+				};
+			}
+
 			const newCurso = await this._cursoEscuelaService.createCursoEscuela({
-				...bodyVal.data,
-				fechaFin: new Date(bodyVal.data.fechaFin),
-				fechaInicio: new Date(bodyVal.data.fechaInicio),
-				fechaLimiteRegistro: new Date(bodyVal.data.fechaLimiteRegistro),
+				...data,
+				fechaFin: new Date(data.fechaFin),
+				fechaInicio: new Date(data.fechaInicio),
+				fechaLimiteRegistro: new Date(data.fechaLimiteRegistro),
 				plantillaId: null,
 			});
 

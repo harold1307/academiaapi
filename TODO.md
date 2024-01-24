@@ -4,7 +4,7 @@
 
 - [] Implementar metodo PATCH
 - [] Implementar programas
-- [] Implementar sesiones
+- [x] Implementar sesiones
 - [] Implementar creacion mediante plantilla Curso
   - [x] Materias
   - [] Programas

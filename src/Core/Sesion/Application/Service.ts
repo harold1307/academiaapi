@@ -4,7 +4,7 @@ import { TYPES } from "../../../Main/Inversify/types";
 import type { ISesion } from "../Domain/ISesion.ts";
 import type { ISesionRepository } from "../Domain/ISesionRepository.ts";
 import type { ISesionService } from "../Domain/ISesionService.ts";
-import { type ICreateSesion } from "../Domain/ICreateSesion";
+import type { ICreateSesion } from "../Domain/ICreateSesion";
 import { CreateSesionDTO } from "../Infrastructure/DTOs/CreateSesionDTO";
 
 @injectable()
