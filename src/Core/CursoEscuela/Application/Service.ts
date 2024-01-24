@@ -46,46 +46,70 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 		return this._cursoEscuelaRepository.deleteById(id);
 	}
 
-	// createCursoEscuelaByPlantillaTransaction({
-	// 	cursoEscuela,
-	// 	cursoPlantillaId,
-	// }: CreateCursoEscuelaByPlantillaTransactionParams): Promise<ICursoEscuela> {
-	// 	const dto = new CreateCursoEscuelaDTO(cursoEscuela);
-	// 	const validation = dto.validate();
+	createCursoEscuelaByPlantillaTransaction({
+		cursoEscuela: cursoEscuelaData,
+		cursoPlantillaId,
+	}: CreateCursoEscuelaByPlantillaTransactionParams): Promise<ICursoEscuela> {
+		const dto = new CreateCursoEscuelaDTO({
+			...cursoEscuelaData,
+			plantillaId: cursoPlantillaId,
+		});
+		const validation = dto.validate();
 
-	// 	if (!validation.success) {
-	// 		console.error(
-	// 			"Error de validacion para crear curso escuela",
-	// 			validation.error,
-	// 		);
-	// 		throw new CursoEscuelaServiceError(
-	// 			"Esquema para crear curso escuela invalido.",
-	// 		);
-	// 	}
+		if (!validation.success) {
+			console.error(
+				"Error de validacion para crear curso escuela",
+				validation.error,
+			);
+			throw new CursoEscuelaServiceError(
+				"Esquema para crear curso escuela invalido.",
+			);
+		}
 
-	// 	const { plantillaId, paraleloId, ...restData } = validation.data;
+		const { plantillaId, paraleloId, sesionId, ...restData } = validation.data;
 
-	// 	if (!plantillaId)
-	// 		throw new CursoEscuelaServiceError("ID de la plantilla invalido");
+		if (!plantillaId)
+			throw new CursoEscuelaServiceError(
+				"ID de la plantilla de curso invalido",
+			);
 
-	// 	return this._cursoEscuelaRepository.transaction(async tx => {
-	// 		const newCursoEscuela = await tx.cursoEscuela.create({
-	// 			data: {
-	// 				...restData,
-	// 				paralelo: {
-	// 					connect: {
-	// 						nombre: paraleloId,
-	// 					},
-	// 				},
-	// 				plantilla: {
-	// 					connect: {
-	// 						id: plantillaId,
-	// 					},
-	// 				},
-	// 			},
-	// 		});
-	// 	});
-	// }
+		return this._cursoEscuelaRepository.transaction(async tx => {
+			const asignaturasEnPlantilla =
+				await tx.asignaturaEnVarianteCurso.findMany({
+					where: { varianteCursoId: plantillaId },
+				});
+
+			const newCursoEscuela = await tx.cursoEscuela.create({
+				data: {
+					...restData,
+					paralelo: {
+						connect: {
+							nombre: paraleloId,
+						},
+					},
+					plantilla: {
+						connect: {
+							id: plantillaId,
+						},
+					},
+					sesion: {
+						connect: {
+							id: sesionId,
+						},
+					},
+					asignaturas: {
+						createMany: {
+							data: asignaturasEnPlantilla.map(({ id: _, ...data }) => ({
+								...data,
+							})),
+						},
+					},
+				},
+			});
+
+			return newCursoEscuela;
+		});
+	}
 }
 
 class CursoEscuelaServiceError extends Error {

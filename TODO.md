@@ -6,6 +6,9 @@
 - [] Implementar programas
 - [] Implementar sesiones
 - [] Implementar creacion mediante plantilla Curso
+  - [x] Materias
+  - [] Programas
+  - [] Costos
 
 ## VarianteCurso
 

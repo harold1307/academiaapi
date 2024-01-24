@@ -13,7 +13,7 @@ export type ICursoEscuelaService = {
 	// updateCursoEscuelaById(params: IUpdateCursoEscuelaParams): Promise<ICursoEscuela>;
 	deleteCursoEscuelaById(id: string): Promise<ICursoEscuela>;
 
-	// createCursoEscuelaByPlantillaTransaction(
-	// 	params: CreateCursoEscuelaByPlantillaTransactionParams,
-	// ): Promise<ICursoEscuela>;
+	createCursoEscuelaByPlantillaTransaction(
+		params: CreateCursoEscuelaByPlantillaTransactionParams,
+	): Promise<ICursoEscuela>;
 };
