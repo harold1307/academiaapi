@@ -123,6 +123,12 @@ import type { IModeloNivelacionRepository } from "../../Core/ModeloNivelacion/Do
 import type { IModeloNivelacionService } from "../../Core/ModeloNivelacion/Domain/IModeloNivelacionService";
 import { ModeloNivelacionRepository } from "../../Core/ModeloNivelacion/Infrastructure/Repositories/ModeloNivelacionRepository";
 
+// proyectos integradores
+import { ProyectoIntegradorService } from "../../Core/ProyectoIntegrador/Application/Service";
+import type { IProyectoIntegradorRepository } from "../../Core/ProyectoIntegrador/Domain/IProyectoIntegradorRepository";
+import type { IProyectoIntegradorService } from "../../Core/ProyectoIntegrador/Domain/IProyectoIntegradorService";
+import { ProyectoIntegradorRepository } from "../../Core/ProyectoIntegrador/Infrastructure/Repositories/ProyectoIntegradorRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -324,6 +330,16 @@ StartupBuilder.bind<IModeloNivelacionRepository>(
 	.inSingletonScope();
 StartupBuilder.bind<IModeloNivelacionService>(TYPES.ModeloNivelacionService)
 	.to(ModeloNivelacionService)
+	.inSingletonScope();
+
+// proyectos integradores
+StartupBuilder.bind<IProyectoIntegradorRepository>(
+	TYPES.ProyectoIntegradorRepository,
+)
+	.to(ProyectoIntegradorRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IProyectoIntegradorService>(TYPES.ProyectoIntegradorService)
+	.to(ProyectoIntegradorService)
 	.inSingletonScope();
 
 export { StartupBuilder };
