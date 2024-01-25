@@ -431,7 +431,7 @@ model CampoProyectoIntegrador {
 
 model ProyectoIntegrador {
   id                 String  @id @default(uuid())
-  estado             Boolean
+  estado             Boolean @default(false)
   nombre             String
   notaMaxima         Float
   notaAprobatoria    Float
