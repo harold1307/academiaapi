@@ -40,3 +40,8 @@
 ## Modelo Evaluativo
 
 - [] Implementar campo enUso al dominio, este campo no es afectado por la logica de evaluacion ni los campos de modelo evaluativo
+- [] Implementar logica de modelo
+
+## Modelo Nivelacion
+
+- [] Implementar logica de modelo

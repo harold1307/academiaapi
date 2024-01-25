@@ -117,6 +117,12 @@ import type { ICampoModeloEvaluativoRepository } from "../../Core/CampoModeloEva
 import type { ICampoModeloEvaluativoService } from "../../Core/CampoModeloEvaluativo/Domain/ICampoModeloEvaluativoService";
 import { CampoModeloEvaluativoRepository } from "../../Core/CampoModeloEvaluativo/Infrastructure/Repositories/CampoModeloEvaluativoRepository";
 
+// modelos nivelacion
+import { ModeloNivelacionService } from "../../Core/ModeloNivelacion/Application/Service";
+import type { IModeloNivelacionRepository } from "../../Core/ModeloNivelacion/Domain/IModeloNivelacionRepository";
+import type { IModeloNivelacionService } from "../../Core/ModeloNivelacion/Domain/IModeloNivelacionService";
+import { ModeloNivelacionRepository } from "../../Core/ModeloNivelacion/Infrastructure/Repositories/ModeloNivelacionRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -308,6 +314,16 @@ StartupBuilder.bind<ICampoModeloEvaluativoService>(
 	TYPES.CampoModeloEvaluativoService,
 )
 	.to(CampoModeloEvaluativoService)
+	.inSingletonScope();
+
+// modelos nivelacion
+StartupBuilder.bind<IModeloNivelacionRepository>(
+	TYPES.ModeloNivelacionRepository,
+)
+	.to(ModeloNivelacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IModeloNivelacionService>(TYPES.ModeloNivelacionService)
+	.to(ModeloNivelacionService)
 	.inSingletonScope();
 
 export { StartupBuilder };
