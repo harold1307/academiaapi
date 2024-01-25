@@ -398,6 +398,50 @@ model ModeloEvaluativo {
   @@map("modelos_evaluativos")
 }
 
+model ModeloNivelacion {
+  id                 String  @id @default(uuid())
+  nombre             String
+  notaMaxima         Float
+  notaAprobatoria    Float
+  decimalesNotaFinal Int
+  observaciones      String?
+
+  @@map("modelos_nivelacion")
+}
+
+model CampoProyectoIntegrador {
+  id                   String  @id @default(uuid())
+  nombre               String
+  codigo               String
+  observaciones        String?
+  ordenActa            Int
+  notaMaxima           Float
+  notaMinima           Float
+  decimales            Int
+  campoDependiente     Boolean
+  actualizaEstado      Boolean
+  determinaEstadoFinal Boolean
+
+  proyectoIntegradorId String
+  proyectoIntegrador   ProyectoIntegrador @relation(fields: [proyectoIntegradorId], references: [id])
+
+  @@map("campos_proyectos_integradores")
+}
+
+model ProyectoIntegrador {
+  id                 String  @id @default(uuid())
+  estado             Boolean
+  nombre             String
+  notaMaxima         Float
+  notaAprobatoria    Float
+  decimalesNotaFinal Int
+  observaciones      String?
+
+  campos CampoProyectoIntegrador[]
+
+  @@map("proyectos_integradores")
+}
+
 model Sesion {
   id     String      @id @default(uuid())
   estado Boolean     @default(false)
