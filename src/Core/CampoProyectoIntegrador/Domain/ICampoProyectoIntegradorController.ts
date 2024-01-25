@@ -4,29 +4,20 @@ import type {
 	InvocationContext,
 } from "@azure/functions";
 
-export type IProyectoIntegradorController = {
-	proyectosIntegradoresCreate(
+export type ICampoProyectoIntegradorController = {
+	camposProyectoIntegradorGetById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	proyectosIntegradoresDeleteById(
+	camposProyectoIntegradorGetAll(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	proyectosIntegradoresGetAll(
+	camposProyectoIntegradorUpdateById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	proyectosIntegradoresGetById(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-	proyectosIntegradoresUpdateById(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-
-	proyectosIntegradoresCreateCampo(
+	camposProyectoIntegradorDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;

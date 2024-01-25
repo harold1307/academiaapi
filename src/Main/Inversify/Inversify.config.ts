@@ -129,6 +129,12 @@ import type { IProyectoIntegradorRepository } from "../../Core/ProyectoIntegrado
 import type { IProyectoIntegradorService } from "../../Core/ProyectoIntegrador/Domain/IProyectoIntegradorService";
 import { ProyectoIntegradorRepository } from "../../Core/ProyectoIntegrador/Infrastructure/Repositories/ProyectoIntegradorRepository";
 
+// campos en proyectos integradores
+import { CampoProyectoIntegradorService } from "../../Core/CampoProyectoIntegrador/Application/Service";
+import type { ICampoProyectoIntegradorRepository } from "../../Core/CampoProyectoIntegrador/Domain/ICampoProyectoIntegradorRepository";
+import type { ICampoProyectoIntegradorService } from "../../Core/CampoProyectoIntegrador/Domain/ICampoProyectoIntegradorService";
+import { CampoProyectoIntegradorRepository } from "../../Core/CampoProyectoIntegrador/Infrastructure/Repositories/CampoProyectoIntegradorRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -340,6 +346,18 @@ StartupBuilder.bind<IProyectoIntegradorRepository>(
 	.inSingletonScope();
 StartupBuilder.bind<IProyectoIntegradorService>(TYPES.ProyectoIntegradorService)
 	.to(ProyectoIntegradorService)
+	.inSingletonScope();
+
+// campos en proyectos integradores
+StartupBuilder.bind<ICampoProyectoIntegradorRepository>(
+	TYPES.CampoProyectoIntegradorRepository,
+)
+	.to(CampoProyectoIntegradorRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICampoProyectoIntegradorService>(
+	TYPES.CampoProyectoIntegradorService,
+)
+	.to(CampoProyectoIntegradorService)
 	.inSingletonScope();
 
 export { StartupBuilder };

@@ -34,9 +34,8 @@ app.patch("proyectosIntegradoresUpdateById", {
 });
 
 // campos
-// app.post("proyectosIntegradoresCreateCampo", {
-// 	authLevel: "anonymous",
-// 	handler: (req, ctx) => controller.proyectosIntegradoresCreateCampo(req, ctx),
-// 	route:
-// 		"proyectos-integradores/{proyectoIntegradorId}/alternativas-evaluacion/{alternativaEvaluacionId}",
-// });
+app.post("proyectosIntegradoresCreateCampo", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.proyectosIntegradoresCreateCampo(req, ctx),
+	route: "proyectos-integradores/{proyectoIntegradorId}/campos",
+});
