@@ -41,7 +41,14 @@
 
 - [] Implementar campo enUso al dominio, este campo no es afectado por la logica de evaluacion ni los campos de modelo evaluativo
 - [] Implementar logica de modelo
+- [] Implementar campo enUso
 
 ## Modelo Nivelacion
 
 - [] Implementar logica de modelo
+- [] Implementar campo enUso
+
+## Proyecto Integrador
+
+- [] Implementar logica de modelo
+- [] Implementar campo enUso
