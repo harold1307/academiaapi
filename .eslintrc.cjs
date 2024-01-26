@@ -5,7 +5,7 @@
 const config = {
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    tsconfigRootDir: __dirname
+    tsconfigRootDir: __dirname,
   },
   plugins: ["@typescript-eslint"],
   extends: ["plugin:@typescript-eslint/recommended"],
@@ -21,6 +21,7 @@ const config = {
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-explicit-any": "off",
   },
+  ignorePatterns: ["node_modules", "dist"],
 };
 
 module.exports = config;
