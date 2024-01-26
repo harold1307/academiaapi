@@ -1,14 +1,15 @@
 import { z } from "zod";
 
 import type { ICreateAsignatura } from "../../Domain/ICreateAsignatura";
+import type { ZodInferSchema } from "../../../../types";
 
-const schema: z.ZodType<ICreateAsignatura> = z.object({
+const schema = z.object<ZodInferSchema<ICreateAsignatura>>({
 	nombre: z.string(),
 	codigo: z.string().nullable(),
 });
 
 export class CreateAsignaturaDTO {
-	private asignatura: ICreateAsignatura | undefined;
+	private data: ICreateAsignatura | undefined;
 
 	constructor(private input: any) {}
 
@@ -16,7 +17,7 @@ export class CreateAsignaturaDTO {
 		const parse = schema.safeParse(this.input);
 
 		if (parse.success) {
-			this.asignatura = parse.data;
+			this.data = parse.data;
 		}
 
 		return parse;

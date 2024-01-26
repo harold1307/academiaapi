@@ -2,57 +2,129 @@ import type { PrismaClient } from "@prisma/client";
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../../Main/Inversify/types";
+import type { IAsignatura } from "../../Domain/IAsignatura";
 import type {
-	IAsignatura,
-	IAsignaturaWithIsUsed,
-} from "../../Domain/IAsignatura";
-import type { IAsignaturaRepository } from "../../Domain/IAsignaturaRepository";
+	IAsignaturaRepository,
+	IUpdateAsignaturaParams,
+} from "../../Domain/IAsignaturaRepository";
 import type { ICreateAsignatura } from "../../Domain/ICreateAsignatura";
 
 @injectable()
 export class AsignaturaRepository implements IAsignaturaRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	async getAll(): Promise<IAsignaturaWithIsUsed[]> {
+	async getAll(): Promise<IAsignatura[]> {
 		const asignaturas = await this._client.asignatura.findMany({
 			include: {
-				_count: {
-					select: {
-						asignaturasEnMalla: true,
-					},
+				asignaturasEnCursoEscuela: {
+					take: 1,
+				},
+				asignaturasEnMalla: {
+					take: 1,
+				},
+				asignaturasEnVarianteCurso: {
+					take: 1,
 				},
 			},
 		});
 
-		return asignaturas.map(({ _count, ...a }) => ({
-			...a,
-			enUso: _count.asignaturasEnMalla > 0,
-		}));
+		return asignaturas.map(
+			({
+				asignaturasEnCursoEscuela,
+				asignaturasEnMalla,
+				asignaturasEnVarianteCurso,
+				...a
+			}) => ({
+				...a,
+				enUso:
+					asignaturasEnMalla.length > 0 ||
+					asignaturasEnCursoEscuela.length > 0 ||
+					asignaturasEnVarianteCurso.length > 0,
+			}),
+		);
 	}
 
-	getById(id: string): Promise<IAsignatura | null> {
-		return this._client.asignatura.findUnique({
+	async getById(id: string): Promise<IAsignatura | null> {
+		const asignatura = await this._client.asignatura.findUnique({
 			where: { id },
+			include: {
+				asignaturasEnCursoEscuela: {
+					take: 1,
+				},
+				asignaturasEnMalla: {
+					take: 1,
+				},
+				asignaturasEnVarianteCurso: {
+					take: 1,
+				},
+			},
 		});
+
+		if (!asignatura) return null;
+
+		const {
+			asignaturasEnCursoEscuela,
+			asignaturasEnMalla,
+			asignaturasEnVarianteCurso,
+			...rest
+		} = asignatura;
+
+		return {
+			...rest,
+			enUso:
+				asignaturasEnMalla.length > 0 ||
+				asignaturasEnCursoEscuela.length > 0 ||
+				asignaturasEnVarianteCurso.length > 0,
+		};
 	}
 
-	create(data: ICreateAsignatura): Promise<IAsignatura> {
-		return this._client.asignatura.create({
+	async create(data: ICreateAsignatura): Promise<IAsignatura> {
+		const asignatura = await this._client.asignatura.create({
 			data,
 		});
+
+		return { ...asignatura, enUso: false };
 	}
 
-	update(params: {
-		id: string;
-		asignatura: Partial<Omit<IAsignatura, "id" | "createdAt">>;
-	}): Promise<IAsignatura> {
-		return this._client.asignatura.update({
-			where: { id: params.id },
-			data: params.asignatura,
+	async update({ data, id }: IUpdateAsignaturaParams): Promise<IAsignatura> {
+		const asignatura = await this._client.asignatura.update({
+			where: { id: id },
+			data,
+			include: {
+				asignaturasEnCursoEscuela: {
+					take: 1,
+				},
+				asignaturasEnMalla: {
+					take: 1,
+				},
+				asignaturasEnVarianteCurso: {
+					take: 1,
+				},
+			},
 		});
+
+		const {
+			asignaturasEnCursoEscuela,
+			asignaturasEnMalla,
+			asignaturasEnVarianteCurso,
+			...rest
+		} = asignatura;
+
+		return {
+			...rest,
+			enUso:
+				asignaturasEnMalla.length > 0 ||
+				asignaturasEnCursoEscuela.length > 0 ||
+				asignaturasEnVarianteCurso.length > 0,
+		};
 	}
 
-	deleteById(id: string): Promise<IAsignatura> {
-		return this._client.asignatura.delete({ where: { id } });
+	async deleteById(id: string): Promise<IAsignatura> {
+		const asignatura = await this._client.asignatura.delete({ where: { id } });
+
+		return {
+			...asignatura,
+			enUso: false,
+		};
 	}
 }

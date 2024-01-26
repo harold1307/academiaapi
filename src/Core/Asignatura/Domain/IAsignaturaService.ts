@@ -1,12 +1,11 @@
-import type { IAsignatura, IAsignaturaWithIsUsed } from "./IAsignatura";
+import type { IAsignatura } from "./IAsignatura";
+import type { IUpdateAsignaturaParams } from "./IAsignaturaRepository";
+import type { ICreateAsignatura } from "./ICreateAsignatura";
 
 export interface IAsignaturaService {
-	createAsignatura(data: any): Promise<IAsignatura>;
-	getAllAsignaturas(): Promise<IAsignaturaWithIsUsed[]>;
+	createAsignatura(data: ICreateAsignatura): Promise<IAsignatura>;
+	getAllAsignaturas(): Promise<IAsignatura[]>;
 	getAsignaturaById(id: string): Promise<IAsignatura | null>;
-	updateAsignaturaById(params: {
-		id: string;
-		asignatura: any;
-	}): Promise<IAsignatura>;
+	updateAsignaturaById(params: IUpdateAsignaturaParams): Promise<IAsignatura>;
 	deleteAsignaturaById(id: string): Promise<IAsignatura>;
 }

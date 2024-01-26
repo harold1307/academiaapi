@@ -74,6 +74,10 @@ export class MallaCurricularService implements IMallaCurricularService {
 					campoFormacion: a.campoFormacion
 						? { ...a.campoFormacion, enUso: true }
 						: null,
+					asignatura: {
+						...a.asignatura,
+						enUso: true,
+					},
 				})),
 			};
 		});
@@ -119,6 +123,10 @@ export class MallaCurricularService implements IMallaCurricularService {
 				campoFormacion: a.campoFormacion
 					? { ...a.campoFormacion, enUso: true }
 					: null,
+				asignatura: {
+					...a.asignatura,
+					enUso: true,
+				},
 			})),
 		};
 	}

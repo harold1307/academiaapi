@@ -1,9 +1,12 @@
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
-import type { IAsignaturaRepository } from "../Domain/IAsignaturaRepository";
+import type {
+	IAsignaturaRepository,
+	IUpdateAsignaturaParams,
+} from "../Domain/IAsignaturaRepository";
 import type { IAsignaturaService } from "../Domain/IAsignaturaService";
-import type { IAsignatura, IAsignaturaWithIsUsed } from "../Domain/IAsignatura";
+import type { IAsignatura } from "../Domain/IAsignatura";
 import { CreateAsignaturaDTO } from "../Infrastructure/DTOs/CreateAsignaturaDTO";
 import { UpdateAsignaturaDTO } from "../Infrastructure/DTOs/UpdateAsignaturaDTO";
 
@@ -31,7 +34,7 @@ export class AsignaturaService implements IAsignaturaService {
 		return this._asignaturaRepository.create(validation.data);
 	}
 
-	async getAllAsignaturas(): Promise<IAsignaturaWithIsUsed[]> {
+	async getAllAsignaturas(): Promise<IAsignatura[]> {
 		return this._asignaturaRepository.getAll();
 	}
 
@@ -43,11 +46,11 @@ export class AsignaturaService implements IAsignaturaService {
 		return this._asignaturaRepository.deleteById(id);
 	}
 
-	async updateAsignaturaById(params: {
-		id: string;
-		asignatura: any;
-	}): Promise<IAsignatura> {
-		const dto = new UpdateAsignaturaDTO(params.asignatura);
+	async updateAsignaturaById({
+		id,
+		data,
+	}: IUpdateAsignaturaParams): Promise<IAsignatura> {
+		const dto = new UpdateAsignaturaDTO(data);
 		const validation = dto.validate();
 
 		if (!validation.success) {
@@ -61,8 +64,8 @@ export class AsignaturaService implements IAsignaturaService {
 		}
 
 		return this._asignaturaRepository.update({
-			id: params.id,
-			asignatura: validation.data,
+			id: id,
+			data: validation.data,
 		});
 	}
 }
