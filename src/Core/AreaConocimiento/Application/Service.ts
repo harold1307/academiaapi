@@ -70,7 +70,7 @@ export class AreaConocimientoService implements IAreaConocimientoService {
 
 		return this._areaConocimientoRepository.update({
 			id: params.id,
-			areaConocimiento: validation.data,
+			data: validation.data,
 		});
 	}
 
