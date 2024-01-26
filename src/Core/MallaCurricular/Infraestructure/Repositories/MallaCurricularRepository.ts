@@ -2,21 +2,22 @@ import type { PrismaClient } from "@prisma/client";
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../../Main/Inversify/types";
+import type { ICreateMallaCurricular } from "../../Domain/ICreateMallaCurricular";
 import type { IMallaCurricular } from "../../Domain/IMallaCurricular";
-import type { IMallaCurricularRepository } from "../../Domain/IMallaCurricularRepository";
-import type { ICreateMallaCurricularOutput } from "../DTOs/CreateMallaCurricularDTO";
-import type { IUpdateMallaCurricularOutput } from "../DTOs/UpdateMallaCurricularDTO";
+import type {
+	IMallaCurricularRepository,
+	IUpdateMallaCurricularParams,
+} from "../../Domain/IMallaCurricularRepository";
 
 @injectable()
 export class MallaCurricularRepository implements IMallaCurricularRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	async create(data: ICreateMallaCurricularOutput) {
+	async create({ modalidadId, ...data }: ICreateMallaCurricular) {
 		return this._client.mallaCurricular.create({
 			data: {
 				...data,
-				perfilEgreso: data.perfilEgreso || null,
-				observaciones: data.observaciones || null,
+				modalidad: { connect: { nombre: modalidadId } },
 			},
 		});
 	}
@@ -32,19 +33,17 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 
 	async update({
 		id,
-		mallaCurricular,
-	}: {
-		id: string;
-		mallaCurricular: IUpdateMallaCurricularOutput;
-	}) {
+		data: { modalidadId, ...data },
+	}: IUpdateMallaCurricularParams) {
 		return this._client.mallaCurricular.update({
 			where: {
 				id,
 			},
 			data: {
-				...mallaCurricular,
-				perfilEgreso: mallaCurricular.perfilEgreso || null,
-				observaciones: mallaCurricular.observaciones || null,
+				...data,
+				...(modalidadId
+					? { modalidad: { connect: { nombre: modalidadId } } }
+					: {}),
 			},
 		});
 	}

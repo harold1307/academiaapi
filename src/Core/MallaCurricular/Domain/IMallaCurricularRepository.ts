@@ -1,14 +1,16 @@
-import type { ICreateMallaCurricularOutput } from "../Infraestructure/DTOs/CreateMallaCurricularDTO";
-import type { IUpdateMallaCurricularOutput } from "../Infraestructure/DTOs/UpdateMallaCurricularDTO";
+import type { IUpdateMallaCurricular } from "../Domain/IUpdateMallaCurricular";
+import type { ICreateMallaCurricular } from "./ICreateMallaCurricular";
 import type { IMallaCurricular } from "./IMallaCurricular";
 
+export type IUpdateMallaCurricularParams = {
+	id: string;
+	data: IUpdateMallaCurricular;
+};
+
 export interface IMallaCurricularRepository {
-	create(data: ICreateMallaCurricularOutput): Promise<IMallaCurricular>;
+	create(data: ICreateMallaCurricular): Promise<IMallaCurricular>;
 	getAll(): Promise<IMallaCurricular[]>;
 	getById(id: string): Promise<IMallaCurricular | null>;
-	update(params: {
-		id: string;
-		mallaCurricular: IUpdateMallaCurricularOutput;
-	}): Promise<IMallaCurricular>;
+	update(params: IUpdateMallaCurricularParams): Promise<IMallaCurricular>;
 	deleteById(id: string): Promise<IMallaCurricular>;
 }

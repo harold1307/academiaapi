@@ -1,40 +1,15 @@
 import { TipoDuracion } from "@prisma/client";
 import { z } from "zod";
 
-import type { IMallaCurricular } from "../../Domain/IMallaCurricular";
+import type { ZodInferSchema } from "../../../../types";
+import type { IUpdateMallaCurricular } from "../../Domain/IUpdateMallaCurricular";
 
-type IUpdateMallaCurricularInput = Partial<
-	Omit<
-		IMallaCurricular,
-		"id" | "createdAt" | "fechaAprobacion" | "fechaLimiteVigencia"
-	> & {
-		fechaAprobacion: string;
-		fechaLimiteVigencia: string;
-	}
->;
-
-export type IUpdateMallaCurricularOutput = Partial<
-	Omit<IMallaCurricular, "id" | "createdAt">
->;
-
-const schema: z.ZodType<
-	IUpdateMallaCurricularOutput,
-	z.ZodTypeDef,
-	IUpdateMallaCurricularInput
-> = z.object({
-	modalidad: z.string().optional(),
+const schema = z.object<ZodInferSchema<IUpdateMallaCurricular>>({
+	modalidadId: z.string().optional(),
 	tituloObtenido: z.string().optional(),
 	tipoDuracion: z.nativeEnum(TipoDuracion).optional(),
-	fechaAprobacion: z
-		.string()
-		.datetime()
-		.optional()
-		.transform(str => (str ? new Date(str) : undefined)),
-	fechaLimiteVigencia: z
-		.string()
-		.datetime()
-		.optional()
-		.transform(str => (str ? new Date(str) : undefined)),
+	fechaAprobacion: z.date().optional(),
+	fechaLimiteVigencia: z.date().optional(),
 	niveles: z.number().optional(),
 	maximoMateriasMatricula: z.number().optional(),
 	cantidadLibreOpcionEgreso: z.number().optional(),
@@ -48,19 +23,19 @@ const schema: z.ZodType<
 	registroProyectosDesde: z.number().optional(),
 	usaNivelacion: z.boolean().optional(),
 	plantillasSilabo: z.boolean().optional(),
-	prefilEgreso: z.string().optional(),
+	perfilEgreso: z.string().optional(),
 	observaciones: z.string().optional(),
 });
 
 export class UpdateMallaCurricularDTO {
-	private mallaCurricular: IUpdateMallaCurricularOutput | undefined;
+	private data: IUpdateMallaCurricular | undefined;
 	constructor(private input: any) {}
 
 	validate() {
 		const parse = schema.safeParse(this.input);
 
 		if (parse.success) {
-			this.mallaCurricular = parse.data;
+			this.data = parse.data;
 		}
 
 		return parse;

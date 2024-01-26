@@ -1,37 +1,15 @@
 import { TipoDuracion } from "@prisma/client";
 import { z } from "zod";
 
-import type { IMallaCurricular } from "../../Domain/IMallaCurricular";
+import type { ZodInferSchema } from "../../../../types";
+import type { ICreateMallaCurricular } from "../../Domain/ICreateMallaCurricular";
 
-type ICreateMallaCurricularInput = Omit<
-	IMallaCurricular,
-	"id" | "createdAt" | "fechaAprobacion" | "fechaLimiteVigencia"
-> & {
-	fechaAprobacion: string;
-	fechaLimiteVigencia: string;
-};
-
-export type ICreateMallaCurricularOutput = Omit<
-	IMallaCurricular,
-	"id" | "createdAt"
->;
-
-const schema: z.ZodType<
-	ICreateMallaCurricularOutput,
-	z.ZodTypeDef,
-	ICreateMallaCurricularInput
-> = z.object({
+const schema = z.object<ZodInferSchema<ICreateMallaCurricular>>({
 	modalidadId: z.string(),
 	tituloObtenido: z.string(),
 	tipoDuracion: z.nativeEnum(TipoDuracion),
-	fechaAprobacion: z
-		.string()
-		.datetime()
-		.transform(str => new Date(str)),
-	fechaLimiteVigencia: z
-		.string()
-		.datetime()
-		.transform(str => new Date(str)),
+	fechaAprobacion: z.date(),
+	fechaLimiteVigencia: z.date(),
 	niveles: z.number(),
 	maximoMateriasMatricula: z.number(),
 	cantidadLibreOpcionEgreso: z.number(),
@@ -50,7 +28,7 @@ const schema: z.ZodType<
 });
 
 export class CreateMallaCurricularDTO {
-	private mallaCurricular: ICreateMallaCurricularOutput | undefined;
+	private data: ICreateMallaCurricular | undefined;
 
 	constructor(private input: any) {}
 
@@ -58,7 +36,7 @@ export class CreateMallaCurricularDTO {
 		const parse = schema.safeParse(this.input);
 
 		if (parse.success) {
-			this.mallaCurricular = parse.data;
+			this.data = parse.data;
 		}
 
 		return parse;

@@ -52,3 +52,7 @@
 
 - [] Implementar logica de modelo
 - [] Implementar campo enUso
+
+## Malla Curricular
+
+- [] Implementar logica de exclusion para eliminar y actualizar

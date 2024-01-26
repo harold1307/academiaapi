@@ -2,10 +2,14 @@ import type { PrismaClient } from "@prisma/client";
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
+import type { ICreateMallaCurricular } from "../Domain/ICreateMallaCurricular";
 import type { ILugarEjecucion } from "../Domain/ILugarEjecucion";
 import type { ILugarEjecucionRepository } from "../Domain/ILugarEjecucionRepository";
 import type { IMallaCurricular } from "../Domain/IMallaCurricular";
-import type { IMallaCurricularRepository } from "../Domain/IMallaCurricularRepository";
+import type {
+	IMallaCurricularRepository,
+	IUpdateMallaCurricularParams,
+} from "../Domain/IMallaCurricularRepository";
 import type {
 	IMallaCurricularService,
 	MallaCurricularWithLugaresEjecucion,
@@ -25,7 +29,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 		@inject(TYPES.PrismaClient) private _client: PrismaClient,
 	) {}
 
-	async createMallaCurricular(data: any) {
+	async createMallaCurricular(data: ICreateMallaCurricular) {
 		const dto = new CreateMallaCurricularDTO(data);
 		const validation = dto.validate();
 
@@ -34,7 +38,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 				"Error de validacion para crear de malla curricular",
 				validation.error,
 			);
-			throw new MallaCurricularError(
+			throw new MallaCurricularServiceError(
 				"Esquema para crear de malla curricular invalido.",
 			);
 		}
@@ -131,14 +135,8 @@ export class MallaCurricularService implements IMallaCurricularService {
 		};
 	}
 
-	async updateMallaCurricularById({
-		id,
-		mallaCurricular,
-	}: {
-		id: string;
-		mallaCurricular: any;
-	}) {
-		const dto = new UpdateMallaCurricularDTO(mallaCurricular);
+	async updateMallaCurricularById({ id, data }: IUpdateMallaCurricularParams) {
+		const dto = new UpdateMallaCurricularDTO(data);
 		const validation = dto.validate();
 
 		if (!validation.success) {
@@ -146,14 +144,14 @@ export class MallaCurricularService implements IMallaCurricularService {
 				"Error de validacion para actualizar mallaCurricular",
 				JSON.stringify(validation.error),
 			);
-			throw new MallaCurricularError(
+			throw new MallaCurricularServiceError(
 				"Esquema para actualizar mallaCurricular invalido.",
 			);
 		}
 
 		return this._mallaCurricularRepository.update({
 			id,
-			mallaCurricular: validation.data,
+			data: validation.data,
 		});
 	}
 
@@ -167,7 +165,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 	): Promise<ILugarEjecucion> {
 		const malla = this._mallaCurricularRepository.getById(mallaId);
 
-		if (!malla) throw new MallaCurricularError("La malla no existe.");
+		if (!malla) throw new MallaCurricularServiceError("La malla no existe.");
 
 		const dto = new CreateLugarEjecucionDTO({ ...data, mallaId });
 		const validation = dto.validate();
@@ -177,7 +175,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 				"Error de validacion para crear lugar de ejecucion.",
 				JSON.stringify(validation.error, null, 2),
 			);
-			throw new MallaCurricularError(
+			throw new MallaCurricularServiceError(
 				"Esquema para crear lugar de ejecucion invalido.",
 			);
 		}
@@ -214,9 +212,9 @@ export class MallaCurricularService implements IMallaCurricularService {
 	}
 }
 
-class MallaCurricularError extends Error {
+class MallaCurricularServiceError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = "MallaCurricularError";
+		this.name = "MallaCurricularServiceError";
 	}
 }
