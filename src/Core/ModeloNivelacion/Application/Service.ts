@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
-import { type ICreateModeloNivelacion } from "../Domain/ICreateModeloNivelacion";
+import type { ICreateModeloNivelacion } from "../Domain/ICreateModeloNivelacion";
 import type { IModeloNivelacion } from "../Domain/IModeloNivelacion";
 import type {
 	IModeloNivelacionRepository,
