@@ -150,10 +150,13 @@ model LugarEjecucion {
 }
 
 model Titulo {
-  id            String       @id @default(uuid())
-  nombre        String
+  id     String @id @default(uuid())
+  nombre String
+
   institucionId String?
-  institucion   Institucion? @relation(fields: [institucionId], references: [id])
+  institucion   Institucion? @relation(fields: [institucionId], references: [id], onDelete: SetNull)
+  programaId    String?
+  programa      Programa?    @relation(fields: [programaId], references: [id], onDelete: SetNull)
 
   @@index([institucionId], map: "titulos_institucionId_fkey")
   @@map("titulos")
@@ -274,11 +277,14 @@ model VarianteCurso {
 }
 
 model Competencia {
-  id                  String             @id @default(uuid())
-  tipo                TipoCompetencia
-  nombre              String
+  id     String          @id @default(uuid())
+  tipo   TipoCompetencia
+  nombre String
+
   asignaturaEnMallaId String?            @unique
-  asignaturaEnMalla   AsignaturaEnMalla? @relation(fields: [asignaturaEnMallaId], references: [id], onUpdate: SetNull)
+  asignaturaEnMalla   AsignaturaEnMalla? @relation(fields: [asignaturaEnMallaId], references: [id], onDelete: SetNull)
+  programaId          String?
+  programa            Programa?          @relation(fields: [programaId], references: [id], onDelete: SetNull)
 
   @@map("competencias")
 }
@@ -463,6 +469,104 @@ model Sesion {
   turnos        Turno[]
 
   @@map("sesiones")
+}
+
+model Recurso {
+  id     String @id @default(uuid())
+  nombre String
+
+  @@map("recursos")
+}
+
+model MetodologiaAprendizaje {
+  id     String @id @default(uuid())
+  nombre String
+
+  @@map("metodologias_aprendizaje")
+}
+
+model PerfilPractica {
+  id          String  @id @default(uuid())
+  nombre      String
+  capacidades String?
+  resultados  String?
+  actividades String?
+
+  programaId String?
+  programa   Programa? @relation(fields: [programaId], references: [id], onDelete: SetNull)
+
+  @@map("perfiles_practicas")
+}
+
+model ProductoAcreditableEvaluacion {
+  id     String @id @default(uuid())
+  nombre String
+
+  @@map("productos_acreditables_evaluacion")
+}
+
+model TipoDocumento {
+  id                String  @id @default(uuid())
+  nombre            String
+  titulo            Boolean
+  actaGrado         Boolean
+  cedula            Boolean
+  papeletaVotacion  Boolean
+  carnetConadis     Boolean
+  convalidacion     Boolean
+  partidaNacimiento Boolean
+  preNivelacion     Boolean
+  serviciosBasicos  Boolean
+  examenIngreso     Boolean
+  paraPasantia      Boolean
+
+  programas TipoDocumentoEnPrograma[]
+
+  @@map("tipos_documento")
+}
+
+model TipoDocumentoEnPrograma {
+  id               String  @id @default(uuid())
+  requeridoFisico  Boolean
+  requeridoDigital Boolean
+
+  tipoDocumentoId String
+  tipoDocumento   TipoDocumento @relation(fields: [tipoDocumentoId], references: [id])
+  programaId      String
+  programa        Programa      @relation(fields: [programaId], references: [id])
+
+  @@map("tipo_documento_programa")
+}
+
+model NivelTitulacion {
+  nombre String @id
+
+  @@map("niveles_titulacion")
+}
+
+model DetalleNivelTitulacion {
+  nombre String @id
+
+  programas Programa[]
+
+  @@map("detalles_niveles_titucion")
+}
+
+model Programa {
+  id      String  @id @default(uuid())
+  estado  Boolean @default(false)
+  nombre  String
+  mencion String
+  alias   String
+
+  detalleNivelTitulacionId String
+  detalleNivelTitucion     DetalleNivelTitulacion    @relation(fields: [detalleNivelTitulacionId], references: [nombre])
+  competencias             Competencia[]
+  perfilesPracticas        PerfilPractica[]
+  titulosObtenidos         Titulo[]
+  documentosRequeridos     TipoDocumentoEnPrograma[]
+
+  @@map("programas")
 }
 
 model Account {
