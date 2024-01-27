@@ -100,6 +100,7 @@ export class MallaCurricularController implements IMallaCurricularController {
 			const bodyVal = createBodySchema.safeParse(body);
 
 			if (!bodyVal.success) {
+				ctx.error(bodyVal.error);
 				return {
 					jsonBody: {
 						message: "Peticion invalida",
@@ -108,8 +109,14 @@ export class MallaCurricularController implements IMallaCurricularController {
 				};
 			}
 
+			const { fechaAprobacion, fechaLimiteVigencia, ...data } = bodyVal.data;
+
 			const newMallaCurricular =
-				await this._mallaCurricularService.createMallaCurricular(bodyVal.data);
+				await this._mallaCurricularService.createMallaCurricular({
+					...data,
+					fechaAprobacion: new Date(fechaAprobacion),
+					fechaLimiteVigencia: new Date(fechaLimiteVigencia),
+				});
 
 			ctx.log({ newMallaCurricular });
 
@@ -148,12 +155,20 @@ export class MallaCurricularController implements IMallaCurricularController {
 				};
 			}
 
-			const { data } = bodyVal;
+			const { fechaAprobacion, fechaLimiteVigencia, ...data } = bodyVal.data;
 
 			const mallaCurricular =
 				await this._mallaCurricularService.updateMallaCurricularById({
 					id: mallaCurricularId,
-					data,
+					data: {
+						...data,
+						fechaAprobacion: fechaAprobacion
+							? new Date(fechaAprobacion)
+							: undefined,
+						fechaLimiteVigencia: fechaLimiteVigencia
+							? new Date(fechaLimiteVigencia)
+							: undefined,
+					},
 				});
 
 			return {
@@ -414,12 +429,19 @@ export class MallaCurricularController implements IMallaCurricularController {
 	}
 }
 
-const createBodySchema = z.object<ZodInferSchema<ICreateMallaCurricular>>({
+const createBodySchema = z.object<
+	ZodInferSchema<
+		Omit<ICreateMallaCurricular, "fechaAprobacion" | "fechaLimiteVigencia"> & {
+			fechaAprobacion: string;
+			fechaLimiteVigencia: string;
+		}
+	>
+>({
 	modalidadId: z.string(),
 	tituloObtenido: z.string(),
 	tipoDuracion: z.nativeEnum(TipoDuracion),
-	fechaAprobacion: z.date(),
-	fechaLimiteVigencia: z.date(),
+	fechaAprobacion: z.string().datetime(),
+	fechaLimiteVigencia: z.string().datetime(),
 	niveles: z.number(),
 	maximoMateriasMatricula: z.number(),
 	cantidadLibreOpcionEgreso: z.number(),
@@ -437,12 +459,19 @@ const createBodySchema = z.object<ZodInferSchema<ICreateMallaCurricular>>({
 	observaciones: z.string(),
 });
 
-const updateBodySchema = z.object<ZodInferSchema<IUpdateMallaCurricular>>({
+const updateBodySchema = z.object<
+	ZodInferSchema<
+		Omit<IUpdateMallaCurricular, "fechaAprobacion" | "fechaLimiteVigencia"> & {
+			fechaAprobacion?: string;
+			fechaLimiteVigencia?: string;
+		}
+	>
+>({
 	modalidadId: z.string().optional(),
 	tituloObtenido: z.string().optional(),
 	tipoDuracion: z.nativeEnum(TipoDuracion).optional(),
-	fechaAprobacion: z.date().optional(),
-	fechaLimiteVigencia: z.date().optional(),
+	fechaAprobacion: z.string().datetime().optional(),
+	fechaLimiteVigencia: z.string().datetime().optional(),
 	niveles: z.number().optional(),
 	maximoMateriasMatricula: z.number().optional(),
 	cantidadLibreOpcionEgreso: z.number().optional(),

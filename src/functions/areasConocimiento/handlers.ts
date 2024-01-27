@@ -13,7 +13,7 @@ app.get("areasConocimientoGetAll", {
 app.get("areasConocimientoGetById", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.areasConocimientoGetById(req, ctx),
-	route: "areas-conocimiento/{asignaturaId}",
+	route: "areas-conocimiento/{areaConocimientoId}",
 });
 
 app.post("areasConocimientoCreate", {
@@ -25,11 +25,11 @@ app.post("areasConocimientoCreate", {
 app.patch("areasConocimientoUpdateById", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.areasConocimientoUpdateById(req, ctx),
-	route: "areas-conocimiento/{asignaturaId}",
+	route: "areas-conocimiento/{areaConocimientoId}",
 });
 
 app.deleteRequest("areasConocimientoDeleteById", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.areasConocimientoDeleteById(req, ctx),
-	route: "areas-conocimiento/{asignaturaId}",
+	route: "areas-conocimiento/{areaConocimientoId}",
 });
