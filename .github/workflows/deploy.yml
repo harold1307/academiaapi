@@ -72,8 +72,8 @@ jobs:
           pnpm --if-present run test
           popd
 
-      - name: Run prune
-        run: pnpm prune --production --config.ignore-scripts=true
+      - name: Delete node_modules
+        run: pnpm dlx rimraf --glob node_modules
 
       - name: Run Azure Functions Action
         uses: Azure/functions-action@v1.5.1
