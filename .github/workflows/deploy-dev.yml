@@ -58,6 +58,7 @@ jobs:
         shell: bash
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pnpm install --config.node-linker=hoisted
           pnpm --if-present run build
           pnpm --if-present run test
           popd
