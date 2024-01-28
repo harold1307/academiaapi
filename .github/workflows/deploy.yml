@@ -22,7 +22,7 @@ jobs:
       AZURE_FUNCTIONAPP_NAME: "tecdu-api" # set this to your function app name on Azure
       AZURE_FUNCTIONAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE_DEV }}
       DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
-      SHADOW_DATABASE_URL_DEV: $${{ secrets.SHADOW_DATABASE_URL_DEV }}
+      SHADOW_DATABASE_URL_DEV: ${{ secrets.SHADOW_DATABASE_URL_DEV }}
     steps:
       - name: "Checkout GitHub Action"
         uses: actions/checkout@v4
@@ -53,6 +53,13 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --config.node-linker=hoisted
+
+      - name: "Create env file"
+        run: |
+          touch .env
+          echo DATABASE_URL="${{ secrets.DATABASE_URL_DEV }}" >> .env
+          echo SHADOW_DATABASE_URL_DEV=${{ secrets.SHADOW_DATABASE_URL_DEV }} >> .env
+          cat .env
 
       - name: Apply all pending migrations to the database
         run: pnpm dlx prisma migrate deploy
