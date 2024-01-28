@@ -41,11 +41,11 @@ IF NOT DEFINED NEXT_MANIFEST_PATH (
 IF NOT DEFINED KUDU_SYNC_CMD (
   :: Install kudu sync
   echo Installing Kudu Sync
-  call npm install kudusync -g --silent
+  call pnpm install kudusync -g --silent
   IF !ERRORLEVEL! NEQ 0 goto error
 
   :: Locally just running "kuduSync" would also work
-  SET KUDU_SYNC_CMD=%appdata%\npm\kuduSync.cmd
+  SET KUDU_SYNC_CMD=%appdata%\pnpm\kuduSync.cmd
 )
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -118,7 +118,7 @@ echo Restoring npm packages in %1
 
 IF EXIST "%1\package.json" (
   pushd "%1"
-  call npm install --production
+  call pnpm install --prod --config.node-linker=hoisted
   IF !ERRORLEVEL! NEQ 0 goto error
   popd
 )
@@ -126,7 +126,7 @@ IF EXIST "%1\package.json" (
 FOR /F "tokens=*" %%i IN ('DIR /B %1 /A:D') DO (
   IF EXIST "%1\%%i\package.json" (
     pushd "%1\%%i"
-    call npm install --production
+    call pnpm install --prod --config.node-linker=hoisted
     IF !ERRORLEVEL! NEQ 0 goto error
     popd
   )

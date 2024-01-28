@@ -51,45 +51,37 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      # - name: Install dependencies
-      #   run: pnpm install --config.node-linker=hoisted
+      - name: Install dependencies
+        run: pnpm install --config.node-linker=hoisted
 
-      - name: test
+      - name: "Create env file"
+        run: |
+          touch .env
+          echo DATABASE_URL="${{ secrets.DATABASE_URL_DEV }}" >> .env
+          echo SHADOW_DATABASE_URL_DEV=${{ secrets.SHADOW_DATABASE_URL_DEV }} >> .env
+          cat .env
+
+      - name: Apply all pending migrations to the database
+        run: pnpm dlx prisma migrate deploy
+
+      - name: Resolve Project Dependencies Using pnpm
         shell: pwsh
         run: |
-          pnpm install kudusync -g
-          gcm kudusync
-          $env:APPDATA
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pnpm --if-present run build
+          pnpm --if-present run test
+          popd
 
-      # - name: "Create env file"
-      #   run: |
-      #     touch .env
-      #     echo DATABASE_URL="${{ secrets.DATABASE_URL_DEV }}" >> .env
-      #     echo SHADOW_DATABASE_URL_DEV=${{ secrets.SHADOW_DATABASE_URL_DEV }} >> .env
-      #     cat .env
+      - name: Run prune
+        run: pnpm prune --production --config.ignore-scripts=true
 
-      # - name: Apply all pending migrations to the database
-      #   run: pnpm dlx prisma migrate deploy
-
-      # - name: Resolve Project Dependencies Using pnpm
-      #   shell: pwsh
-      #   run: |
-      #     pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-      #     pnpm --if-present run build
-      #     pnpm --if-present run test
-      #     popd
-
-      # - name: Run prune
-      #   run: pnpm prune --production --config.ignore-scripts=true
-
-      # - name: Run Azure Functions Action
-      #   uses: Azure/functions-action@v1.5.1
-      #   id: fa
-      #   with:
-      #     app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-      #     package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-      #     publish-profile: ${{ env.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-      #     scm-do-build-during-deployment: true
-      #     slot-name: dev
-
+      - name: Run Azure Functions Action
+        uses: Azure/functions-action@v1.5.1
+        id: fa
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          publish-profile: ${{ env.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          scm-do-build-during-deployment: true
+          slot-name: dev
 # For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
