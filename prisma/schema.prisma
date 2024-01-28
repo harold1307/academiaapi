@@ -32,7 +32,7 @@ model MallaCurricular {
   plantillasSilabo          Boolean
   observaciones             String?
   createdAt                 DateTime            @default(now())
-  updatedAt                 DateTime            @updatedAt
+  updatedAt                 DateTime            @default(now()) @updatedAt
   perfilEgreso              String?
   asignaturasEnMalla        AsignaturaEnMalla[]
   lugaresEjecucion          LugarEjecucion[]
@@ -49,7 +49,7 @@ model Institucion {
   canton           String
   codigo           String
   createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  updatedAt        DateTime         @default(now()) @updatedAt
   lugaresEjecucion LugarEjecucion[]
   titulos          Titulo[]
   sesiones         Sesion[]
@@ -66,7 +66,7 @@ model Asignatura {
   asignaturasEnCursoEscuela  AsignaturaEnCursoEscuela[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("asignaturas")
 }
@@ -95,7 +95,7 @@ model AsignaturaEnMalla {
   descripcion               String?
   resultadosAprendizaje     String?
   createdAt                 DateTime         @default(now())
-  updatedAt                 DateTime         @updatedAt
+  updatedAt                 DateTime         @default(now()) @updatedAt
   asignaturaId              String
   mallaId                   String
   areaConocimientoId        String
@@ -139,7 +139,7 @@ model AsignaturaEnVarianteCurso {
   modeloEvaluativo   ModeloEvaluativo? @relation(fields: [modeloEvaluativoId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@index([asignaturaId], map: "asignaturas_en_variantes_curso_asignaturaId_fkey")
   @@index([varianteCursoId], map: "asignaturas_en_variantes_curso_varianteCursoId_fkey")
@@ -155,7 +155,7 @@ model LugarEjecucion {
   malla         MallaCurricular @relation(fields: [mallaId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@index([institucionId], map: "lugares_ejecucion_institucionId_fkey")
   @@index([mallaId], map: "lugares_ejecucion_mallaId_fkey")
@@ -172,7 +172,7 @@ model Titulo {
   programa      Programa?    @relation(fields: [programaId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@index([institucionId], map: "titulos_institucionId_fkey")
   @@map("titulos")
@@ -218,7 +218,7 @@ model CursoEscuela {
   asignaturas AsignaturaEnCursoEscuela[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("curso_escuelas")
 }
@@ -247,7 +247,7 @@ model AsignaturaEnCursoEscuela {
   modeloEvaluativo   ModeloEvaluativo? @relation(fields: [modeloEvaluativoId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("asignatura_en_curso_escuela")
 }
@@ -259,7 +259,7 @@ model Paralelo {
   cursoEscuelas CursoEscuela[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("paralelos")
 }
@@ -273,7 +273,7 @@ model Curso {
   variantes   VarianteCurso[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("cursos")
 }
@@ -301,7 +301,7 @@ model VarianteCurso {
   cursoEscuelas         CursoEscuela[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@index([cursoId], map: "variantes_de_cursos_cursoId_fkey")
   @@map("variantes_de_cursos")
@@ -318,7 +318,7 @@ model Competencia {
   programa            Programa?          @relation(fields: [programaId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("competencias")
 }
@@ -329,7 +329,7 @@ model EjeFormativo {
   asignaturasEnMalla AsignaturaEnMalla[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("ejes_formativos")
 }
@@ -341,7 +341,7 @@ model AreaConocimiento {
   asignaturasEnMalla AsignaturaEnMalla[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("areas_de_conocimiento")
 }
@@ -352,7 +352,7 @@ model CampoFormacion {
   asignaturasEnMalla AsignaturaEnMalla[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("campos_de_formacion")
 }
@@ -366,7 +366,7 @@ model ModeloContrato {
   archivoUrl     String  @db.Text
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("modelos_contrato")
 }
@@ -375,7 +375,7 @@ model Grupo {
   nombre String @id
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("grupos")
 }
@@ -387,7 +387,7 @@ model Modalidad {
   mallas MallaCurricular[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("modalidades")
 }
@@ -403,7 +403,7 @@ model Turno {
   sesion   Sesion   @relation(fields: [sesionId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("turnos")
 }
@@ -416,7 +416,7 @@ model AlternativaEvaluacion {
   camposModeloEvaluativo CampoModeloEvaluativo[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("alternativas_evaluacion")
 }
@@ -440,7 +440,7 @@ model CampoModeloEvaluativo {
   modeloEvaluativo   ModeloEvaluativo      @relation(fields: [modeloEvaluativoId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("campos_modelo_evaluativo")
 }
@@ -463,7 +463,7 @@ model ModeloEvaluativo {
   asignaturasEnCursoEscuela  AsignaturaEnCursoEscuela[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("modelos_evaluativos")
 }
@@ -478,7 +478,7 @@ model ModeloNivelacion {
   observaciones      String?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("modelos_nivelacion")
 }
@@ -500,7 +500,7 @@ model CampoProyectoIntegrador {
   proyectoIntegrador   ProyectoIntegrador @relation(fields: [proyectoIntegradorId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("campos_proyectos_integradores")
 }
@@ -517,7 +517,7 @@ model ProyectoIntegrador {
   campos CampoProyectoIntegrador[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("proyectos_integradores")
 }
@@ -542,7 +542,7 @@ model Sesion {
   turnos        Turno[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("sesiones")
 }
@@ -552,7 +552,7 @@ model Recurso {
   nombre String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("recursos")
 }
@@ -562,7 +562,7 @@ model MetodologiaAprendizaje {
   nombre String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("metodologias_aprendizaje")
 }
@@ -578,7 +578,7 @@ model PerfilPractica {
   programa   Programa? @relation(fields: [programaId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("perfiles_practicas")
 }
@@ -588,7 +588,7 @@ model ProductoAcreditableEvaluacion {
   nombre String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("productos_acreditables_evaluacion")
 }
@@ -611,7 +611,7 @@ model TipoDocumento {
   programas TipoDocumentoEnPrograma[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("tipos_documento")
 }
@@ -627,7 +627,7 @@ model TipoDocumentoEnPrograma {
   programa        Programa      @relation(fields: [programaId], references: [id])
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("tipo_documento_programa")
 }
@@ -636,7 +636,7 @@ model NivelTitulacion {
   nombre String @id
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("niveles_titulacion")
 }
@@ -647,7 +647,7 @@ model DetalleNivelTitulacion {
   programas Programa[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("detalles_niveles_titucion")
 }
@@ -667,7 +667,7 @@ model Programa {
   documentosRequeridos     TipoDocumentoEnPrograma[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("programas")
 }
@@ -690,7 +690,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@unique([provider, providerAccountId])
   @@index([userId], map: "accounts_userId_fkey")
@@ -720,7 +720,7 @@ model User {
   asignaturasEnCursoEscuelas AsignaturaEnCursoEscuela[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("users")
 }
