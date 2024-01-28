@@ -1,5 +1,5 @@
 import type { IProyectoIntegrador } from "./IProyectoIntegrador";
 
 export type IUpdateProyectoIntegrador = Partial<
-	Omit<IProyectoIntegrador, "id" | "enUso">
+	Omit<IProyectoIntegrador, "id" | "enUso" | "createdAt" | "updatedAt">
 >;

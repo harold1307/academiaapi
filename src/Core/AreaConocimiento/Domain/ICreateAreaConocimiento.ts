@@ -1,3 +1,6 @@
 import type { IAreaConocimiento } from "./IAreaConocimiento";
 
-export type ICreateAreaConocimiento = Omit<IAreaConocimiento, "id" | "enUso">;
+export type ICreateAreaConocimiento = Omit<
+	IAreaConocimiento,
+	"id" | "enUso" | "createdAt" | "updatedAt"
+>;

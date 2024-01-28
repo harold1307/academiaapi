@@ -1,3 +1,6 @@
 import type { ISesion } from "./ISesion";
 
-export type ICreateSesion = Omit<ISesion, "id" | "estado" | "enUso">;
+export type ICreateSesion = Omit<
+	ISesion,
+	"id" | "estado" | "enUso" | "createdAt" | "updatedAt"
+>;

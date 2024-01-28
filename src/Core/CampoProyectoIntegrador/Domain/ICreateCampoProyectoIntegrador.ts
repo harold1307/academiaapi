@@ -2,5 +2,5 @@ import type { ICampoProyectoIntegrador } from "./ICampoProyectoIntegrador";
 
 export type ICreateCampoProyectoIntegrador = Omit<
 	ICampoProyectoIntegrador,
-	"id"
+	"id" | "createdAt" | "updatedAt"
 >;

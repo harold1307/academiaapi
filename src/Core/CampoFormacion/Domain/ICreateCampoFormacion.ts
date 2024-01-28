@@ -1,3 +1,6 @@
 import type { ICampoFormacion } from "./ICampoFormacion";
 
-export type ICreateCampoFormacion = Omit<ICampoFormacion, "id" | "enUso">;
+export type ICreateCampoFormacion = Omit<
+	ICampoFormacion,
+	"id" | "enUso" | "createdAt" | "updatedAt"
+>;

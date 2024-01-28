@@ -5,7 +5,7 @@ import type { IInstitucion } from "../../Domain/IInstitucion";
 
 export type ICreateInstitucion = Omit<
 	IInstitucion,
-	"id" | "createdAt" | "enUso"
+	"id" | "enUso" | "createdAt" | "updatedAt"
 >;
 
 const schema: z.ZodType<ICreateInstitucion> = z.object({

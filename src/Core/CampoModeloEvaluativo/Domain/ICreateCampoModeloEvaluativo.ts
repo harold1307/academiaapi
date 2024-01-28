@@ -1,3 +1,6 @@
 import type { ICampoModeloEvaluativo } from "./ICampoModeloEvaluativo";
 
-export type ICreateCampoModeloEvaluativo = Omit<ICampoModeloEvaluativo, "id">;
+export type ICreateCampoModeloEvaluativo = Omit<
+	ICampoModeloEvaluativo,
+	"id" | "createdAt" | "updatedAt"
+>;

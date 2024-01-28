@@ -2,5 +2,5 @@ import type { IAlternativaEvaluacion } from "./IAlternativaEvaluacion";
 
 export type ICreateAlternativaEvaluacion = Omit<
 	IAlternativaEvaluacion,
-	"id" | "enUso"
+	"id" | "enUso" | "createdAt" | "updatedAt"
 >;
