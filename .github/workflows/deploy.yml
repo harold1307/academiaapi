@@ -19,7 +19,7 @@ jobs:
     runs-on: windows-latest
     if: github.ref == 'refs/heads/dev'
     env:
-      AZURE_FUNCTIONAPP_NAME: "tecdu-api-dev" # set this to your function app name on Azure
+      AZURE_FUNCTIONAPP_NAME: "tecdu-api" # set this to your function app name on Azure
       AZURE_FUNCTIONAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE_DEV }}
       DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
       SHADOW_DATABASE_URL_DEV: $${{ secrets.SHADOW_DATABASE_URL_DEV }}
@@ -79,4 +79,5 @@ jobs:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           publish-profile: ${{ env.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          slot-name: tecdu-api-dev
 # For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
