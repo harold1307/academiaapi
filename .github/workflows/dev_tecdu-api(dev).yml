@@ -3,11 +3,7 @@
 
 name: Build and deploy Node.js project to Azure Function App - tecdu-api
 
-on:
-  push:
-    branches:
-      - dev
-  workflow_dispatch:
+on: workflow_dispatch
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: "." # set this to the path to your web app project, defaults to the repository root
