@@ -58,8 +58,8 @@ jobs:
         shell: bash
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          pnpm run build --if-present
-          pnpm run test --if-present
+          pnpm --if-present run build
+          pnpm --if-present run test
           popd
 
       - name: Run prune
