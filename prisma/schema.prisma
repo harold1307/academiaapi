@@ -633,7 +633,8 @@ model TipoDocumentoEnPrograma {
 }
 
 model NivelTitulacion {
-  nombre   String                   @id
+  id       String                   @id @default(uuid())
+  nombre   String
   detalles DetalleNivelTitulacion[]
 
   createdAt DateTime @default(now())
@@ -643,12 +644,13 @@ model NivelTitulacion {
 }
 
 model DetalleNivelTitulacion {
-  nombre String @id
+  id     String @id @default(uuid())
+  nombre String
 
   programas Programa[]
 
   nivelTitulacionId String
-  nivelTitulacion   NivelTitulacion @relation(fields: [nivelTitulacionId], references: [nombre])
+  nivelTitulacion   NivelTitulacion @relation(fields: [nivelTitulacionId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -664,7 +666,7 @@ model Programa {
   alias   String
 
   detalleNivelTitulacionId String
-  detalleNivelTitucion     DetalleNivelTitulacion    @relation(fields: [detalleNivelTitulacionId], references: [nombre])
+  detalleNivelTitucion     DetalleNivelTitulacion    @relation(fields: [detalleNivelTitulacionId], references: [id])
   competencias             Competencia[]
   perfilesPracticas        PerfilPractica[]
   titulosObtenidos         Titulo[]
