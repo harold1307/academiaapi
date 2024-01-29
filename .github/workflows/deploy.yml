@@ -82,14 +82,13 @@ jobs:
       # - name: Delete node_modules
       #   run: pnpm dlx rimraf --glob node_modules
 
-      # - name: Run Azure Functions Action
-      #   uses: Azure/functions-action@v1.5.1
-      #   id: fa
-      #   with:
-      #     app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-      #     package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-      #     publish-profile: ${{ env.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-      #     scm-do-build-during-deployment: true
-      #     slot-name: dev
-
+      - name: Run Azure Functions Action
+        uses: Azure/functions-action@v1.5.1
+        id: fa
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          publish-profile: ${{ env.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          scm-do-build-during-deployment: true
+          slot-name: dev
 # For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
