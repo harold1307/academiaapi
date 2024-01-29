@@ -51,13 +51,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: test
-        shell: pwsh
-        run: |
-          pnpm install kudusync -g
-          gcm kudusync.cmd
-          $env:APPDATA
-
       # - name: Install dependencies
       #   run: pnpm install --config.node-linker=hoisted
 
