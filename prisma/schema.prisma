@@ -633,7 +633,8 @@ model TipoDocumentoEnPrograma {
 }
 
 model NivelTitulacion {
-  nombre String @id
+  nombre   String                   @id
+  detalles DetalleNivelTitulacion[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -645,6 +646,9 @@ model DetalleNivelTitulacion {
   nombre String @id
 
   programas Programa[]
+
+  nivelTitulacionId String
+  nivelTitulacion   NivelTitulacion @relation(fields: [nivelTitulacionId], references: [nombre])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
