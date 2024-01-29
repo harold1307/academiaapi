@@ -135,6 +135,12 @@ import type { ICampoProyectoIntegradorRepository } from "../../Core/CampoProyect
 import type { ICampoProyectoIntegradorService } from "../../Core/CampoProyectoIntegrador/Domain/ICampoProyectoIntegradorService";
 import { CampoProyectoIntegradorRepository } from "../../Core/CampoProyectoIntegrador/Infrastructure/Repositories/CampoProyectoIntegradorRepository";
 
+// niveles de titulacion
+import { NivelTitulacionService } from "../../Core/NivelTitulacion/Application/Service";
+import type { INivelTitulacionRepository } from "../../Core/NivelTitulacion/Domain/INivelTitulacionRepository";
+import type { INivelTitulacionService } from "../../Core/NivelTitulacion/Domain/INivelTitulacionService";
+import { NivelTitulacionRepository } from "../../Core/NivelTitulacion/Infrastructure/Repositories/NivelTitulacionRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -358,6 +364,14 @@ StartupBuilder.bind<ICampoProyectoIntegradorService>(
 	TYPES.CampoProyectoIntegradorService,
 )
 	.to(CampoProyectoIntegradorService)
+	.inSingletonScope();
+
+// niveles de titulacion
+StartupBuilder.bind<INivelTitulacionRepository>(TYPES.NivelTitulacionRepository)
+	.to(NivelTitulacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<INivelTitulacionService>(TYPES.NivelTitulacionService)
+	.to(NivelTitulacionService)
 	.inSingletonScope();
 
 export { StartupBuilder };

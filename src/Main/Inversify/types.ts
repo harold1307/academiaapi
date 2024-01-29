@@ -61,4 +61,6 @@ export const TYPES = {
 		"CampoProyectoIntegradorRepository",
 	),
 	CampoProyectoIntegradorService: Symbol.for("CampoProyectoIntegradorService"),
+	NivelTitulacionRepository: Symbol.for("NivelTitulacionRepository"),
+	NivelTitulacionService: Symbol.for("NivelTitulacionService"),
 } as const;
