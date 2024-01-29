@@ -116,9 +116,11 @@ setlocal
 
 echo Restoring npm packages in %1
 
-call npm i pnpm -g
+call node --Version
+call iwr https://get.pnpm.io/install.ps1 -useb | iex
 
 IF EXIST "%1\package.json" (
+  echo From Normal
   pushd "%1"
   call :ExecuteCmd "pnpm" dlx rimraf --glob node_modules
   call :ExecuteCmd "pnpm" install --prod --config.node-linker=hoisted
@@ -128,6 +130,7 @@ IF EXIST "%1\package.json" (
 
 FOR /F "tokens=*" %%i IN ('DIR /B %1 /A:D') DO (
   IF EXIST "%1\%%i\package.json" (
+    echo From Loop
     pushd "%1\%%i"
     call :ExecuteCmd "pnpm" dlx rimraf --glob node_modules
     call :ExecuteCmd "pnpm" install --prod --config.node-linker=hoisted
