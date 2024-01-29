@@ -20,7 +20,17 @@ IF %ERRORLEVEL% NEQ 0 (
 
 setlocal enabledelayedexpansion
 
+call node --version
+call npm i -g npm@9
+
 SET ARTIFACTS=%~dp0%..\artifacts
+
+IF NOT DEFINED PNPM_CMD (
+  echo Installing pnpm
+  call npm i -g pnpm@8
+
+  SET PNPM_CMD=%appdata%\npm\pnpm.cmd
+)
 
 IF NOT DEFINED DEPLOYMENT_SOURCE (
   SET DEPLOYMENT_SOURCE=%~dp0%.
@@ -116,14 +126,13 @@ setlocal
 
 echo Restoring npm packages in %1
 
-call node --Version
-call iwr https://get.pnpm.io/install.ps1 -useb | iex
+call node --version
 
 IF EXIST "%1\package.json" (
   echo From Normal
   pushd "%1"
-  call :ExecuteCmd "pnpm" dlx rimraf --glob node_modules
-  call :ExecuteCmd "pnpm" install --prod --config.node-linker=hoisted
+  call :ExecuteCmd "%PNPM_CMD%" dlx rimraf --glob node_modules
+  call :ExecuteCmd "%PNPM_CMD%" install --prod --config.node-linker=hoisted
   IF !ERRORLEVEL! NEQ 0 goto error
   popd
 )
@@ -132,8 +141,8 @@ FOR /F "tokens=*" %%i IN ('DIR /B %1 /A:D') DO (
   IF EXIST "%1\%%i\package.json" (
     echo From Loop
     pushd "%1\%%i"
-    call :ExecuteCmd "pnpm" dlx rimraf --glob node_modules
-    call :ExecuteCmd "pnpm" install --prod --config.node-linker=hoisted
+    call :ExecuteCmd "%PNPM_CMD%" dlx rimraf --glob node_modules
+    call :ExecuteCmd "%PNPM_CMD%" install --prod --config.node-linker=hoisted
     IF !ERRORLEVEL! NEQ 0 goto error
     popd
   )
