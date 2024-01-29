@@ -20,7 +20,7 @@ IF %ERRORLEVEL% NEQ 0 (
 
 setlocal enabledelayedexpansion
 
-call: npm i pnpm -g
+call npm i pnpm -g
 
 SET ARTIFACTS=%~dp0%..\artifacts
 
@@ -117,9 +117,11 @@ exit /b %ERRORLEVEL%
 setlocal
 
 echo Restoring npm packages in %1
+call gcm pnpm
 
 IF EXIST "%1\package.json" (
   pushd "%1"
+  call gcm pnpm
   call pnpm dlx rimraf --glob node_modules
   call pnpm install --prod --config.node-linker=hoisted
   IF !ERRORLEVEL! NEQ 0 goto error
@@ -129,6 +131,7 @@ IF EXIST "%1\package.json" (
 FOR /F "tokens=*" %%i IN ('DIR /B %1 /A:D') DO (
   IF EXIST "%1\%%i\package.json" (
     pushd "%1\%%i"
+    call gcm pnpm
     call pnpm dlx rimraf --glob node_modules
     call pnpm install --prod --config.node-linker=hoisted
     IF !ERRORLEVEL! NEQ 0 goto error
