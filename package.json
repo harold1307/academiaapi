@@ -10,6 +10,7 @@
 		"start": "func start",
 		"test": "echo \"No tests yet...\"",
 		"create:modulo": "pnpm dlx hygen modulo new",
+		"create:controller": "pnpm dlx hygen controller new",
 		"db:pull": "prisma db pull",
 		"db:studio": "prisma studio --browser none",
 		"format:check": "prettier --check \"src/**/*.ts\"",
