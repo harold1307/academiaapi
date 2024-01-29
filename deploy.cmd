@@ -131,10 +131,10 @@ call node --version
 IF EXIST "%1\package.json" (
   echo From Normal
   pushd "%1"
-  @REM call :ExecuteCmd "%PNPM_CMD%" dlx rimraf --glob node_modules
-  @REM call :ExecuteCmd "%PNPM_CMD%" install --prod --config.node-linker=hoisted
-  call npx rimraf --glob node_modules
-  call npm install --production
+  call :ExecuteCmd "%PNPM_CMD%" dlx rimraf --glob node_modules
+  call :ExecuteCmd "%PNPM_CMD%" install --prod --config.node-linker=hoisted
+  @REM call npx rimraf --glob node_modules
+  @REM call npm install --production
   IF !ERRORLEVEL! NEQ 0 goto error
   popd
 )
@@ -143,10 +143,10 @@ FOR /F "tokens=*" %%i IN ('DIR /B %1 /A:D') DO (
   IF EXIST "%1\%%i\package.json" (
     echo From Loop
     pushd "%1\%%i"
-    @REM call :ExecuteCmd "%PNPM_CMD%" dlx rimraf --glob node_modules
-    @REM call :ExecuteCmd "%PNPM_CMD%" install --prod --config.node-linker=hoisted
-    call npx rimraf --glob node_modules
-    call npm install --production
+    call :ExecuteCmd "%PNPM_CMD%" dlx rimraf --glob node_modules
+    call :ExecuteCmd "%PNPM_CMD%" install --prod --config.node-linker=hoisted
+    @REM call npx rimraf --glob node_modules
+    @REM call npm install --production
     IF !ERRORLEVEL! NEQ 0 goto error
     popd
   )
