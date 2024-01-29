@@ -20,8 +20,6 @@ IF %ERRORLEVEL% NEQ 0 (
 
 setlocal enabledelayedexpansion
 
-call npm i pnpm -g
-
 SET ARTIFACTS=%~dp0%..\artifacts
 
 IF NOT DEFINED DEPLOYMENT_SOURCE (
@@ -117,13 +115,13 @@ exit /b %ERRORLEVEL%
 setlocal
 
 echo Restoring npm packages in %1
-call gcm pnpm
+
+call npm i pnpm -g
 
 IF EXIST "%1\package.json" (
   pushd "%1"
-  call gcm pnpm
-  call pnpm dlx rimraf --glob node_modules
-  call pnpm install --prod --config.node-linker=hoisted
+  call :ExecuteCmd "pnpm" dlx rimraf --glob node_modules
+  call :ExecuteCmd "pnpm" install --prod --config.node-linker=hoisted
   IF !ERRORLEVEL! NEQ 0 goto error
   popd
 )
@@ -131,9 +129,8 @@ IF EXIST "%1\package.json" (
 FOR /F "tokens=*" %%i IN ('DIR /B %1 /A:D') DO (
   IF EXIST "%1\%%i\package.json" (
     pushd "%1\%%i"
-    call gcm pnpm
-    call pnpm dlx rimraf --glob node_modules
-    call pnpm install --prod --config.node-linker=hoisted
+    call :ExecuteCmd "pnpm" dlx rimraf --glob node_modules
+    call :ExecuteCmd "pnpm" install --prod --config.node-linker=hoisted
     IF !ERRORLEVEL! NEQ 0 goto error
     popd
   )
