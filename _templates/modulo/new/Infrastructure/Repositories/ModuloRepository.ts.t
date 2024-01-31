@@ -6,7 +6,8 @@ import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { I<%= name %> } from "../../Domain/I<%= name %>";
-import type { I<%= name %>Repository } from "../../Domain/I<%= name %>Repository"
+import type { I<%= name %>Repository, Update<%= name %>Params } from "../../Domain/I<%= name %>Repository"
+import type { ICreate<%= name %> } from "../../Domain/ICreate<%= name %>"
 
 @injectable()
 export class <%= name %>Repository implements I<%= name %>Repository {
@@ -22,10 +23,10 @@ export class <%= name %>Repository implements I<%= name %>Repository {
 
   }
 
-  // create(data: ICreate<%= name %>): Promise<I<%= name %>> {
+  create(data: ICreate<%= name %>): Promise<I<%= name %>> {
 
-  // }
-  // update(params: IUpdate<%= name %>Params): Promise<I<%= name %>> {
+  }
+  update(params: Update<%= name %>Params): Promise<I<%= name %>> {
 
-  // }
+  }
 }
