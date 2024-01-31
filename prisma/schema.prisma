@@ -168,8 +168,6 @@ model Titulo {
 
   institucionId String?
   institucion   Institucion? @relation(fields: [institucionId], references: [id], onDelete: SetNull)
-  programaId    String?
-  programa      Programa?    @relation(fields: [programaId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -670,6 +668,16 @@ model DetalleNivelTitulacion {
   @@map("detalles_niveles_titucion")
 }
 
+model TituloObtenido {
+  id     String @id @default(uuid())
+  nombre String
+
+  programaId String
+  programa   Programa @relation(fields: [programaId], references: [id])
+
+  @@map("titulos_obtenidos")
+}
+
 model Programa {
   id      String  @id @default(uuid())
   estado  Boolean @default(false)
@@ -681,7 +689,7 @@ model Programa {
   detalleNivelTitucion      DetalleNivelTitulacion     @relation(fields: [detalleNivelTitulacionId], references: [id])
   competencias              Competencia[]
   perfilesPracticaProgramas PerfilPracticaEnPrograma[]
-  titulosObtenidos          Titulo[]
+  titulosObtenidos          TituloObtenido[]
   documentosRequeridos      TipoDocumentoEnPrograma[]
 
   createdAt DateTime @default(now())
