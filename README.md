@@ -90,16 +90,18 @@ pnpm dlx prisma migrate dev --name new-field
 
 ## Comandos de creacion
 
+Cada comando tiene su prompt de creacion.
+
 - Crear modulo
 
 ```bash
-pnpm create:modulo "NombreModulo"
+pnpm create:modulo
 ```
 
 - Crear controlador
 
 ```bash
-pnpm create:controller "NombreModulo" --pluralName "NombrePlural" --path "nombre-url"
+pnpm create:controller
 ```
 
 ## Implementar modulo
