@@ -67,4 +67,6 @@ export const TYPES = {
 		"DetalleNivelTitulacionRepository",
 	),
 	DetalleNivelTitulacionService: Symbol.for("DetalleNivelTitulacionService"),
+	PerfilPracticaRepository: Symbol.for("PerfilPracticaRepository"),
+	PerfilPracticaService: Symbol.for("PerfilPracticaService"),
 } as const;

@@ -147,6 +147,12 @@ import type { IDetalleNivelTitulacionRepository } from "../../Core/DetalleNivelT
 import type { IDetalleNivelTitulacionService } from "../../Core/DetalleNivelTitulacion/Domain/IDetalleNivelTitulacionService";
 import { DetalleNivelTitulacionRepository } from "../../Core/DetalleNivelTitulacion/Infrastructure/Repositories/DetalleNivelTitulacionRepository";
 
+// perfiles de practica
+import { PerfilPracticaService } from "../../Core/PerfilPractica/Application/Service";
+import type { IPerfilPracticaRepository } from "../../Core/PerfilPractica/Domain/IPerfilPracticaRepository";
+import type { IPerfilPracticaService } from "../../Core/PerfilPractica/Domain/IPerfilPracticaService";
+import { PerfilPracticaRepository } from "../../Core/PerfilPractica/Infrastructure/Repositories/PerfilPracticaRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -390,6 +396,14 @@ StartupBuilder.bind<IDetalleNivelTitulacionService>(
 	TYPES.DetalleNivelTitulacionService,
 )
 	.to(DetalleNivelTitulacionService)
+	.inSingletonScope();
+
+// perfiles de practica
+StartupBuilder.bind<IPerfilPracticaRepository>(TYPES.PerfilPracticaRepository)
+	.to(PerfilPracticaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IPerfilPracticaService>(TYPES.PerfilPracticaService)
+	.to(PerfilPracticaService)
 	.inSingletonScope();
 
 export { StartupBuilder };
