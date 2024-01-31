@@ -33,3 +33,10 @@ app.patch("nivelesTitulacionUpdateById", {
 	handler: (req, ctx) => controller.nivelesTitulacionUpdateById(req, ctx),
 	route: "niveles-titulacion/{nivelTitulacionId}",
 });
+
+// detalles
+app.post("nivelesTitulacionCreateDetalle", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.nivelesTitulacionCreateDetalle(req, ctx),
+	route: "niveles-titulacion/{nivelTitulacionId}/detalles",
+});

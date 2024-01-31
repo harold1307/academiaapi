@@ -6,8 +6,12 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { DetalleNivelTitulacionService } from "../../DetalleNivelTitulacion/Application/Service";
+import type { ICreateDetalleNivelTitulacion } from "../../DetalleNivelTitulacion/Domain/ICreateDetalleNivelTitulacion";
+import type { IDetalleNivelTitulacionService } from "../../DetalleNivelTitulacion/Domain/IDetalleNivelTitulacionService";
 import type { ICreateNivelTitulacion } from "../Domain/ICreateNivelTitulacion";
 import type { INivelTitulacionController } from "../Domain/INivelTitulacionController";
 import type { INivelTitulacionService } from "../Domain/INivelTitulacionService";
@@ -16,10 +20,14 @@ import { NivelTitulacionService } from "./Service";
 
 export class NivelTitulacionController implements INivelTitulacionController {
 	private _nivelTitulacionService: INivelTitulacionService;
+	private _detalleNivelTitulacionService: IDetalleNivelTitulacionService;
 
 	constructor() {
 		this._nivelTitulacionService = StartupBuilder.resolve(
 			NivelTitulacionService,
+		);
+		this._detalleNivelTitulacionService = StartupBuilder.resolve(
+			DetalleNivelTitulacionService,
 		);
 	}
 
@@ -175,6 +183,47 @@ export class NivelTitulacionController implements INivelTitulacionController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async nivelesTitulacionCreateDetalle(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+			const nivelTitulacionId = req.params.nivelTitulacionId;
+
+			if (!nivelTitulacionId) return CommonResponse.invalidId();
+
+			const nivelTitulacion =
+				await this._nivelTitulacionService.getNivelTitulacionById(
+					nivelTitulacionId,
+				);
+
+			if (!nivelTitulacion) {
+				return {
+					jsonBody: { message: "El nivel de titulacion no existe." },
+					status: 400,
+				};
+			}
+
+			const body = await req.json();
+			const bodyVal = createDetalleBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const newDetalleNivelTitulacion =
+				await this._detalleNivelTitulacionService.createDetalleNivelTitulacion({
+					...bodyVal.data,
+					nivelTitulacionId,
+				});
+
+			ctx.log({ newDetalleNivelTitulacion });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const createBodySchema = z.object<ZodInferSchema<ICreateNivelTitulacion>>({
@@ -183,4 +232,10 @@ const createBodySchema = z.object<ZodInferSchema<ICreateNivelTitulacion>>({
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateNivelTitulacion>>({
 	nombre: z.string().optional(),
+});
+
+const createDetalleBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateDetalleNivelTitulacion, "nivelTitulacionId">>
+>({
+	nombre: z.string(),
 });

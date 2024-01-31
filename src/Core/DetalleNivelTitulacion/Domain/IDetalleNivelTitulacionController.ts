@@ -4,29 +4,20 @@ import type {
 	InvocationContext,
 } from "@azure/functions";
 
-export type INivelTitulacionController = {
-	nivelesTitulacionCreate(
+export type IDetalleNivelTitulacionController = {
+	detallesNivelTitulacionDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	nivelesTitulacionDeleteById(
+	detallesNivelTitulacionGetAll(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	nivelesTitulacionGetAll(
+	detallesNivelTitulacionGetById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	nivelesTitulacionGetById(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-	nivelesTitulacionUpdateById(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-
-	nivelesTitulacionCreateDetalle(
+	detallesNivelTitulacionUpdateById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;

@@ -141,6 +141,12 @@ import type { INivelTitulacionRepository } from "../../Core/NivelTitulacion/Doma
 import type { INivelTitulacionService } from "../../Core/NivelTitulacion/Domain/INivelTitulacionService";
 import { NivelTitulacionRepository } from "../../Core/NivelTitulacion/Infrastructure/Repositories/NivelTitulacionRepository";
 
+// detalles de nivel de titulacion
+import { DetalleNivelTitulacionService } from "../../Core/DetalleNivelTitulacion/Application/Service";
+import type { IDetalleNivelTitulacionRepository } from "../../Core/DetalleNivelTitulacion/Domain/IDetalleNivelTitulacionRepository";
+import type { IDetalleNivelTitulacionService } from "../../Core/DetalleNivelTitulacion/Domain/IDetalleNivelTitulacionService";
+import { DetalleNivelTitulacionRepository } from "../../Core/DetalleNivelTitulacion/Infrastructure/Repositories/DetalleNivelTitulacionRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -372,6 +378,18 @@ StartupBuilder.bind<INivelTitulacionRepository>(TYPES.NivelTitulacionRepository)
 	.inSingletonScope();
 StartupBuilder.bind<INivelTitulacionService>(TYPES.NivelTitulacionService)
 	.to(NivelTitulacionService)
+	.inSingletonScope();
+
+// detalles de nivel de titulacion
+StartupBuilder.bind<IDetalleNivelTitulacionRepository>(
+	TYPES.DetalleNivelTitulacionRepository,
+)
+	.to(DetalleNivelTitulacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IDetalleNivelTitulacionService>(
+	TYPES.DetalleNivelTitulacionService,
+)
+	.to(DetalleNivelTitulacionService)
 	.inSingletonScope();
 
 export { StartupBuilder };

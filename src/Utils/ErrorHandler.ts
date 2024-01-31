@@ -27,9 +27,19 @@ export class ErrorHandler {
 			};
 		}
 
-		// todos los errores que se manejan en la aplicacion son de servicios, y terminan con ServiceError
+		// todos los errores de servicios que se manejan en la aplicacion terminan con ServiceError
 		if (String(error.name).includes("ServiceError")) {
 			ctx.error(error.message);
+
+			return {
+				jsonBody: { message: error.message },
+				status: 500,
+			};
+		}
+
+		if (String(error.name).includes("DTOError")) {
+			ctx.error(error.message);
+			ctx.error(error.issues);
 
 			return {
 				jsonBody: { message: error.message },

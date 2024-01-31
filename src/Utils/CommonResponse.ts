@@ -1,8 +1,20 @@
 import type { HttpResponseInit } from "@azure/functions";
 
 type SuccessfulParams = Omit<HttpResponseInit, "jsonBody" | "body"> & {
+	/**
+	 * Data sended in jsonBody
+	 * @default undefined
+	 */
 	data?: any;
+	/**
+	 * Message sended in jsonBody
+	 * @default "Solicitud exitosa"
+	 */
 	message?: string;
+	/**
+	 * Extend the base body (data and message)
+	 * @default undefined
+	 */
 	extendBody?: Record<string, any>;
 };
 
@@ -26,13 +38,15 @@ export class CommonResponse {
 	/**
 	 * @default params {data = undefined, message = "Solicitud exitosa", status = 200, extendBody = undefined }
 	 */
-	static successful({
-		data = undefined,
-		message = "Solicitud exitosa",
-		status = 200,
-		extendBody = undefined,
-		...rest
-	}: SuccessfulParams): HttpResponseInit {
+	static successful(params?: SuccessfulParams): HttpResponseInit {
+		const { data, message, status, extendBody, ...rest } = {
+			data: undefined,
+			message: "Solicitud exitosa",
+			status: 200,
+			extendBody: undefined,
+			...params,
+		};
+
 		return {
 			jsonBody: { data, message, ...(extendBody || {}) },
 			status,
