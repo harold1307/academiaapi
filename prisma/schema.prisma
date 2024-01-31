@@ -574,13 +574,25 @@ model PerfilPractica {
   resultados  String?
   actividades String?
 
-  programaId String?
-  programa   Programa? @relation(fields: [programaId], references: [id], onDelete: SetNull)
+  perfilesPracticaProgramas PerfilPracticaEnPrograma[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  @@map("perfiles_practicas")
+  @@map("perfiles_practica")
+}
+
+model PerfilPracticaEnPrograma {
+  perfilPracticaId String
+  perfilPractica   PerfilPractica @relation(fields: [perfilPracticaId], references: [id])
+  programaId       String
+  programa         Programa       @relation(fields: [programaId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@id([perfilPracticaId, programaId])
+  @@map("perfiles_practica_programas")
 }
 
 model ProductoAcreditableEvaluacion {
@@ -665,12 +677,12 @@ model Programa {
   mencion String
   alias   String
 
-  detalleNivelTitulacionId String
-  detalleNivelTitucion     DetalleNivelTitulacion    @relation(fields: [detalleNivelTitulacionId], references: [id])
-  competencias             Competencia[]
-  perfilesPracticas        PerfilPractica[]
-  titulosObtenidos         Titulo[]
-  documentosRequeridos     TipoDocumentoEnPrograma[]
+  detalleNivelTitulacionId  String
+  detalleNivelTitucion      DetalleNivelTitulacion     @relation(fields: [detalleNivelTitulacionId], references: [id])
+  competencias              Competencia[]
+  perfilesPracticaProgramas PerfilPracticaEnPrograma[]
+  titulosObtenidos          Titulo[]
+  documentosRequeridos      TipoDocumentoEnPrograma[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
