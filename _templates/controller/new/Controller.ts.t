@@ -16,10 +16,10 @@ import type { I<%= name %>Service } from "../Domain/I<%= name %>Service";
 import { <%= name %>Service } from "./Service";
 
 export class <%= name %>Controller implements I<%= name %>Controller {
-	private <%= h.inflection.camelize(name, true) %>Service: I<%= name %>Service;
+	private _<%= h.inflection.camelize(name, true) %>Service: I<%= name %>Service;
 
 	constructor() {
-		this.<%= h.inflection.camelize(name, true) %>Service = StartupBuilder.resolve(
+		this._<%= h.inflection.camelize(name, true) %>Service = StartupBuilder.resolve(
 			<%= name %>Service,
 		);
 	}
