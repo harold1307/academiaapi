@@ -153,6 +153,12 @@ import type { IPerfilPracticaRepository } from "../../Core/PerfilPractica/Domain
 import type { IPerfilPracticaService } from "../../Core/PerfilPractica/Domain/IPerfilPracticaService";
 import { PerfilPracticaRepository } from "../../Core/PerfilPractica/Infrastructure/Repositories/PerfilPracticaRepository";
 
+// tipos de documento
+import { TipoDocumentoService } from "../../Core/TipoDocumento/Application/Service";
+import type { ITipoDocumentoRepository } from "../../Core/TipoDocumento/Domain/ITipoDocumentoRepository";
+import type { ITipoDocumentoService } from "../../Core/TipoDocumento/Domain/ITipoDocumentoService";
+import { TipoDocumentoRepository } from "../../Core/TipoDocumento/Infrastructure/Repositories/TipoDocumentoRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -404,6 +410,14 @@ StartupBuilder.bind<IPerfilPracticaRepository>(TYPES.PerfilPracticaRepository)
 	.inSingletonScope();
 StartupBuilder.bind<IPerfilPracticaService>(TYPES.PerfilPracticaService)
 	.to(PerfilPracticaService)
+	.inSingletonScope();
+
+// tipos de documento
+StartupBuilder.bind<ITipoDocumentoRepository>(TYPES.TipoDocumentoRepository)
+	.to(TipoDocumentoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ITipoDocumentoService>(TYPES.TipoDocumentoService)
+	.to(TipoDocumentoService)
 	.inSingletonScope();
 
 export { StartupBuilder };
