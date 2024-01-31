@@ -71,4 +71,6 @@ export const TYPES = {
 	PerfilPracticaService: Symbol.for("PerfilPracticaService"),
 	TipoDocumentoRepository: Symbol.for("TipoDocumentoRepository"),
 	TipoDocumentoService: Symbol.for("TipoDocumentoService"),
+	TituloObtenidoRepository: Symbol.for("TituloObtenidoRepository"),
+	TituloObtenidoService: Symbol.for("TituloObtenidoService"),
 } as const;
