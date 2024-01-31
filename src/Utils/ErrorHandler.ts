@@ -33,7 +33,7 @@ export class ErrorHandler {
 
 			return {
 				jsonBody: { message: error.message },
-				status: 500,
+				status: 400,
 			};
 		}
 
@@ -43,7 +43,7 @@ export class ErrorHandler {
 
 			return {
 				jsonBody: { message: error.message },
-				status: 500,
+				status: 400,
 			};
 		}
 
