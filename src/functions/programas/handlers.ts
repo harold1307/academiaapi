@@ -16,12 +16,6 @@ app.get("programasGetById", {
 	route: "programas/{programaId}",
 });
 
-app.post("programasCreate", {
-	authLevel: "anonymous",
-	handler: (req, ctx) => controller.programasCreate(req, ctx),
-	route: "programas",
-});
-
 app.deleteRequest("programasDeleteById", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.programasDeleteById(req, ctx),

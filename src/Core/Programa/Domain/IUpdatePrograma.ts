@@ -5,6 +5,6 @@ export type IUpdatePrograma = Partial<
 		ICreatePrograma & {
 			estado: boolean;
 		},
-		"nombre" | "mencion"
+		"nombre" | "mencion" | "coordinacionId"
 	>
 >;

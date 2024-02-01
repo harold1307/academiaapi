@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { IUpdatePrograma } from "../../Domain/IUpdatePrograma";
 
@@ -9,32 +10,19 @@ const schema = z.object<ZodInferSchema<IUpdatePrograma>>({
 	estado: z.boolean().optional(),
 });
 
-class UpdateProgramaDTOError extends Error {
-	public issues: z.ZodIssue[];
-
-	constructor(issues: z.ZodIssue[]) {
-		super();
-
+class UpdateProgramaDTOError extends BaseDTOError<IUpdatePrograma> {
+	constructor(error: z.ZodError<IUpdatePrograma>) {
+		super(error);
 		this.name = "UpdateProgramaDTOError";
 		this.message = "Error de validacion para actualizar el programa";
-		this.issues = issues;
 	}
 }
 
-export class UpdateProgramaDTO {
-	private data: IUpdatePrograma;
-
-	constructor(private input: unknown) {
-		const parse = schema.safeParse(this.input);
-
-		if (!parse.success) {
-			throw new UpdateProgramaDTOError(parse.error.issues);
-		}
-
-		this.data = parse.data;
-	}
-
-	getData() {
-		return this.data;
+export class UpdateProgramaDTO extends BaseValidatorDTO<
+	IUpdatePrograma,
+	UpdateProgramaDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, UpdateProgramaDTOError, input);
 	}
 }

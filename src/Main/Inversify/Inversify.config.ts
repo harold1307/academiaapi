@@ -177,6 +177,12 @@ import type { IProgramaRepository } from "../../Core/Programa/Domain/IProgramaRe
 import type { IProgramaService } from "../../Core/Programa/Domain/IProgramaService";
 import { ProgramaRepository } from "../../Core/Programa/Infrastructure/Repositories/ProgramaRepository";
 
+// coordinaciones
+import { CoordinacionService } from "../../Core/Coordinacion/Application/Service";
+import type { ICoordinacionRepository } from "../../Core/Coordinacion/Domain/ICoordinacionRepository";
+import type { ICoordinacionService } from "../../Core/Coordinacion/Domain/ICoordinacionService";
+import { CoordinacionRepository } from "../../Core/Coordinacion/Infrastructure/Repositories/CoordinacionRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -464,6 +470,14 @@ StartupBuilder.bind<IProgramaRepository>(TYPES.ProgramaRepository)
 	.inSingletonScope();
 StartupBuilder.bind<IProgramaService>(TYPES.ProgramaService)
 	.to(ProgramaService)
+	.inSingletonScope();
+
+// coordinaciones
+StartupBuilder.bind<ICoordinacionRepository>(TYPES.CoordinacionRepository)
+	.to(CoordinacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICoordinacionService>(TYPES.CoordinacionService)
+	.to(CoordinacionService)
 	.inSingletonScope();
 
 export { StartupBuilder };

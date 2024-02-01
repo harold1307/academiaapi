@@ -9,6 +9,9 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { CoordinacionService } from "../../Coordinacion/Application/Service";
+import type { ICoordinacionService } from "../../Coordinacion/Domain/ICoordinacionService";
+import type { ICreateCoordinacion } from "../../Coordinacion/Domain/ICreateCoordinacion";
 import type { ICreateSede } from "../Domain/ICreateSede";
 import type { ISedeController } from "../Domain/ISedeController";
 import type { ISedeService } from "../Domain/ISedeService";
@@ -17,9 +20,11 @@ import { SedeService } from "./Service";
 
 export class SedeController implements ISedeController {
 	private _sedeService: ISedeService;
+	private _coordinacionService: ICoordinacionService;
 
 	constructor() {
 		this._sedeService = StartupBuilder.resolve(SedeService);
+		this._coordinacionService = StartupBuilder.resolve(CoordinacionService);
 	}
 
 	async sedesGetAll(
@@ -121,6 +126,44 @@ export class SedeController implements ISedeController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async sedesCreateCoordinacion(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const sedeId = req.params.sedeId;
+
+			if (!sedeId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createCoordinacionBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const sede = await this._sedeService.getSedeById(sedeId);
+
+			if (!sede)
+				return {
+					jsonBody: { message: "La sede no existe" },
+					status: 400,
+				};
+
+			const newCoordinacion =
+				await this._coordinacionService.createCoordinacion({
+					...bodyVal.data,
+					sedeId,
+				});
+
+			ctx.log({ newCoordinacion });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const createBodySchema = z.object<ZodInferSchema<ICreateSede>>({
@@ -137,4 +180,11 @@ const updateBodySchema = z.object<ZodInferSchema<IUpdateSede>>({
 	provincia: z.string().optional(),
 	canton: z.string().optional(),
 	codigo: z.string().optional(),
+});
+
+const createCoordinacionBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateCoordinacion, "sedeId">>
+>({
+	alias: z.string(),
+	nombre: z.string(),
 });

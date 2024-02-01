@@ -9,8 +9,6 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
-import { DetalleNivelTitulacionService } from "../../DetalleNivelTitulacion/Application/Service";
-import type { IDetalleNivelTitulacionService } from "../../DetalleNivelTitulacion/Domain/IDetalleNivelTitulacionService";
 import { TipoDocumentoService } from "../../TipoDocumento/Application/Service";
 import type { ITipoDocumentoService } from "../../TipoDocumento/Domain/ITipoDocumentoService";
 import { TipoDocumentoEnProgramaService } from "../../TipoDocumentoEnPrograma/Application/Service";
@@ -19,7 +17,6 @@ import type { ITipoDocumentoEnProgramaService } from "../../TipoDocumentoEnProgr
 import { TituloObtenidoService } from "../../TituloObtenido/Application/Service";
 import type { ICreateTituloObtenido } from "../../TituloObtenido/Domain/ICreateTituloObtenido";
 import type { ITituloObtenidoService } from "../../TituloObtenido/Domain/ITituloObtenidoService";
-import type { ICreatePrograma } from "../Domain/ICreatePrograma";
 import type { IProgramaController } from "../Domain/IProgramaController";
 import type { IProgramaService } from "../Domain/IProgramaService";
 import type { IUpdatePrograma } from "../Domain/IUpdatePrograma";
@@ -27,16 +24,12 @@ import { ProgramaService } from "./Service";
 
 export class ProgramaController implements IProgramaController {
 	private _programaService: IProgramaService;
-	private _detalleNivelTitulacionService: IDetalleNivelTitulacionService;
 	private _tipoDocumentoService: ITipoDocumentoService;
 	private _tipoDocumentoEnProgramaService: ITipoDocumentoEnProgramaService;
 	private _tituloObtenidoService: ITituloObtenidoService;
 
 	constructor() {
 		this._programaService = StartupBuilder.resolve(ProgramaService);
-		this._detalleNivelTitulacionService = StartupBuilder.resolve(
-			DetalleNivelTitulacionService,
-		);
 		this._tipoDocumentoEnProgramaService = StartupBuilder.resolve(
 			TipoDocumentoEnProgramaService,
 		);
@@ -73,41 +66,6 @@ export class ProgramaController implements IProgramaController {
 
 			return CommonResponse.successful({ data: programa });
 		} catch (error) {
-			return ErrorHandler.handle({ ctx, error });
-		}
-	}
-
-	async programasCreate(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit> {
-		try {
-			ctx.log(`Http function processed request for url '${req.url}'`);
-
-			const body = await req.json();
-			const bodyVal = createBodySchema.safeParse(body);
-
-			if (!bodyVal.success) return CommonResponse.invalidBody();
-
-			const detalleNivelTitulacion =
-				await this._detalleNivelTitulacionService.getDetalleNivelTitulacionById(
-					bodyVal.data.detalleNivelTitulacionId,
-				);
-
-			if (!detalleNivelTitulacion)
-				return {
-					jsonBody: { message: "El detalle de nivel titulacion no existe" },
-					status: 400,
-				};
-
-			const newPrograma = await this._programaService.createPrograma(
-				bodyVal.data,
-			);
-
-			ctx.log({ newPrograma });
-
-			return CommonResponse.successful({ status: 201 });
-		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
@@ -236,13 +194,6 @@ export class ProgramaController implements IProgramaController {
 		}
 	}
 }
-
-const createBodySchema = z.object<ZodInferSchema<ICreatePrograma>>({
-	nombre: z.string(),
-	mencion: z.string(),
-	alias: z.string(),
-	detalleNivelTitulacionId: z.string(),
-});
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdatePrograma>>({
 	alias: z.string().optional(),

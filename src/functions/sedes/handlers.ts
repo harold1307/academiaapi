@@ -33,3 +33,10 @@ app.patch("sedesUpdateById", {
 	handler: (req, ctx) => controller.sedesUpdateById(req, ctx),
 	route: "sedes/{sedeId}",
 });
+
+// coordinaciones
+app.post("sedesCreateCoordinacion", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.sedesCreateCoordinacion(req, ctx),
+	route: "sedes/{sedeId}/coordinaciones",
+});

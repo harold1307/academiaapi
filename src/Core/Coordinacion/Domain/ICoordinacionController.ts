@@ -4,29 +4,25 @@ import type {
 	InvocationContext,
 } from "@azure/functions";
 
-export type ISedeController = {
-	sedesCreate(
+export type ICoordinacionController = {
+	coordinacionesDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	sedesDeleteById(
+	coordinacionesGetAll(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	sedesGetAll(
+	coordinacionesGetById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	sedesGetById(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-	sedesUpdateById(
+	coordinacionesUpdateById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
 
-	sedesCreateCoordinacion(
+	coordinacionesCreatePrograma(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;

@@ -89,12 +89,14 @@ export class ProgramaRepository implements IProgramaRepository {
 
 	async create({
 		detalleNivelTitulacionId,
+		coordinacionId,
 		...data
 	}: ICreatePrograma): Promise<IPrograma> {
 		const programa = await this._client.programa.create({
 			data: {
 				...data,
 				detalleNivelTitulacion: { connect: { id: detalleNivelTitulacionId } },
+				coordinacion: { connect: { id: coordinacionId } },
 			},
 			include: {
 				detalleNivelTitulacion: {

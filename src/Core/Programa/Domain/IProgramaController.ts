@@ -5,10 +5,6 @@ import type {
 } from "@azure/functions";
 
 export type IProgramaController = {
-	programasCreate(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
 	programasDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,
