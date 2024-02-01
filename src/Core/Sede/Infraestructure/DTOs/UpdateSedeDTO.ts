@@ -1,9 +1,10 @@
 import { z } from "zod";
 
 import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
+import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateSede } from "../../Domain/IUpdateSede";
 
-const schema: z.ZodType<IUpdateSede> = z.object({
+const schema = z.object<ZodInferSchema<IUpdateSede>>({
 	nombre: z.string().optional(),
 	pais: z.string().optional(),
 	provincia: z.string().optional(),

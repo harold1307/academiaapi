@@ -1,9 +1,10 @@
 import { $Enums } from "@prisma/client";
 import { z } from "zod";
 
+import type { ZodInferSchema } from "../../../../types";
 import type { ICreateCompetencia } from "../../Domain/ICreateCompetencia";
 
-const schema: z.ZodType<ICreateCompetencia> = z.object({
+const schema = z.object<ZodInferSchema<ICreateCompetencia>>({
 	tipo: z.nativeEnum($Enums.TipoCompetencia),
 	nombre: z.string(),
 	asignaturaEnMallaId: z.string().nullable(),

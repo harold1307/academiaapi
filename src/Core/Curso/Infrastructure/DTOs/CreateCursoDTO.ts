@@ -1,8 +1,9 @@
 import { z } from "zod";
 
+import type { ZodInferSchema } from "../../../../types";
 import type { ICreateCurso } from "../../Domain/ICreateCurso";
 
-const schema: z.ZodType<ICreateCurso> = z.object({
+const schema = z.object<ZodInferSchema<ICreateCurso>>({
 	estado: z.boolean(),
 	nombre: z.string(),
 	certificado: z.string().nullable(),
