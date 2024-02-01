@@ -31,19 +31,8 @@ export class MallaCurricularService implements IMallaCurricularService {
 
 	async createMallaCurricular(data: ICreateMallaCurricular) {
 		const dto = new CreateMallaCurricularDTO(data);
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para crear de malla curricular",
-				validation.error,
-			);
-			throw new MallaCurricularServiceError(
-				"Esquema para crear de malla curricular invalido.",
-			);
-		}
-
-		return this._mallaCurricularRepository.create(validation.data);
+		return this._mallaCurricularRepository.create(dto.getData());
 	}
 
 	async getAllMallasCurriculares() {
@@ -137,21 +126,10 @@ export class MallaCurricularService implements IMallaCurricularService {
 
 	async updateMallaCurricularById({ id, data }: IUpdateMallaCurricularParams) {
 		const dto = new UpdateMallaCurricularDTO(data);
-		const validation = dto.validate();
-
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para actualizar mallaCurricular",
-				JSON.stringify(validation.error),
-			);
-			throw new MallaCurricularServiceError(
-				"Esquema para actualizar mallaCurricular invalido.",
-			);
-		}
 
 		return this._mallaCurricularRepository.update({
 			id,
-			data: validation.data,
+			data: dto.getData(),
 		});
 	}
 
@@ -163,24 +141,13 @@ export class MallaCurricularService implements IMallaCurricularService {
 		mallaId: string,
 		data: any,
 	): Promise<ILugarEjecucion> {
+		const dto = new CreateLugarEjecucionDTO({ ...data, mallaId });
+
 		const malla = this._mallaCurricularRepository.getById(mallaId);
 
 		if (!malla) throw new MallaCurricularServiceError("La malla no existe.");
 
-		const dto = new CreateLugarEjecucionDTO({ ...data, mallaId });
-		const validation = dto.validate();
-
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para crear lugar de ejecucion.",
-				JSON.stringify(validation.error, null, 2),
-			);
-			throw new MallaCurricularServiceError(
-				"Esquema para crear lugar de ejecucion invalido.",
-			);
-		}
-
-		return this._lugarEjecucionRepository.create(validation.data);
+		return this._lugarEjecucionRepository.create(dto.getData());
 	}
 
 	async getMallaCurricularByIdWithLugaresEjecucion(
@@ -191,7 +158,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 			include: {
 				lugaresEjecucion: {
 					include: {
-						institucion: true,
+						sede: true,
 					},
 				},
 			},
@@ -203,8 +170,8 @@ export class MallaCurricularService implements IMallaCurricularService {
 			...malla,
 			lugaresEjecucion: malla.lugaresEjecucion.map(l => ({
 				...l,
-				institucion: {
-					...l.institucion,
+				sede: {
+					...l.sede,
 					enUso: true,
 				},
 			})),

@@ -13,31 +13,39 @@ export class LugarEjecucionRepository implements ILugarEjecucionRepository {
 	async getAll(): Promise<ILugarEjecucion[]> {
 		const lugares = await this._client.lugarEjecucion.findMany({
 			include: {
-				institucion: true,
+				sede: true,
 			},
 		});
 
 		return lugares.map(l => ({
 			...l,
-			institucion: {
-				...l.institucion,
+			sede: {
+				...l.sede,
 				enUso: true,
 			},
 		}));
 	}
 
-	async create(data: ICreateLugarEjecucion): Promise<ILugarEjecucion> {
+	async create({
+		mallaId,
+		sedeId,
+		...data
+	}: ICreateLugarEjecucion): Promise<ILugarEjecucion> {
 		const lugar = await this._client.lugarEjecucion.create({
-			data,
+			data: {
+				...data,
+				malla: { connect: { id: mallaId } },
+				sede: { connect: { id: sedeId } },
+			},
 			include: {
-				institucion: true,
+				sede: true,
 			},
 		});
 
 		return {
 			...lugar,
-			institucion: {
-				...lugar.institucion,
+			sede: {
+				...lugar.sede,
 				enUso: true,
 			},
 		};

@@ -7,6 +7,7 @@ import { TipoAsignatura, TipoDuracion } from "@prisma/client";
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
 import { AsignaturaService } from "../../Asignatura/Application/Service";
@@ -16,6 +17,10 @@ import type { IAsignaturaEnMallaService } from "../../AsignaturaEnMalla/Domain/I
 import type { ICreateAsignaturaEnMalla } from "../../AsignaturaEnMalla/Domain/ICreateAsignaturaEnMalla";
 import { CompetenciaService } from "../../Competencia/Application/Service";
 import type { ICompetenciaService } from "../../Competencia/Domain/ICompetenciaService";
+import { ModalidadService } from "../../Modalidad/Application/Service";
+import type { IModalidadService } from "../../Modalidad/Domain/IModalidadService";
+import { SedeService } from "../../Sede/Application/Service";
+import type { ISedeService } from "../../Sede/Domain/ISedeService";
 import type { ICreateLugarEjecucion } from "../Domain/ICreateLugarEjecucion";
 import type { ICreateMallaCurricular } from "../Domain/ICreateMallaCurricular";
 import type { IMallaCurricularController } from "../Domain/IMallaCurricularController";
@@ -28,6 +33,8 @@ export class MallaCurricularController implements IMallaCurricularController {
 	private _asignaturaService: IAsignaturaService;
 	private _asignaturaEnMallaService: IAsignaturaEnMallaService;
 	private _competenciaService: ICompetenciaService;
+	private _modalidadService: IModalidadService;
+	private _sedeService: ISedeService;
 
 	constructor() {
 		this._mallaCurricularService = StartupBuilder.resolve(
@@ -38,6 +45,8 @@ export class MallaCurricularController implements IMallaCurricularController {
 			AsignaturaEnMallaService,
 		);
 		this._competenciaService = StartupBuilder.resolve(CompetenciaService);
+		this._modalidadService = StartupBuilder.resolve(ModalidadService);
+		this._sedeService = StartupBuilder.resolve(SedeService);
 	}
 
 	async mallasCurricularesGetAll(
@@ -50,10 +59,7 @@ export class MallaCurricularController implements IMallaCurricularController {
 			const mallaCurriculares =
 				await this._mallaCurricularService.getAllMallasCurricularesWithAsignaturas();
 
-			return {
-				jsonBody: { data: mallaCurriculares, message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: mallaCurriculares });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -67,24 +73,16 @@ export class MallaCurricularController implements IMallaCurricularController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const mallaCurricularId = req.params.mallaCurricularId;
 
-			if (!mallaCurricularId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado",
-					},
-					status: 400,
-				};
-			}
+			if (!mallaCurricularId) return CommonResponse.invalidId();
 
 			const mallaCurricular =
 				await this._mallaCurricularService.getMallaCurricularById(
 					mallaCurricularId,
 				);
 
-			return {
-				jsonBody: { data: mallaCurricular, message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({
+				data: mallaCurricular,
+			});
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -99,17 +97,19 @@ export class MallaCurricularController implements IMallaCurricularController {
 			const body = await req.json();
 			const bodyVal = createBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				ctx.error(bodyVal.error);
-				return {
-					jsonBody: {
-						message: "Peticion invalida",
-					},
-					status: 400,
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const { fechaAprobacion, fechaLimiteVigencia, ...data } = bodyVal.data;
+
+			const modalidad = await this._modalidadService.getModalidadById(
+				data.modalidadId,
+			);
+
+			if (!modalidad)
+				return {
+					jsonBody: { message: "La modalidad no existe" },
+					status: 400,
+				};
 
 			const newMallaCurricular =
 				await this._mallaCurricularService.createMallaCurricular({
@@ -120,7 +120,7 @@ export class MallaCurricularController implements IMallaCurricularController {
 
 			ctx.log({ newMallaCurricular });
 
-			return { jsonBody: { message: "Solicitud exitosa" }, status: 201 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -134,26 +134,12 @@ export class MallaCurricularController implements IMallaCurricularController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const mallaCurricularId = req.params.mallaCurricularId;
 
-			if (!mallaCurricularId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado",
-					},
-					status: 400,
-				};
-			}
+			if (!mallaCurricularId) return CommonResponse.invalidId();
 
 			const body = await req.json();
 			const bodyVal = updateBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				return {
-					jsonBody: {
-						message: "Peticion invalida",
-					},
-					status: 400,
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const { fechaAprobacion, fechaLimiteVigencia, ...data } = bodyVal.data;
 
@@ -171,10 +157,7 @@ export class MallaCurricularController implements IMallaCurricularController {
 					},
 				});
 
-			return {
-				jsonBody: { data: mallaCurricular, message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: mallaCurricular });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -188,23 +171,13 @@ export class MallaCurricularController implements IMallaCurricularController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const mallaCurricularId = req.params.mallaCurricularId;
 
-			if (!mallaCurricularId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado",
-					},
-					status: 400,
-				};
-			}
+			if (!mallaCurricularId) return CommonResponse.invalidId();
 
 			await this._mallaCurricularService.deleteMallaCurricularById(
 				mallaCurricularId,
 			);
 
-			return {
-				jsonBody: { message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful();
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -218,26 +191,35 @@ export class MallaCurricularController implements IMallaCurricularController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const mallaCurricularId = req.params.mallaCurricularId;
 
-			if (!mallaCurricularId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado",
-					},
-					status: 400,
-				};
-			}
+			if (!mallaCurricularId) return CommonResponse.invalidId();
 
 			const body = await req.json();
 			const bodyVal = createLugarEjecucionBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				return {
-					jsonBody: { message: "Peticion invalida" },
-					status: 400,
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const { data } = bodyVal;
+
+			const malla =
+				await this._mallaCurricularService.getMallaCurricularById(
+					mallaCurricularId,
+				);
+
+			if (!malla)
+				return {
+					jsonBody: {
+						message: "La malla curricular no existe",
+					},
+					status: 400,
+				};
+
+			const sede = await this._sedeService.getSedeById(data.sedeId);
+
+			if (!sede)
+				return {
+					jsonBody: { message: "La sede no existe" },
+					status: 400,
+				};
 
 			const newLugarEjecucion =
 				await this._mallaCurricularService.createLugarEjecucion(
@@ -247,7 +229,7 @@ export class MallaCurricularController implements IMallaCurricularController {
 
 			ctx.log({ newLugarEjecucion });
 
-			return { jsonBody: { message: "Solicitud exitosa" }, status: 201 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -262,24 +244,13 @@ export class MallaCurricularController implements IMallaCurricularController {
 			const mallaCurricularId = req.params.mallaCurricularId;
 			const asignaturaId = req.params.asignaturaId;
 
-			if (!mallaCurricularId || !asignaturaId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado",
-					},
-					status: 400,
-				};
-			}
+			if (!mallaCurricularId || !asignaturaId)
+				return CommonResponse.invalidId();
 
 			const body = await req.json();
 			const bodyVal = createAsignaturaEnMallaBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				return {
-					jsonBody: { message: "Peticion invalida" },
-					status: 400,
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const { data } = bodyVal;
 
@@ -324,7 +295,7 @@ export class MallaCurricularController implements IMallaCurricularController {
 
 				newAsignaturaEnMallaId = asignaturaEnMalla.id;
 
-				return { jsonBody: { message: "Solicitud exitosa" }, status: 201 };
+				return CommonResponse.successful({ status: 201 });
 			}
 
 			if (!data.esAnexo && data.ejeFormativoId) {
@@ -346,10 +317,10 @@ export class MallaCurricularController implements IMallaCurricularController {
 			}
 
 			if (newAsignaturaEnMallaId) {
-				return { jsonBody: { message: "Solicitud exitosa" }, status: 201 };
+				return CommonResponse.successful({ status: 201 });
 			}
 
-			return { jsonBody: { message: "Error desconocido" }, status: 400 };
+			return { jsonBody: { message: "Error desconocido" }, status: 500 };
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -364,24 +335,14 @@ export class MallaCurricularController implements IMallaCurricularController {
 
 			const mallaCurricularId = req.params.mallaCurricularId;
 
-			if (!mallaCurricularId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado",
-					},
-					status: 400,
-				};
-			}
+			if (!mallaCurricularId) return CommonResponse.invalidId();
 
 			const mallaCurricular =
 				await this._mallaCurricularService.getMallaCurricularByIdWithLugaresEjecucion(
 					mallaCurricularId,
 				);
 
-			return {
-				jsonBody: { data: mallaCurricular, message: "Solicitud exitosa." },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: mallaCurricular });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -396,14 +357,7 @@ export class MallaCurricularController implements IMallaCurricularController {
 
 			const mallaCurricularId = req.params.mallaCurricularId;
 
-			if (!mallaCurricularId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado",
-					},
-					status: 400,
-				};
-			}
+			if (!mallaCurricularId) return CommonResponse.invalidId();
 
 			const { query } = req;
 
@@ -419,10 +373,7 @@ export class MallaCurricularController implements IMallaCurricularController {
 					},
 				);
 
-			return {
-				jsonBody: { data: mallaCurricular, message: "Solicitud exitosa." },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: mallaCurricular });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -492,7 +443,7 @@ const updateBodySchema = z.object<
 const createLugarEjecucionBodySchema = z.object<
 	ZodInferSchema<Omit<ICreateLugarEjecucion, "mallaId">>
 >({
-	institucionId: z.string(),
+	sedeId: z.string(),
 	codigo: z.string().nullable(),
 });
 

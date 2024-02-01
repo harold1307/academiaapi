@@ -1,7 +1,7 @@
 export const TYPES = {
 	PrismaClient: Symbol.for("PrismaClient"),
-	InstitucionRepository: Symbol.for("InstitucionRepository"),
-	InstitucionService: Symbol.for("InstitucionService"),
+	SedeRepository: Symbol.for("SedeRepository"),
+	SedeService: Symbol.for("SedeService"),
 	MallaCurricularRepository: Symbol.for("MallaCurricularRepository"),
 	MallaCurricularService: Symbol.for("MallaCurricularService"),
 	AsignaturaRepository: Symbol.for("AsignaturaRepository"),

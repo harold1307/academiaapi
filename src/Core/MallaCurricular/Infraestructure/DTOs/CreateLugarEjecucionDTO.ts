@@ -2,25 +2,27 @@ import { z } from "zod";
 
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreateLugarEjecucion } from "../../Domain/ICreateLugarEjecucion";
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 
 const schema = z.object<ZodInferSchema<ICreateLugarEjecucion>>({
 	mallaId: z.string(),
 	codigo: z.string().nullable(),
-	institucionId: z.string(),
+	sedeId: z.string().uuid(),
 });
 
-export class CreateLugarEjecucionDTO {
-	private data: ICreateLugarEjecucion | undefined;
+class CreateLugarEjecucionDTOError extends BaseDTOError<ICreateLugarEjecucion> {
+	constructor(error: z.ZodError<ICreateLugarEjecucion>) {
+		super(error);
+		this.name = "CreateLugarEjecucionDTOError";
+		this.message = "Error de validacion para crear el lugar de ejecucion";
+	}
+}
 
-	constructor(private input: unknown) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class CreateLugarEjecucionDTO extends BaseValidatorDTO<
+	ICreateLugarEjecucion,
+	CreateLugarEjecucionDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateLugarEjecucionDTOError, input);
 	}
 }

@@ -3,11 +3,11 @@ import "reflect-metadata";
 import type { PrismaClient } from "@prisma/client";
 import { Container } from "inversify";
 
-// Institucion
-import { InstitucionService } from "../../Core/Institucion/Application/Service";
-import type { IInstitucionRepository } from "../../Core/Institucion/Domain/IInstitucionRepository";
-import type { IInstitucionService } from "../../Core/Institucion/Domain/IInstitucionService";
-import { InstitucionRepository } from "../../Core/Institucion/Infraestructure/Repositories/InstitucionRepository";
+// sede
+import { SedeService } from "../../Core/Sede/Application/Service";
+import type { ISedeRepository } from "../../Core/Sede/Domain/ISedeRepository";
+import type { ISedeService } from "../../Core/Sede/Domain/ISedeService";
+import { SedeRepository } from "../../Core/Sede/Infraestructure/Repositories/SedeRepository";
 
 // Malla Curricular
 import { MallaCurricularService } from "../../Core/MallaCurricular/Application/Service";
@@ -189,12 +189,12 @@ const StartupBuilder = new Container();
 // prisma
 StartupBuilder.bind<PrismaClient>(TYPES.PrismaClient).toConstantValue(Prisma);
 
-// institucion
-StartupBuilder.bind<IInstitucionRepository>(TYPES.InstitucionRepository)
-	.to(InstitucionRepository)
+// sedes
+StartupBuilder.bind<ISedeRepository>(TYPES.SedeRepository)
+	.to(SedeRepository)
 	.inSingletonScope();
-StartupBuilder.bind<IInstitucionService>(TYPES.InstitucionService)
-	.to(InstitucionService)
+StartupBuilder.bind<ISedeService>(TYPES.SedeService)
+	.to(SedeService)
 	.inSingletonScope();
 
 // malla curricular

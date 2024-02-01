@@ -1,6 +1,7 @@
 import { TipoDuracion } from "@prisma/client";
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateMallaCurricular } from "../../Domain/IUpdateMallaCurricular";
 
@@ -27,17 +28,19 @@ const schema = z.object<ZodInferSchema<IUpdateMallaCurricular>>({
 	observaciones: z.string().optional(),
 });
 
-export class UpdateMallaCurricularDTO {
-	private data: IUpdateMallaCurricular | undefined;
-	constructor(private input: any) {}
+class UpdateMallaCurricularDTOError extends BaseDTOError<IUpdateMallaCurricular> {
+	constructor(error: z.ZodError<IUpdateMallaCurricular>) {
+		super(error);
+		this.name = "UpdateMallaCurricularDTOError";
+		this.message = "Error de validacion para actualizar la malla curricular";
+	}
+}
 
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class UpdateMallaCurricularDTO extends BaseValidatorDTO<
+	IUpdateMallaCurricular,
+	UpdateMallaCurricularDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, UpdateMallaCurricularDTOError, input);
 	}
 }

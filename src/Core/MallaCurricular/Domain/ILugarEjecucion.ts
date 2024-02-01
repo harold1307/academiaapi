@@ -1,7 +1,7 @@
 import type { LugarEjecucion } from "@prisma/client";
 
-import type { IInstitucion } from "../../Institucion/Domain/IInstitucion";
+import type { ISede } from "../../Sede/Domain/ISede";
 
 export type ILugarEjecucion = LugarEjecucion & {
-	institucion: IInstitucion;
+	sede: ISede;
 };
