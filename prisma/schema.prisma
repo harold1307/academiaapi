@@ -524,9 +524,10 @@ model Sesion {
   id     String  @id @default(uuid())
   estado Boolean @default(false)
   nombre String
+  alias  String
+
   sedeId String
-  sede   Sede    @relation(fields: [sedeId], references: [id])
-  alias  String?
+  sede   Sede   @relation(fields: [sedeId], references: [id])
 
   lunes     Boolean
   martes    Boolean
