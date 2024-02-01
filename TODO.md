@@ -61,3 +61,7 @@
 
 - [] Implementar enUso
 - [] Implementar creacion desde Programa
+
+## TIpo Documento En Programa
+
+- [] Implementar enUso

@@ -73,4 +73,8 @@ export const TYPES = {
 	TipoDocumentoService: Symbol.for("TipoDocumentoService"),
 	TituloObtenidoRepository: Symbol.for("TituloObtenidoRepository"),
 	TituloObtenidoService: Symbol.for("TituloObtenidoService"),
+	TipoDocumentoEnProgramaRepository: Symbol.for(
+		"TipoDocumentoEnProgramaRepository",
+	),
+	TipoDocumentoEnProgramaService: Symbol.for("TipoDocumentoEnProgramaService"),
 } as const;

@@ -165,6 +165,12 @@ import type { ITituloObtenidoRepository } from "../../Core/TituloObtenido/Domain
 import type { ITituloObtenidoService } from "../../Core/TituloObtenido/Domain/ITituloObtenidoService";
 import { TituloObtenidoRepository } from "../../Core/TituloObtenido/Infrastructure/Repositories/TituloObtenidoRepository";
 
+// tipos de documento en programas
+import { TipoDocumentoEnProgramaService } from "../../Core/TipoDocumentoEnPrograma/Application/Service";
+import type { ITipoDocumentoEnProgramaRepository } from "../../Core/TipoDocumentoEnPrograma/Domain/ITipoDocumentoEnProgramaRepository";
+import type { ITipoDocumentoEnProgramaService } from "../../Core/TipoDocumentoEnPrograma/Domain/ITipoDocumentoEnProgramaService";
+import { TipoDocumentoEnProgramaRepository } from "../../Core/TipoDocumentoEnPrograma/Infrastructure/Repositories/TipoDocumentoEnProgramaRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -432,6 +438,18 @@ StartupBuilder.bind<ITituloObtenidoRepository>(TYPES.TituloObtenidoRepository)
 	.inSingletonScope();
 StartupBuilder.bind<ITituloObtenidoService>(TYPES.TituloObtenidoService)
 	.to(TituloObtenidoService)
+	.inSingletonScope();
+
+// tipos de documento en programas
+StartupBuilder.bind<ITipoDocumentoEnProgramaRepository>(
+	TYPES.TipoDocumentoEnProgramaRepository,
+)
+	.to(TipoDocumentoEnProgramaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ITipoDocumentoEnProgramaService>(
+	TYPES.TipoDocumentoEnProgramaService,
+)
+	.to(TipoDocumentoEnProgramaService)
 	.inSingletonScope();
 
 export { StartupBuilder };
