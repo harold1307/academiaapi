@@ -60,7 +60,7 @@
 ## Titulo Obtenido
 
 - [] Implementar enUso
-- [] Implementar creacion desde Programa
+- [x] Implementar creacion desde Programa
 
 ## TIpo Documento En Programa
 
