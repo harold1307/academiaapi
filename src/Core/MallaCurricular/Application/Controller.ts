@@ -349,6 +349,7 @@ const updateBodySchema = z.object<
 		}
 	>
 >({
+	estado: z.boolean().optional(),
 	tituloObtenidoId: z.string().optional(),
 	tipoDuracion: z.nativeEnum(TipoDuracion).optional(),
 	fechaAprobacion: z.string().datetime().optional(),

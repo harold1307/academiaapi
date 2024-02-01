@@ -6,6 +6,7 @@ import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateMallaCurricular } from "../../Domain/IUpdateMallaCurricular";
 
 const schema = z.object<ZodInferSchema<IUpdateMallaCurricular>>({
+	estado: z.boolean().optional(),
 	tituloObtenidoId: z.string().uuid().optional(),
 	tipoDuracion: z.nativeEnum(TipoDuracion).optional(),
 	fechaAprobacion: z.date().optional(),
