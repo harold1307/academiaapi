@@ -6,19 +6,14 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
+import type { ZodInferSchema } from "../../../types";
+import type { ICreateModalidad } from "../Domain/ICreateModalidad";
 import type { IModalidadController } from "../Domain/IModalidadController";
 import type { IModalidadService } from "../Domain/IModalidadService";
+import type { IUpdateModalidad } from "../Domain/IUpdateModalidad";
 import { ModalidadService } from "./Service";
-
-const createBodySchema = z.object({
-	nombre: z.string(),
-	alias: z.string().nullable(),
-});
-
-const updateBodySchema = z.object({
-	alias: z.string().nullable(),
-});
 
 export class ModalidadController implements IModalidadController {
 	private _modalidadService: IModalidadService;
@@ -35,10 +30,7 @@ export class ModalidadController implements IModalidadController {
 
 			const modalidades = await this._modalidadService.getAllModalidades();
 
-			return {
-				jsonBody: { data: modalidades, message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: modalidades });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -50,24 +42,15 @@ export class ModalidadController implements IModalidadController {
 	): Promise<HttpResponseInit> {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
+
 			const modalidadId = req.params.modalidadId;
 
-			if (!modalidadId) {
-				return {
-					jsonBody: {
-						message: "ID invalido o no identificado",
-					},
-					status: 400,
-				};
-			}
+			if (!modalidadId) return CommonResponse.invalidId();
 
-			const modalidades =
+			const modalidad =
 				await this._modalidadService.getModalidadById(modalidadId);
 
-			return {
-				jsonBody: { data: modalidades, message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: modalidad });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -81,17 +64,9 @@ export class ModalidadController implements IModalidadController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 
 			const body = await req.json();
-
 			const bodyVal = createBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				return {
-					jsonBody: {
-						message: "Peticion invalida",
-					},
-					status: 400,
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const newModalidad = await this._modalidadService.createModalidad(
 				bodyVal.data,
@@ -99,10 +74,7 @@ export class ModalidadController implements IModalidadController {
 
 			ctx.log({ newModalidad });
 
-			return {
-				jsonBody: { message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({ status: 201 });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -116,37 +88,19 @@ export class ModalidadController implements IModalidadController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const modalidadId = req.params.modalidadId;
 
-			if (!modalidadId) {
-				return {
-					jsonBody: {
-						message: "ID invalido o no identificado",
-					},
-					status: 400,
-				};
-			}
+			if (!modalidadId) return CommonResponse.invalidId();
 
 			const body = await req.json();
-
 			const bodyVal = updateBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				return {
-					jsonBody: {
-						message: "Peticion invalida",
-						status: 400,
-					},
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
-			const modalidades = await this._modalidadService.updateModalidadById({
+			const modalidad = await this._modalidadService.updateModalidadById({
 				id: modalidadId,
 				data: bodyVal.data,
 			});
 
-			return {
-				jsonBody: { data: modalidades, message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: modalidad });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -161,23 +115,24 @@ export class ModalidadController implements IModalidadController {
 
 			const modalidadId = req.params.modalidadId;
 
-			if (!modalidadId) {
-				return {
-					jsonBody: {
-						message: "ID invalido o no identificado",
-					},
-					status: 400,
-				};
-			}
+			if (!modalidadId) return CommonResponse.invalidId();
 
 			await this._modalidadService.deleteModalidadById(modalidadId);
 
-			return {
-				jsonBody: { message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful();
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 }
+
+const createBodySchema = z.object<ZodInferSchema<ICreateModalidad>>({
+	nombre: z.string(),
+	alias: z.string().nullable(),
+});
+
+const updateBodySchema = z.object<ZodInferSchema<IUpdateModalidad>>({
+	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+	alias: z.string().nullable().optional(),
+	nombre: z.string().optional(),
+});

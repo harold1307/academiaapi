@@ -5,7 +5,7 @@ import type { ICreateModalidad } from "../Domain/ICreateModalidad";
 import type { IModalidad } from "../Domain/IModalidad";
 import type {
 	IModalidadRepository,
-	IUpdateModalidadParams,
+	UpdateModalidadParams,
 } from "../Domain/IModalidadRepository";
 import type { IModalidadService } from "../Domain/IModalidadService";
 import { CreateModalidadDTO } from "../Infrastructure/DTOs/CreateModalidadDTO";
@@ -20,19 +20,8 @@ export class ModalidadService implements IModalidadService {
 
 	createModalidad(data: ICreateModalidad): Promise<IModalidad> {
 		const dto = new CreateModalidadDTO(data);
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para crear de modalidad",
-				validation.error,
-			);
-			throw new ModalidadServiceError(
-				"Esquema para crear de modalidad invalido.",
-			);
-		}
-
-		return this._modalidadRepository.create(validation.data);
+		return this._modalidadRepository.create(dto.getData());
 	}
 
 	getAllModalidades(): Promise<IModalidad[]> {
@@ -49,7 +38,9 @@ export class ModalidadService implements IModalidadService {
 		if (!modalidad) throw new ModalidadServiceError("La modalidad no existe");
 
 		if (modalidad.enUso)
-			throw new ModalidadServiceError("La modalidad esta en uso");
+			throw new ModalidadServiceError(
+				"La modalidad esta en uso, no se puede eliminar",
+			);
 
 		return this._modalidadRepository.deleteById(id);
 	}
@@ -57,21 +48,10 @@ export class ModalidadService implements IModalidadService {
 	updateModalidadById({
 		data,
 		id,
-	}: IUpdateModalidadParams): Promise<IModalidad> {
+	}: UpdateModalidadParams): Promise<IModalidad> {
 		const dto = new UpdateModalidadDTO(data);
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para actualizar de modalidad",
-				validation.error,
-			);
-			throw new ModalidadServiceError(
-				"Esquema para actualizar de modalidad invalido.",
-			);
-		}
-
-		return this._modalidadRepository.update({ data: validation.data, id });
+		return this._modalidadRepository.update({ data: dto.getData(), id });
 	}
 }
 

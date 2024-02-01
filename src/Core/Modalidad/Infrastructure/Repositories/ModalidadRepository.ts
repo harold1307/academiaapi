@@ -6,7 +6,7 @@ import type { ICreateModalidad } from "../../Domain/ICreateModalidad";
 import type { IModalidad } from "../../Domain/IModalidad";
 import type {
 	IModalidadRepository,
-	IUpdateModalidadParams,
+	UpdateModalidadParams,
 } from "../../Domain/IModalidadRepository";
 
 @injectable()
@@ -30,7 +30,7 @@ export class ModalidadRepository implements IModalidadRepository {
 
 	async getById(id: string): Promise<IModalidad | null> {
 		const modalidad = await this._client.modalidad.findUnique({
-			where: { nombre: id },
+			where: { id },
 			include: {
 				mallas: {
 					take: 1,
@@ -50,7 +50,7 @@ export class ModalidadRepository implements IModalidadRepository {
 
 	async deleteById(id: string): Promise<IModalidad> {
 		const modalidad = await this._client.modalidad.delete({
-			where: { nombre: id },
+			where: { id },
 		});
 
 		return {
@@ -70,9 +70,9 @@ export class ModalidadRepository implements IModalidadRepository {
 		};
 	}
 
-	async update({ data, id }: IUpdateModalidadParams): Promise<IModalidad> {
+	async update({ data, id }: UpdateModalidadParams): Promise<IModalidad> {
 		const modalidad = await this._client.modalidad.update({
-			where: { nombre: id },
+			where: { id },
 			data,
 			include: {
 				mallas: {

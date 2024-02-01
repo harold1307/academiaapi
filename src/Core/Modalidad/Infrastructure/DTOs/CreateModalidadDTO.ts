@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreateModalidad } from "../../Domain/ICreateModalidad";
 
@@ -8,18 +9,19 @@ const schema = z.object<ZodInferSchema<ICreateModalidad>>({
 	nombre: z.string(),
 });
 
-export class CreateModalidadDTO {
-	private data: ICreateModalidad | undefined;
+class CreateModalidadDTOError extends BaseDTOError<ICreateModalidad> {
+	constructor(error: z.ZodError<ICreateModalidad>) {
+		super(error);
+		this.name = "CreateModalidadDTOError";
+		this.message = "Error de validacion para crear la modalidad";
+	}
+}
 
-	constructor(private input: unknown) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class CreateModalidadDTO extends BaseValidatorDTO<
+	ICreateModalidad,
+	CreateModalidadDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateModalidadDTOError, input);
 	}
 }
