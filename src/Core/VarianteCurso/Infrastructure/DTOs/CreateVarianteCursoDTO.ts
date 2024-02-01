@@ -20,18 +20,32 @@ const schema = z.object<ZodInferSchema<ICreateVarianteCurso>>({
 	aprobarCursoPrevio: z.boolean(),
 });
 
+class CreateVarianteCursoError extends Error {
+	public issues: z.ZodIssue[];
+
+	constructor(issues: z.ZodIssue[]) {
+		super();
+
+		this.name = "CreateVarianteCursoError";
+		this.message = "Error de validacion para crear la variante de curso";
+		this.issues = issues;
+	}
+}
+
 export class CreateVarianteCursoDTO {
-	private curso: ICreateVarianteCurso | undefined;
+	private data: ICreateVarianteCurso;
 
-	constructor(private input: unknown) {}
-
-	validate() {
+	constructor(private input: unknown) {
 		const parse = schema.safeParse(this.input);
 
-		if (parse.success) {
-			this.curso = parse.data;
+		if (!parse.success) {
+			throw new CreateVarianteCursoError(parse.error.issues);
 		}
 
-		return parse;
+		this.data = parse.data;
+	}
+
+	getData() {
+		return this.data;
 	}
 }

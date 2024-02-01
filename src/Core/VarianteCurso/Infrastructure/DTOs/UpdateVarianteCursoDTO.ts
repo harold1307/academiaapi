@@ -26,18 +26,32 @@ const schema = z.object<ZodInferSchema<IUpdateVarianteCurso>>({
 	cursoId: z.string().nullable().optional(),
 });
 
+class UpdateVarianteCursoError extends Error {
+	public issues: z.ZodIssue[];
+
+	constructor(issues: z.ZodIssue[]) {
+		super();
+
+		this.name = "UpdateVarianteCursoError";
+		this.message = "Error de validacion para actualizar la variante de curso";
+		this.issues = issues;
+	}
+}
+
 export class UpdateVarianteCursoDTO {
-	private data: IUpdateVarianteCurso | undefined;
+	private data: IUpdateVarianteCurso;
 
-	constructor(private input: unknown) {}
-
-	validate() {
+	constructor(private input: unknown) {
 		const parse = schema.safeParse(this.input);
 
-		if (parse.success) {
-			this.data = parse.data;
+		if (!parse.success) {
+			throw new UpdateVarianteCursoError(parse.error.issues);
 		}
 
-		return parse;
+		this.data = parse.data;
+	}
+
+	getData() {
+		return this.data;
 	}
 }
