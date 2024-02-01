@@ -701,7 +701,7 @@ model Programa {
   id      String  @id @default(uuid())
   estado  Boolean @default(false)
   nombre  String
-  mencion String
+  mencion String?
   alias   String
 
   detalleNivelTitulacionId String
