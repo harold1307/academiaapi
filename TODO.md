@@ -29,8 +29,8 @@
 
 ## Turno
 
-- [] Implementar metodo PATCH
-- [] Implementar logica de exclusion para eliminar un Turno
+- [x] Implementar metodo PATCH
+- [x] Implementar logica de exclusion para eliminar un Turno
 
 ## Asignatura En Curso Escuela
 

@@ -1,4 +1,5 @@
 import { app } from "@azure/functions";
+
 import { TurnoController } from "../../Core/Turno/Application/Controller";
 
 const controller = new TurnoController();
@@ -21,8 +22,8 @@ app.deleteRequest("turnosDeleteById", {
 	route: "turnos/{turnoId}",
 });
 
-// app.patch("turnosUpdateById", {
-// 	authLevel: "anonymous",
-// 	handler: (req, ctx) => controller.turnosUpdateById(req, ctx),
-// 	route: "turnos/{turnoId}",
-// });
+app.patch("turnosUpdateById", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.turnosUpdateById(req, ctx),
+	route: "turnos/{turnoId}",
+});

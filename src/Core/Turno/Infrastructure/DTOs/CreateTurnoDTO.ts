@@ -1,28 +1,29 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreateTurno } from "../../Domain/ICreateTurno";
 
 const schema = z.object<ZodInferSchema<ICreateTurno>>({
-	nombre: z.string(),
 	horas: z.number().int(),
 	comienza: z.date(),
 	termina: z.date(),
-	sesionId: z.string(),
+	sesionId: z.string().uuid(),
 });
 
-export class CreateTurnoDTO {
-	private data: ICreateTurno | undefined;
+class CreateTurnoDTOError extends BaseDTOError<ICreateTurno> {
+	constructor(error: z.ZodError<ICreateTurno>) {
+		super(error);
+		this.name = "CreateTurnoDTOError";
+		this.message = "Error de validacion para crear el turno";
+	}
+}
 
-	constructor(private input: unknown) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class CreateTurnoDTO extends BaseValidatorDTO<
+	ICreateTurno,
+	CreateTurnoDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateTurnoDTOError, input);
 	}
 }

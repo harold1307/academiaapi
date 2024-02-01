@@ -216,7 +216,6 @@ const createTurnoBodySchema = z.object<
 		}
 	>
 >({
-	nombre: z.string(),
 	horas: z.number(),
 	comienza: z.string().datetime(),
 	termina: z.string().datetime(),
