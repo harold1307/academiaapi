@@ -6,9 +6,15 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { TipoDuracion } from "@prisma/client";
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { MallaCurricularService } from "../../MallaCurricular/Application/Service";
+import { type ICreateMallaCurricular } from "../../MallaCurricular/Domain/ICreateMallaCurricular";
+import type { IMallaCurricularService } from "../../MallaCurricular/Domain/IMallaCurricularService";
+import { ModalidadService } from "../../Modalidad/Application/Service";
+import type { IModalidadService } from "../../Modalidad/Domain/IModalidadService";
 import { TipoDocumentoService } from "../../TipoDocumento/Application/Service";
 import type { ITipoDocumentoService } from "../../TipoDocumento/Domain/ITipoDocumentoService";
 import { TipoDocumentoEnProgramaService } from "../../TipoDocumentoEnPrograma/Application/Service";
@@ -27,6 +33,8 @@ export class ProgramaController implements IProgramaController {
 	private _tipoDocumentoService: ITipoDocumentoService;
 	private _tipoDocumentoEnProgramaService: ITipoDocumentoEnProgramaService;
 	private _tituloObtenidoService: ITituloObtenidoService;
+	private _modalidadService: IModalidadService;
+	private _mallaCurricularService: IMallaCurricularService;
 
 	constructor() {
 		this._programaService = StartupBuilder.resolve(ProgramaService);
@@ -35,6 +43,10 @@ export class ProgramaController implements IProgramaController {
 		);
 		this._tipoDocumentoService = StartupBuilder.resolve(TipoDocumentoService);
 		this._tituloObtenidoService = StartupBuilder.resolve(TituloObtenidoService);
+		this._modalidadService = StartupBuilder.resolve(ModalidadService);
+		this._mallaCurricularService = StartupBuilder.resolve(
+			MallaCurricularService,
+		);
 	}
 
 	async programasGetAll(
@@ -193,6 +205,66 @@ export class ProgramaController implements IProgramaController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async programasCreateMalla(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url "${req.url}"`);
+
+			const programaId = req.params.programaId;
+
+			if (!programaId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const { fechaAprobacion, fechaLimiteVigencia, ...data } = bodyVal.data;
+
+			const programa = await this._programaService.getProgramaById(programaId);
+
+			if (!programa)
+				return { jsonBody: { message: "El programa no existe" }, status: 400 };
+
+			const modalidad = await this._modalidadService.getModalidadById(
+				data.modalidadId,
+			);
+
+			if (!modalidad)
+				return {
+					jsonBody: { message: "La modalidad no existe" },
+					status: 400,
+				};
+
+			const tituloObtenido =
+				await this._tituloObtenidoService.getTituloObtenidoById(
+					data.tituloObtenidoId,
+				);
+
+			if (!tituloObtenido)
+				return {
+					jsonBody: { message: "El titulo obtenido no existe" },
+					status: 400,
+				};
+
+			const newMallaCurricular =
+				await this._mallaCurricularService.createMallaCurricular({
+					...data,
+					fechaAprobacion: new Date(fechaAprobacion),
+					fechaLimiteVigencia: new Date(fechaLimiteVigencia),
+					programaId,
+				});
+
+			ctx.log({ newMallaCurricular });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdatePrograma>>({
@@ -214,4 +286,37 @@ const createTituloObtenidoBodySchema = z.object<
 	ZodInferSchema<Omit<ICreateTituloObtenido, "programaId">>
 >({
 	nombre: z.string(),
+});
+
+const createBodySchema = z.object<
+	ZodInferSchema<
+		Omit<
+			ICreateMallaCurricular,
+			"fechaAprobacion" | "fechaLimiteVigencia" | "programaId"
+		> & {
+			fechaAprobacion: string;
+			fechaLimiteVigencia: string;
+		}
+	>
+>({
+	modalidadId: z.string(),
+	tituloObtenidoId: z.string(),
+	tipoDuracion: z.nativeEnum(TipoDuracion),
+	fechaAprobacion: z.string().datetime(),
+	fechaLimiteVigencia: z.string().datetime(),
+	niveles: z.number(),
+	maximoMateriasMatricula: z.number(),
+	cantidadLibreOpcionEgreso: z.number(),
+	cantidadOptativasEgreso: z.number(),
+	cantidadArrastres: z.number(),
+	practicasLigadasMaterias: z.boolean(),
+	horasPractica: z.number(),
+	registroPracticasDesde: z.number(),
+	horasVinculacion: z.number(),
+	registroVinculacionDesde: z.number(),
+	registroProyectosDesde: z.number(),
+	usaNivelacion: z.boolean(),
+	plantillasSilabo: z.boolean(),
+	perfilEgreso: z.string(),
+	observaciones: z.string(),
 });

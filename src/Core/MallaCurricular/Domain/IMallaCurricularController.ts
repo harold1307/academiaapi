@@ -5,10 +5,6 @@ import type {
 } from "@azure/functions";
 
 export type IMallaCurricularController = {
-	mallasCurricularesCreate(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
 	mallasCurricularesDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,

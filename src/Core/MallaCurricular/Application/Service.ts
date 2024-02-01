@@ -8,7 +8,7 @@ import type { ILugarEjecucionRepository } from "../Domain/ILugarEjecucionReposit
 import type { IMallaCurricular } from "../Domain/IMallaCurricular";
 import type {
 	IMallaCurricularRepository,
-	IUpdateMallaCurricularParams,
+	UpdateMallaCurricularParams,
 } from "../Domain/IMallaCurricularRepository";
 import type {
 	IMallaCurricularService,
@@ -50,30 +50,32 @@ export class MallaCurricularService implements IMallaCurricularService {
 						campoFormacion: true,
 					},
 				},
+				lugaresEjecucion: {
+					take: 1,
+				},
 			},
 		});
 
-		return mallas.map(malla => {
-			return {
-				...malla,
-				asignaturasEnMalla: malla.asignaturasEnMalla.map(a => ({
-					...a,
-					areaConocimiento: a.areaConocimiento
-						? { ...a.areaConocimiento, enUso: true }
-						: null,
-					ejeFormativo: a.ejeFormativo
-						? { ...a.ejeFormativo, enUso: true }
-						: null,
-					campoFormacion: a.campoFormacion
-						? { ...a.campoFormacion, enUso: true }
-						: null,
-					asignatura: {
-						...a.asignatura,
-						enUso: true,
-					},
-				})),
-			};
-		});
+		return mallas.map(({ asignaturasEnMalla, lugaresEjecucion, ...rest }) => ({
+			...rest,
+			asignaturasEnMalla: asignaturasEnMalla.map(a => ({
+				...a,
+				areaConocimiento: a.areaConocimiento
+					? { ...a.areaConocimiento, enUso: true }
+					: null,
+				ejeFormativo: a.ejeFormativo
+					? { ...a.ejeFormativo, enUso: true }
+					: null,
+				campoFormacion: a.campoFormacion
+					? { ...a.campoFormacion, enUso: true }
+					: null,
+				asignatura: {
+					...a.asignatura,
+					enUso: true,
+				},
+			})),
+			enUso: asignaturasEnMalla.length > 0 || lugaresEjecucion.length > 0,
+		}));
 	}
 
 	async getMallaCurricularById(id: string) {
@@ -98,14 +100,19 @@ export class MallaCurricularService implements IMallaCurricularService {
 						campoFormacion: true,
 					},
 				},
+				lugaresEjecucion: {
+					take: 1,
+				},
 			},
 		});
 
 		if (!malla) return null;
 
+		const { asignaturasEnMalla, lugaresEjecucion, ...rest } = malla;
+
 		return {
-			...malla,
-			asignaturasEnMalla: malla.asignaturasEnMalla.map(a => ({
+			...rest,
+			asignaturasEnMalla: asignaturasEnMalla.map(a => ({
 				...a,
 				areaConocimiento: a.areaConocimiento
 					? { ...a.areaConocimiento, enUso: true }
@@ -121,10 +128,11 @@ export class MallaCurricularService implements IMallaCurricularService {
 					enUso: true,
 				},
 			})),
+			enUso: asignaturasEnMalla.length > 0 || lugaresEjecucion.length > 0,
 		};
 	}
 
-	async updateMallaCurricularById({ id, data }: IUpdateMallaCurricularParams) {
+	async updateMallaCurricularById({ id, data }: UpdateMallaCurricularParams) {
 		const dto = new UpdateMallaCurricularDTO(data);
 
 		return this._mallaCurricularRepository.update({
@@ -134,6 +142,15 @@ export class MallaCurricularService implements IMallaCurricularService {
 	}
 
 	async deleteMallaCurricularById(id: string): Promise<IMallaCurricular> {
+		const malla = await this._mallaCurricularRepository.getById(id);
+
+		if (!malla) throw new MallaCurricularServiceError("La malla no existe");
+
+		if (malla.enUso)
+			throw new MallaCurricularServiceError(
+				"La malla esta en uso, no se puede eliminar",
+			);
+
 		return this._mallaCurricularRepository.deleteById(id);
 	}
 
@@ -145,7 +162,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 
 		const malla = this._mallaCurricularRepository.getById(mallaId);
 
-		if (!malla) throw new MallaCurricularServiceError("La malla no existe.");
+		if (!malla) throw new MallaCurricularServiceError("La malla no existe");
 
 		return this._lugarEjecucionRepository.create(dto.getData());
 	}
@@ -161,13 +178,18 @@ export class MallaCurricularService implements IMallaCurricularService {
 						sede: true,
 					},
 				},
+				asignaturasEnMalla: {
+					take: 1,
+				},
 			},
 		});
 
 		if (!malla) return null;
 
+		const { asignaturasEnMalla, lugaresEjecucion, ...rest } = malla;
+
 		return {
-			...malla,
+			...rest,
 			lugaresEjecucion: malla.lugaresEjecucion.map(l => ({
 				...l,
 				sede: {
@@ -175,6 +197,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 					enUso: true,
 				},
 			})),
+			enUso: asignaturasEnMalla.length > 0 || lugaresEjecucion.length > 0,
 		};
 	}
 }

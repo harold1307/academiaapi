@@ -6,49 +6,115 @@ import type { ICreateMallaCurricular } from "../../Domain/ICreateMallaCurricular
 import type { IMallaCurricular } from "../../Domain/IMallaCurricular";
 import type {
 	IMallaCurricularRepository,
-	IUpdateMallaCurricularParams,
+	UpdateMallaCurricularParams,
 } from "../../Domain/IMallaCurricularRepository";
 
 @injectable()
 export class MallaCurricularRepository implements IMallaCurricularRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	async create({ modalidadId, ...data }: ICreateMallaCurricular) {
-		return this._client.mallaCurricular.create({
+	async create({
+		modalidadId,
+		programaId,
+		tituloObtenidoId,
+		...data
+	}: ICreateMallaCurricular) {
+		const malla = await this._client.mallaCurricular.create({
 			data: {
 				...data,
-				modalidad: { connect: { nombre: modalidadId } },
+				modalidad: { connect: { id: modalidadId } },
+				programa: { connect: { id: programaId } },
+				tituloObtenido: { connect: { id: tituloObtenidoId } },
 			},
 		});
+
+		return {
+			...malla,
+			enUso: false,
+		};
 	}
 	async getAll() {
-		return this._client.mallaCurricular.findMany();
+		const mallas = await this._client.mallaCurricular.findMany({
+			include: {
+				asignaturasEnMalla: {
+					take: 1,
+				},
+				lugaresEjecucion: {
+					take: 1,
+				},
+			},
+		});
+
+		return mallas.map(({ asignaturasEnMalla, lugaresEjecucion, ...rest }) => ({
+			...rest,
+			enUso: asignaturasEnMalla.length > 0 || lugaresEjecucion.length > 0,
+		}));
 	}
 
 	async getById(id: string) {
-		return this._client.mallaCurricular.findUnique({
+		const malla = await this._client.mallaCurricular.findUnique({
 			where: { id },
+			include: {
+				asignaturasEnMalla: {
+					take: 1,
+				},
+				lugaresEjecucion: {
+					take: 1,
+				},
+			},
 		});
+
+		if (!malla) return null;
+
+		const { asignaturasEnMalla, lugaresEjecucion, ...rest } = malla;
+
+		return {
+			...rest,
+			enUso: asignaturasEnMalla.length > 0 || lugaresEjecucion.length > 0,
+		};
 	}
 
 	async update({
 		id,
-		data: { modalidadId, ...data },
-	}: IUpdateMallaCurricularParams) {
-		return this._client.mallaCurricular.update({
+		data: { modalidadId, tituloObtenidoId, ...data },
+	}: UpdateMallaCurricularParams) {
+		const malla = await this._client.mallaCurricular.update({
 			where: {
 				id,
 			},
 			data: {
 				...data,
-				...(modalidadId
-					? { modalidad: { connect: { nombre: modalidadId } } }
+				...(modalidadId ? { modalidad: { connect: { id: modalidadId } } } : {}),
+				...(tituloObtenidoId
+					? { tituloObtenido: { connect: { id: tituloObtenidoId } } }
 					: {}),
 			},
+			include: {
+				asignaturasEnMalla: {
+					take: 1,
+				},
+				lugaresEjecucion: {
+					take: 1,
+				},
+			},
 		});
+
+		const { asignaturasEnMalla, lugaresEjecucion, ...rest } = malla;
+
+		return {
+			...rest,
+			enUso: asignaturasEnMalla.length > 0 || lugaresEjecucion.length > 0,
+		};
 	}
 
 	async deleteById(id: string): Promise<IMallaCurricular> {
-		return this._client.mallaCurricular.delete({ where: { id } });
+		const malla = await this._client.mallaCurricular.delete({
+			where: { id },
+		});
+
+		return {
+			...malla,
+			enUso: false,
+		};
 	}
 }

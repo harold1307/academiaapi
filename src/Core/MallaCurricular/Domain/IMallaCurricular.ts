@@ -1,1 +1,5 @@
-export { MallaCurricular as IMallaCurricular } from "@prisma/client";
+import type { MallaCurricular } from "@prisma/client";
+
+export type IMallaCurricular = MallaCurricular & {
+	enUso: boolean;
+};

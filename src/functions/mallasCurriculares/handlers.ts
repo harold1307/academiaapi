@@ -16,12 +16,6 @@ app.get("mallasCurricularesGetById", {
 	route: "mallas-curriculares/{mallaCurricularId}",
 });
 
-app.post("mallasCurricularesCreate", {
-	authLevel: "anonymous",
-	handler: (req, ctx) => controller.mallasCurricularesCreate(req, ctx),
-	route: "mallas-curriculares",
-});
-
 app.patch("mallasCurricularesUpdateById", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.mallasCurricularesUpdateById(req, ctx),

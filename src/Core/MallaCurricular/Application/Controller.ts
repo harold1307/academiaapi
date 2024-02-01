@@ -22,7 +22,6 @@ import type { IModalidadService } from "../../Modalidad/Domain/IModalidadService
 import { SedeService } from "../../Sede/Application/Service";
 import type { ISedeService } from "../../Sede/Domain/ISedeService";
 import type { ICreateLugarEjecucion } from "../Domain/ICreateLugarEjecucion";
-import type { ICreateMallaCurricular } from "../Domain/ICreateMallaCurricular";
 import type { IMallaCurricularController } from "../Domain/IMallaCurricularController";
 import type { IMallaCurricularService } from "../Domain/IMallaCurricularService";
 import type { IUpdateMallaCurricular } from "../Domain/IUpdateMallaCurricular";
@@ -84,44 +83,6 @@ export class MallaCurricularController implements IMallaCurricularController {
 				data: mallaCurricular,
 			});
 		} catch (error: any) {
-			return ErrorHandler.handle({ ctx, error });
-		}
-	}
-
-	async mallasCurricularesCreate(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit> {
-		try {
-			ctx.log(`Http function processed request for url "${req.url}"`);
-			const body = await req.json();
-			const bodyVal = createBodySchema.safeParse(body);
-
-			if (!bodyVal.success) return CommonResponse.invalidBody();
-
-			const { fechaAprobacion, fechaLimiteVigencia, ...data } = bodyVal.data;
-
-			const modalidad = await this._modalidadService.getModalidadById(
-				data.modalidadId,
-			);
-
-			if (!modalidad)
-				return {
-					jsonBody: { message: "La modalidad no existe" },
-					status: 400,
-				};
-
-			const newMallaCurricular =
-				await this._mallaCurricularService.createMallaCurricular({
-					...data,
-					fechaAprobacion: new Date(fechaAprobacion),
-					fechaLimiteVigencia: new Date(fechaLimiteVigencia),
-				});
-
-			ctx.log({ newMallaCurricular });
-
-			return CommonResponse.successful({ status: 201 });
-		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
@@ -380,36 +341,6 @@ export class MallaCurricularController implements IMallaCurricularController {
 	}
 }
 
-const createBodySchema = z.object<
-	ZodInferSchema<
-		Omit<ICreateMallaCurricular, "fechaAprobacion" | "fechaLimiteVigencia"> & {
-			fechaAprobacion: string;
-			fechaLimiteVigencia: string;
-		}
-	>
->({
-	modalidadId: z.string(),
-	tituloObtenido: z.string(),
-	tipoDuracion: z.nativeEnum(TipoDuracion),
-	fechaAprobacion: z.string().datetime(),
-	fechaLimiteVigencia: z.string().datetime(),
-	niveles: z.number(),
-	maximoMateriasMatricula: z.number(),
-	cantidadLibreOpcionEgreso: z.number(),
-	cantidadOptativasEgreso: z.number(),
-	cantidadArrastres: z.number(),
-	practicasLigadasMaterias: z.boolean(),
-	horasPractica: z.number(),
-	registroPracticasDesde: z.number(),
-	horasVinculacion: z.number(),
-	registroVinculacionDesde: z.number(),
-	registroProyectosDesde: z.number(),
-	usaNivelacion: z.boolean(),
-	plantillasSilabo: z.boolean(),
-	perfilEgreso: z.string(),
-	observaciones: z.string(),
-});
-
 const updateBodySchema = z.object<
 	ZodInferSchema<
 		Omit<IUpdateMallaCurricular, "fechaAprobacion" | "fechaLimiteVigencia"> & {
@@ -418,8 +349,7 @@ const updateBodySchema = z.object<
 		}
 	>
 >({
-	modalidadId: z.string().optional(),
-	tituloObtenido: z.string().optional(),
+	tituloObtenidoId: z.string().optional(),
 	tipoDuracion: z.nativeEnum(TipoDuracion).optional(),
 	fechaAprobacion: z.string().datetime().optional(),
 	fechaLimiteVigencia: z.string().datetime().optional(),

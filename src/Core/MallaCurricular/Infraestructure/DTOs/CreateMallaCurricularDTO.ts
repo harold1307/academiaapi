@@ -6,8 +6,9 @@ import type { ZodInferSchema } from "../../../../types";
 import type { ICreateMallaCurricular } from "../../Domain/ICreateMallaCurricular";
 
 const schema = z.object<ZodInferSchema<ICreateMallaCurricular>>({
-	modalidadId: z.string(),
-	tituloObtenido: z.string(),
+	modalidadId: z.string().uuid(),
+	tituloObtenidoId: z.string().uuid(),
+	programaId: z.string().uuid(),
 	tipoDuracion: z.nativeEnum(TipoDuracion),
 	fechaAprobacion: z.date(),
 	fechaLimiteVigencia: z.date(),

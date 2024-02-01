@@ -3,7 +3,7 @@ import type { IAsignaturaEnMalla } from "../../AsignaturaEnMalla/Domain/IAsignat
 import type { ICreateMallaCurricular } from "./ICreateMallaCurricular";
 import type { ILugarEjecucion } from "./ILugarEjecucion";
 import type { IMallaCurricular } from "./IMallaCurricular";
-import type { IUpdateMallaCurricularParams } from "./IMallaCurricularRepository";
+import type { UpdateMallaCurricularParams } from "./IMallaCurricularRepository";
 
 export type MallaCurricularWithAsignaturas = IMallaCurricular & {
 	asignaturasEnMalla: (IAsignaturaEnMalla & {
@@ -22,7 +22,7 @@ export type IMallaCurricularService = {
 	getAllMallasCurriculares(): Promise<IMallaCurricular[]>;
 	getMallaCurricularById(id: string): Promise<IMallaCurricular | null>;
 	updateMallaCurricularById(
-		params: IUpdateMallaCurricularParams,
+		params: UpdateMallaCurricularParams,
 	): Promise<IMallaCurricular>;
 	deleteMallaCurricularById(id: string): Promise<IMallaCurricular>;
 

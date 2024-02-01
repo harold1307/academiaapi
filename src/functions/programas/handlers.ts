@@ -41,3 +41,10 @@ app.post("programasCreateTituloObtenido", {
 	handler: (req, ctx) => controller.programasCreateTituloObtenido(req, ctx),
 	route: "programas/{programaId}/titulos-obtenidos",
 });
+
+// mallas curriculares
+app.post("programasCreateMalla", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.programasCreateMalla(req, ctx),
+	route: "programas/{programaId}/mallas-curriculares",
+});
