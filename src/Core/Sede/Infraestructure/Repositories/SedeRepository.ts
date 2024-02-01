@@ -17,57 +17,94 @@ export class SedeRepository implements ISedeRepository {
 		const sede = await this._client.sede.create({
 			data,
 			include: {
-				_count: {
-					select: {
-						lugaresEjecucion: true,
-					},
+				coordinaciones: {
+					take: 1,
+				},
+				lugaresEjecucion: {
+					take: 1,
+				},
+				sesiones: {
+					take: 1,
+				},
+				titulos: {
+					take: 1,
 				},
 			},
 		});
 
-		const { _count, ...rest } = sede;
+		const { coordinaciones, lugaresEjecucion, sesiones, titulos, ...rest } =
+			sede;
 
 		return {
 			...rest,
-			enUso: _count.lugaresEjecucion > 0,
+			enUso:
+				coordinaciones.length > 0 ||
+				lugaresEjecucion.length > 0 ||
+				sesiones.length > 0 ||
+				titulos.length > 0,
 		};
 	}
 	async getAll(): Promise<ISede[]> {
 		const sedes = await this._client.sede.findMany({
 			include: {
-				_count: {
-					select: {
-						lugaresEjecucion: true,
-					},
+				coordinaciones: {
+					take: 1,
+				},
+				lugaresEjecucion: {
+					take: 1,
+				},
+				sesiones: {
+					take: 1,
+				},
+				titulos: {
+					take: 1,
 				},
 			},
 		});
 
-		return sedes.map(({ _count, ...i }) => ({
-			...i,
-			enUso: _count.lugaresEjecucion > 0,
-		}));
+		return sedes.map(
+			({ coordinaciones, lugaresEjecucion, sesiones, titulos, ...rest }) => ({
+				...rest,
+				enUso:
+					coordinaciones.length > 0 ||
+					lugaresEjecucion.length > 0 ||
+					sesiones.length > 0 ||
+					titulos.length > 0,
+			}),
+		);
 	}
 
 	async getById(id: string): Promise<ISede | null> {
 		const sede = await this._client.sede.findUnique({
 			where: { id },
 			include: {
-				_count: {
-					select: {
-						lugaresEjecucion: true,
-					},
+				coordinaciones: {
+					take: 1,
+				},
+				lugaresEjecucion: {
+					take: 1,
+				},
+				sesiones: {
+					take: 1,
+				},
+				titulos: {
+					take: 1,
 				},
 			},
 		});
 
 		if (!sede) return null;
 
-		const { _count, ...rest } = sede;
+		const { coordinaciones, lugaresEjecucion, sesiones, titulos, ...rest } =
+			sede;
 
 		return {
 			...rest,
-			enUso: _count.lugaresEjecucion > 0,
+			enUso:
+				coordinaciones.length > 0 ||
+				lugaresEjecucion.length > 0 ||
+				sesiones.length > 0 ||
+				titulos.length > 0,
 		};
 	}
 
@@ -78,39 +115,42 @@ export class SedeRepository implements ISedeRepository {
 			},
 			data,
 			include: {
-				_count: {
-					select: {
-						lugaresEjecucion: true,
-					},
+				coordinaciones: {
+					take: 1,
+				},
+				lugaresEjecucion: {
+					take: 1,
+				},
+				sesiones: {
+					take: 1,
+				},
+				titulos: {
+					take: 1,
 				},
 			},
 		});
 
-		const { _count, ...rest } = sede;
+		const { coordinaciones, lugaresEjecucion, sesiones, titulos, ...rest } =
+			sede;
 
 		return {
 			...rest,
-			enUso: _count.lugaresEjecucion > 0,
+			enUso:
+				coordinaciones.length > 0 ||
+				lugaresEjecucion.length > 0 ||
+				sesiones.length > 0 ||
+				titulos.length > 0,
 		};
 	}
 
 	async deleteById(id: string): Promise<ISede> {
 		const sede = await this._client.sede.delete({
 			where: { id },
-			include: {
-				_count: {
-					select: {
-						lugaresEjecucion: true,
-					},
-				},
-			},
 		});
 
-		const { _count, ...rest } = sede;
-
 		return {
-			...rest,
-			enUso: _count.lugaresEjecucion > 0,
+			...sede,
+			enUso: false,
 		};
 	}
 }
