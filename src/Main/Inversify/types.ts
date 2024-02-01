@@ -77,4 +77,6 @@ export const TYPES = {
 		"TipoDocumentoEnProgramaRepository",
 	),
 	TipoDocumentoEnProgramaService: Symbol.for("TipoDocumentoEnProgramaService"),
+	ProgramaRepository: Symbol.for("ProgramaRepository"),
+	ProgramaService: Symbol.for("ProgramaService"),
 } as const;

@@ -171,6 +171,12 @@ import type { ITipoDocumentoEnProgramaRepository } from "../../Core/TipoDocument
 import type { ITipoDocumentoEnProgramaService } from "../../Core/TipoDocumentoEnPrograma/Domain/ITipoDocumentoEnProgramaService";
 import { TipoDocumentoEnProgramaRepository } from "../../Core/TipoDocumentoEnPrograma/Infrastructure/Repositories/TipoDocumentoEnProgramaRepository";
 
+// programas
+import { ProgramaService } from "../../Core/Programa/Application/Service";
+import type { IProgramaRepository } from "../../Core/Programa/Domain/IProgramaRepository";
+import type { IProgramaService } from "../../Core/Programa/Domain/IProgramaService";
+import { ProgramaRepository } from "../../Core/Programa/Infrastructure/Repositories/ProgramaRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -450,6 +456,14 @@ StartupBuilder.bind<ITipoDocumentoEnProgramaService>(
 	TYPES.TipoDocumentoEnProgramaService,
 )
 	.to(TipoDocumentoEnProgramaService)
+	.inSingletonScope();
+
+// programas
+StartupBuilder.bind<IProgramaRepository>(TYPES.ProgramaRepository)
+	.to(ProgramaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IProgramaService>(TYPES.ProgramaService)
+	.to(ProgramaService)
 	.inSingletonScope();
 
 export { StartupBuilder };
