@@ -68,4 +68,4 @@
 
 ## Programa
 
-- [] Implementar enUso
+- [x] Implementar enUso

@@ -21,16 +21,36 @@ export class ProgramaRepository implements IProgramaRepository {
 						nivelTitulacion: true,
 					},
 				},
+				titulosObtenidos: {
+					take: 1,
+				},
+				perfilesPracticaProgramas: {
+					take: 1,
+				},
+				mallasCurriculares: {
+					take: 1,
+				},
+				documentosRequeridos: {
+					take: 1,
+				},
 			},
 		});
 
 		return programas.map(
 			({
 				detalleNivelTitulacion: { nivelTitulacion, ...detalleNivelTitulacion },
+				titulosObtenidos,
+				perfilesPracticaProgramas,
+				mallasCurriculares,
+				documentosRequeridos,
 				...rest
 			}) => ({
 				...rest,
-				enUso: false,
+				enUso:
+					titulosObtenidos.length > 0 ||
+					perfilesPracticaProgramas.length > 0 ||
+					mallasCurriculares.length > 0 ||
+					documentosRequeridos.length > 0,
 				detalleNivelTitulacion,
 				nivelTitulacion,
 			}),
@@ -45,6 +65,18 @@ export class ProgramaRepository implements IProgramaRepository {
 						nivelTitulacion: true,
 					},
 				},
+				titulosObtenidos: {
+					take: 1,
+				},
+				perfilesPracticaProgramas: {
+					take: 1,
+				},
+				mallasCurriculares: {
+					take: 1,
+				},
+				documentosRequeridos: {
+					take: 1,
+				},
 			},
 		});
 
@@ -52,6 +84,10 @@ export class ProgramaRepository implements IProgramaRepository {
 
 		const {
 			detalleNivelTitulacion: { nivelTitulacion, ...detalleNivelTitulacion },
+			titulosObtenidos,
+			perfilesPracticaProgramas,
+			mallasCurriculares,
+			documentosRequeridos,
 			...rest
 		} = programa;
 
@@ -59,7 +95,11 @@ export class ProgramaRepository implements IProgramaRepository {
 			...rest,
 			nivelTitulacion,
 			detalleNivelTitulacion,
-			enUso: false,
+			enUso:
+				titulosObtenidos.length > 0 ||
+				perfilesPracticaProgramas.length > 0 ||
+				mallasCurriculares.length > 0 ||
+				documentosRequeridos.length > 0,
 		};
 	}
 	async deleteById(id: string): Promise<IPrograma> {
@@ -141,11 +181,27 @@ export class ProgramaRepository implements IProgramaRepository {
 						nivelTitulacion: true,
 					},
 				},
+				titulosObtenidos: {
+					take: 1,
+				},
+				perfilesPracticaProgramas: {
+					take: 1,
+				},
+				mallasCurriculares: {
+					take: 1,
+				},
+				documentosRequeridos: {
+					take: 1,
+				},
 			},
 		});
 
 		const {
 			detalleNivelTitulacion: { nivelTitulacion, ...detalleNivelTitulacion },
+			titulosObtenidos,
+			perfilesPracticaProgramas,
+			mallasCurriculares,
+			documentosRequeridos,
 			...rest
 		} = programa;
 
@@ -153,7 +209,11 @@ export class ProgramaRepository implements IProgramaRepository {
 			...rest,
 			nivelTitulacion,
 			detalleNivelTitulacion,
-			enUso: false,
+			enUso:
+				titulosObtenidos.length > 0 ||
+				perfilesPracticaProgramas.length > 0 ||
+				mallasCurriculares.length > 0 ||
+				documentosRequeridos.length > 0,
 		};
 	}
 }
