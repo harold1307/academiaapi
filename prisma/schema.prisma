@@ -686,7 +686,7 @@ model Programa {
   alias   String
 
   detalleNivelTitulacionId  String
-  detalleNivelTitucion      DetalleNivelTitulacion     @relation(fields: [detalleNivelTitulacionId], references: [id])
+  detalleNivelTitulacion    DetalleNivelTitulacion     @relation(fields: [detalleNivelTitulacionId], references: [id])
   competencias              Competencia[]
   perfilesPracticaProgramas PerfilPracticaEnPrograma[]
   titulosObtenidos          TituloObtenido[]
