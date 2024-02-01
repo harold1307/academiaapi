@@ -52,6 +52,7 @@ model Sede {
   lugaresEjecucion LugarEjecucion[]
   titulos          Titulo[]
   sesiones         Sesion[]
+  coordinaciones   Coordinacion[]
 
   @@map("sedes")
 }
@@ -674,7 +675,26 @@ model TituloObtenido {
   programaId String
   programa   Programa @relation(fields: [programaId], references: [id])
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@map("titulos_obtenidos")
+}
+
+model Coordinacion {
+  id     String @id @default(uuid())
+  nombre String
+  alias  String
+
+  sedeId String
+  sede   Sede   @relation(fields: [sedeId], references: [id])
+
+  programas Programa[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("coordinaciones")
 }
 
 model Programa {
@@ -684,8 +704,11 @@ model Programa {
   mencion String
   alias   String
 
-  detalleNivelTitulacionId  String
-  detalleNivelTitulacion    DetalleNivelTitulacion     @relation(fields: [detalleNivelTitulacionId], references: [id])
+  detalleNivelTitulacionId String
+  detalleNivelTitulacion   DetalleNivelTitulacion @relation(fields: [detalleNivelTitulacionId], references: [id])
+  coordinacionId           String
+  coordinacion             Coordinacion           @relation(fields: [coordinacionId], references: [id])
+
   competencias              Competencia[]
   perfilesPracticaProgramas PerfilPracticaEnPrograma[]
   titulosObtenidos          TituloObtenido[]
