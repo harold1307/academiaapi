@@ -25,4 +25,9 @@ export type IProgramaController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
+
+	programasCreateTipoDocumento(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 };

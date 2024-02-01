@@ -33,3 +33,10 @@ app.patch("programasUpdateById", {
 	handler: (req, ctx) => controller.programasUpdateById(req, ctx),
 	route: "programas/{programaId}",
 });
+
+// tipos documento
+app.post("programasCreateTipoDocumento", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.programasCreateTipoDocumento(req, ctx),
+	route: "programas/{programaId}/tipos-documento/{tipoDocumentoId}",
+});

@@ -11,6 +11,11 @@ import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
 import { DetalleNivelTitulacionService } from "../../DetalleNivelTitulacion/Application/Service";
 import type { IDetalleNivelTitulacionService } from "../../DetalleNivelTitulacion/Domain/IDetalleNivelTitulacionService";
+import { TipoDocumentoService } from "../../TipoDocumento/Application/Service";
+import type { ITipoDocumentoService } from "../../TipoDocumento/Domain/ITipoDocumentoService";
+import { TipoDocumentoEnProgramaService } from "../../TipoDocumentoEnPrograma/Application/Service";
+import type { ICreateTipoDocumentoEnPrograma } from "../../TipoDocumentoEnPrograma/Domain/ICreateTipoDocumentoEnPrograma";
+import type { ITipoDocumentoEnProgramaService } from "../../TipoDocumentoEnPrograma/Domain/ITipoDocumentoEnProgramaService";
 import type { ICreatePrograma } from "../Domain/ICreatePrograma";
 import type { IProgramaController } from "../Domain/IProgramaController";
 import type { IProgramaService } from "../Domain/IProgramaService";
@@ -19,13 +24,19 @@ import { ProgramaService } from "./Service";
 
 export class ProgramaController implements IProgramaController {
 	private _programaService: IProgramaService;
-	private _detalleNivelTitulacion: IDetalleNivelTitulacionService;
+	private _detalleNivelTitulacionService: IDetalleNivelTitulacionService;
+	private _tipoDocumentoService: ITipoDocumentoService;
+	private _tipoDocumentoEnProgramaService: ITipoDocumentoEnProgramaService;
 
 	constructor() {
 		this._programaService = StartupBuilder.resolve(ProgramaService);
-		this._detalleNivelTitulacion = StartupBuilder.resolve(
+		this._detalleNivelTitulacionService = StartupBuilder.resolve(
 			DetalleNivelTitulacionService,
 		);
+		this._tipoDocumentoEnProgramaService = StartupBuilder.resolve(
+			TipoDocumentoEnProgramaService,
+		);
+		this._tipoDocumentoService = StartupBuilder.resolve(TipoDocumentoService);
 	}
 
 	async programasGetAll(
@@ -74,7 +85,7 @@ export class ProgramaController implements IProgramaController {
 			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const detalleNivelTitulacion =
-				await this._detalleNivelTitulacion.getDetalleNivelTitulacionById(
+				await this._detalleNivelTitulacionService.getDetalleNivelTitulacionById(
 					bodyVal.data.detalleNivelTitulacionId,
 				);
 
@@ -140,6 +151,50 @@ export class ProgramaController implements IProgramaController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async programasCreateTipoDocumento(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const programaId = req.params.programaId;
+			const tipoDocumentoId = req.params.tipoDocumentoId;
+
+			if (!programaId || !tipoDocumentoId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createTipoDocumentoBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const programa = await this._programaService.getProgramaById(programaId);
+
+			if (!programa)
+				return { jsonBody: { message: "El programa no existe" }, status: 400 };
+
+			const tipoDocumento =
+				await this._tipoDocumentoService.getTipoDocumentoById(tipoDocumentoId);
+
+			if (!tipoDocumento)
+				return {
+					jsonBody: { message: "El tipo de documento no existe" },
+					status: 400,
+				};
+
+			const newTipoDocumentoEnPrograma =
+				await this._tipoDocumentoEnProgramaService.createTipoDocumentoEnPrograma(
+					{ ...bodyVal.data, programaId, tipoDocumentoId },
+				);
+
+			ctx.log({ newTipoDocumentoEnPrograma });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const createBodySchema = z.object<ZodInferSchema<ICreatePrograma>>({
@@ -153,4 +208,13 @@ const updateBodySchema = z.object<ZodInferSchema<IUpdatePrograma>>({
 	alias: z.string().optional(),
 	detalleNivelTitulacionId: z.string().optional(),
 	estado: z.boolean().optional(),
+});
+
+const createTipoDocumentoBodySchema = z.object<
+	ZodInferSchema<
+		Omit<ICreateTipoDocumentoEnPrograma, "programaId" | "tipoDocumentoId">
+	>
+>({
+	requeridoDigital: z.boolean(),
+	requeridoFisico: z.boolean(),
 });
