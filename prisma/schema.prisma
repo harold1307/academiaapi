@@ -12,6 +12,7 @@ datasource db {
 model MallaCurricular {
   id String @id @default(uuid())
 
+  estado                    Boolean      @default(false)
   tipoDuracion              TipoDuracion
   fechaAprobacion           DateTime
   fechaLimiteVigencia       DateTime
