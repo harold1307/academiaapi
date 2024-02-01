@@ -15,7 +15,7 @@ class UpdateSedeDTOError extends BaseDTOError<IUpdateSede> {
 	constructor(error: z.ZodError<IUpdateSede>) {
 		super(error);
 		this.name = "UpdateSedeDTOError";
-		this.message = "Error de validacion para crear el lugar de ejecucion";
+		this.message = "Error de validacion para actualizar la sede";
 	}
 }
 
