@@ -10,10 +10,8 @@ datasource db {
 }
 
 model MallaCurricular {
-  id                        String              @id @default(uuid())
-  modalidadId               String
-  modalidad                 Modalidad           @relation(fields: [modalidadId], references: [nombre])
-  tituloObtenido            String
+  id String @id @default(uuid())
+
   tipoDuracion              TipoDuracion
   fechaAprobacion           DateTime
   fechaLimiteVigencia       DateTime
@@ -31,11 +29,19 @@ model MallaCurricular {
   usaNivelacion             Boolean
   plantillasSilabo          Boolean
   observaciones             String?
-  createdAt                 DateTime            @default(now())
-  updatedAt                 DateTime            @default(now()) @updatedAt
+  createdAt                 DateTime     @default(now())
+  updatedAt                 DateTime     @default(now()) @updatedAt
   perfilEgreso              String?
-  asignaturasEnMalla        AsignaturaEnMalla[]
-  lugaresEjecucion          LugarEjecucion[]
+
+  tituloObtenidoId String
+  tituloObtenido   TituloObtenido @relation(fields: [tituloObtenidoId], references: [id])
+  modalidadId      String
+  modalidad        Modalidad      @relation(fields: [modalidadId], references: [id])
+  programaId       String
+  programa         Programa       @relation(fields: [programaId], references: [id])
+
+  asignaturasEnMalla AsignaturaEnMalla[]
+  lugaresEjecucion   LugarEjecucion[]
 
   @@map("mallas_curriculares")
 }
@@ -379,7 +385,8 @@ model Grupo {
 }
 
 model Modalidad {
-  nombre String  @id
+  id     String  @id @default(uuid())
+  nombre String
   alias  String?
 
   mallas MallaCurricular[]
@@ -675,6 +682,8 @@ model TituloObtenido {
   programaId String
   programa   Programa @relation(fields: [programaId], references: [id])
 
+  mallasCurriculares MallaCurricular[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -713,6 +722,7 @@ model Programa {
   perfilesPracticaProgramas PerfilPracticaEnPrograma[]
   titulosObtenidos          TituloObtenido[]
   documentosRequeridos      TipoDocumentoEnPrograma[]
+  mallasCurriculares        MallaCurricular[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
