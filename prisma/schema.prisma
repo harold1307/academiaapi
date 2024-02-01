@@ -40,10 +40,9 @@ model MallaCurricular {
   @@map("mallas_curriculares")
 }
 
-model Institucion {
+model Sede {
   id               String           @id @default(uuid())
   nombre           String
-  tipo             TipoInstitucion
   pais             String
   provincia        String
   canton           String
@@ -54,7 +53,7 @@ model Institucion {
   titulos          Titulo[]
   sesiones         Sesion[]
 
-  @@map("instituciones")
+  @@map("sedes")
 }
 
 model Asignatura {
@@ -147,17 +146,17 @@ model AsignaturaEnVarianteCurso {
 }
 
 model LugarEjecucion {
-  id            String          @id @default(uuid())
-  codigo        String?
-  mallaId       String
-  institucionId String
-  institucion   Institucion     @relation(fields: [institucionId], references: [id])
-  malla         MallaCurricular @relation(fields: [mallaId], references: [id])
+  id      String          @id @default(uuid())
+  codigo  String?
+  mallaId String
+  sedeId  String
+  sede    Sede            @relation(fields: [sedeId], references: [id])
+  malla   MallaCurricular @relation(fields: [mallaId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  @@index([institucionId], map: "lugares_ejecucion_institucionId_fkey")
+  @@index([sedeId], map: "lugares_ejecucion_sedeId_fkey")
   @@index([mallaId], map: "lugares_ejecucion_mallaId_fkey")
   @@map("lugares_ejecucion")
 }
@@ -166,13 +165,13 @@ model Titulo {
   id     String @id @default(uuid())
   nombre String
 
-  institucionId String?
-  institucion   Institucion? @relation(fields: [institucionId], references: [id], onDelete: SetNull)
+  sedeId String?
+  sede   Sede?   @relation(fields: [sedeId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  @@index([institucionId], map: "titulos_institucionId_fkey")
+  @@index([sedeId], map: "titulos_sedeId_fkey")
   @@map("titulos")
 }
 
@@ -521,11 +520,11 @@ model ProyectoIntegrador {
 }
 
 model Sesion {
-  id     String      @id @default(uuid())
-  estado Boolean     @default(false)
+  id     String  @id @default(uuid())
+  estado Boolean @default(false)
   nombre String
   sedeId String
-  sede   Institucion @relation(fields: [sedeId], references: [id])
+  sede   Sede    @relation(fields: [sedeId], references: [id])
   alias  String?
 
   lunes     Boolean
@@ -768,13 +767,6 @@ enum TipoDuracion {
   ANOS
 
   @@map("tipo_duracion")
-}
-
-enum TipoInstitucion {
-  FISCAL
-  PARTICULAR
-
-  @@map("tipo_institucion")
 }
 
 enum TipoCompetencia {
