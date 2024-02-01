@@ -40,3 +40,10 @@ app.post("programasCreateTipoDocumento", {
 	handler: (req, ctx) => controller.programasCreateTipoDocumento(req, ctx),
 	route: "programas/{programaId}/tipos-documento/{tipoDocumentoId}",
 });
+
+// titulos obtenidos
+app.post("programasCreateTituloObtenido", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.programasCreateTituloObtenido(req, ctx),
+	route: "programas/{programaId}/titulos-obtenidos",
+});

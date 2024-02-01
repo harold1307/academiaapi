@@ -16,6 +16,9 @@ import type { ITipoDocumentoService } from "../../TipoDocumento/Domain/ITipoDocu
 import { TipoDocumentoEnProgramaService } from "../../TipoDocumentoEnPrograma/Application/Service";
 import type { ICreateTipoDocumentoEnPrograma } from "../../TipoDocumentoEnPrograma/Domain/ICreateTipoDocumentoEnPrograma";
 import type { ITipoDocumentoEnProgramaService } from "../../TipoDocumentoEnPrograma/Domain/ITipoDocumentoEnProgramaService";
+import { TituloObtenidoService } from "../../TituloObtenido/Application/Service";
+import type { ICreateTituloObtenido } from "../../TituloObtenido/Domain/ICreateTituloObtenido";
+import type { ITituloObtenidoService } from "../../TituloObtenido/Domain/ITituloObtenidoService";
 import type { ICreatePrograma } from "../Domain/ICreatePrograma";
 import type { IProgramaController } from "../Domain/IProgramaController";
 import type { IProgramaService } from "../Domain/IProgramaService";
@@ -27,6 +30,7 @@ export class ProgramaController implements IProgramaController {
 	private _detalleNivelTitulacionService: IDetalleNivelTitulacionService;
 	private _tipoDocumentoService: ITipoDocumentoService;
 	private _tipoDocumentoEnProgramaService: ITipoDocumentoEnProgramaService;
+	private _tituloObtenidoService: ITituloObtenidoService;
 
 	constructor() {
 		this._programaService = StartupBuilder.resolve(ProgramaService);
@@ -37,6 +41,7 @@ export class ProgramaController implements IProgramaController {
 			TipoDocumentoEnProgramaService,
 		);
 		this._tipoDocumentoService = StartupBuilder.resolve(TipoDocumentoService);
+		this._tituloObtenidoService = StartupBuilder.resolve(TituloObtenidoService);
 	}
 
 	async programasGetAll(
@@ -195,6 +200,41 @@ export class ProgramaController implements IProgramaController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async programasCreateTituloObtenido(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const programaId = req.params.programaId;
+
+			if (!programaId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createTituloObtenidoBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const programa = await this._programaService.getProgramaById(programaId);
+
+			if (!programa)
+				return { jsonBody: { message: "El programa no existe" }, status: 400 };
+
+			const newTituloObtenido =
+				await this._tituloObtenidoService.createTituloObtenido({
+					...bodyVal.data,
+					programaId,
+				});
+
+			ctx.log({ newTituloObtenido });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const createBodySchema = z.object<ZodInferSchema<ICreatePrograma>>({
@@ -217,4 +257,10 @@ const createTipoDocumentoBodySchema = z.object<
 >({
 	requeridoDigital: z.boolean(),
 	requeridoFisico: z.boolean(),
+});
+
+const createTituloObtenidoBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateTituloObtenido, "programaId">>
+>({
+	nombre: z.string(),
 });
