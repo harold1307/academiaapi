@@ -135,6 +135,10 @@ export class MallaCurricularService implements IMallaCurricularService {
 	async updateMallaCurricularById({ id, data }: UpdateMallaCurricularParams) {
 		const dto = new UpdateMallaCurricularDTO(data);
 
+		const malla = await this._mallaCurricularRepository.getById(id);
+
+		if (!malla) throw new MallaCurricularServiceError("La malla no existe");
+
 		return this._mallaCurricularRepository.update({
 			id,
 			data: dto.getData(),
