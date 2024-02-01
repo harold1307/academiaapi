@@ -3,9 +3,13 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../Main/Inversify/types";
 import type { ICreateParalelo } from "../Domain/ICreateParalelo";
 import type { IParalelo } from "../Domain/IParalelo";
-import type { IParaleloRepository } from "../Domain/IParaleloRepository";
+import type {
+	IParaleloRepository,
+	UpdateParaleloParams,
+} from "../Domain/IParaleloRepository";
 import type { IParaleloService } from "../Domain/IParaleloService";
 import { CreateParaleloDTO } from "../Infrastructure/DTOs/CreateParaleloDTO";
+import { UpdateParaleloDTO } from "../Infrastructure/DTOs/UpdateParaleloDTO";
 
 @injectable()
 export class ParaleloService implements IParaleloService {
@@ -24,17 +28,8 @@ export class ParaleloService implements IParaleloService {
 
 	createParalelo(data: ICreateParalelo): Promise<IParalelo> {
 		const dto = new CreateParaleloDTO(data);
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para paralelo",
-				JSON.stringify(validation.error, null, 2),
-			);
-			throw new ParaleloServiceError("Esquema para paralelo invalido");
-		}
-
-		return this._paraleloRepository.create(validation.data);
+		return this._paraleloRepository.create(dto.getData());
 	}
 
 	async deleteParaleloById(id: string): Promise<IParalelo> {
@@ -43,9 +38,24 @@ export class ParaleloService implements IParaleloService {
 		if (!paralelo) throw new ParaleloServiceError("El paralelo no existe");
 
 		if (paralelo.enUso)
-			throw new ParaleloServiceError("El paralelo esta en uso");
+			throw new ParaleloServiceError(
+				"El paralelo esta en uso, no se puede eliminar",
+			);
 
 		return this._paraleloRepository.deleteById(id);
+	}
+
+	async updateParaleloById({
+		id,
+		data,
+	}: UpdateParaleloParams): Promise<IParalelo> {
+		const dto = new UpdateParaleloDTO(data);
+
+		const paralelo = await this._paraleloRepository.getById(id);
+
+		if (!paralelo) throw new ParaleloServiceError("El paralelo no existe");
+
+		return this._paraleloRepository.update({ id, data: dto.getData() });
 	}
 }
 

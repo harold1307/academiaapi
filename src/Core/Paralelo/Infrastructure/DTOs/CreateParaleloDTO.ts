@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreateParalelo } from "../../Domain/ICreateParalelo";
 
@@ -8,18 +9,19 @@ const schema = z.object<ZodInferSchema<ICreateParalelo>>({
 	orden: z.number().int(),
 });
 
-export class CreateParaleloDTO {
-	private data: ICreateParalelo | undefined;
+class CreateParaleloDTOError extends BaseDTOError<ICreateParalelo> {
+	constructor(error: z.ZodError<ICreateParalelo>) {
+		super(error);
+		this.name = "CreateParaleloDTOError";
+		this.message = "Error de validacion para crear el paralelo";
+	}
+}
 
-	constructor(private input: unknown) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class CreateParaleloDTO extends BaseValidatorDTO<
+	ICreateParalelo,
+	CreateParaleloDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateParaleloDTOError, input);
 	}
 }

@@ -4,7 +4,10 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreateParalelo } from "../../Domain/ICreateParalelo";
 import type { IParalelo } from "../../Domain/IParalelo";
-import type { IParaleloRepository } from "../../Domain/IParaleloRepository";
+import type {
+	IParaleloRepository,
+	UpdateParaleloParams,
+} from "../../Domain/IParaleloRepository";
 
 @injectable()
 export class ParaleloRepository implements IParaleloRepository {
@@ -62,6 +65,25 @@ export class ParaleloRepository implements IParaleloRepository {
 		return {
 			...paralelo,
 			enUso: false,
+		};
+	}
+
+	async update({ id, data }: UpdateParaleloParams): Promise<IParalelo> {
+		const paralelo = await this._client.paralelo.update({
+			where: { nombre: id },
+			data,
+			include: {
+				cursoEscuelas: {
+					take: 1,
+				},
+			},
+		});
+
+		const { cursoEscuelas, ...rest } = paralelo;
+
+		return {
+			...rest,
+			enUso: cursoEscuelas.length > 0,
 		};
 	}
 }

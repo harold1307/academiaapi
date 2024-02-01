@@ -1,4 +1,5 @@
 import { app } from "@azure/functions";
+
 import { ParaleloController } from "../../Core/Paralelo/Application/Controller";
 
 const controller = new ParaleloController();
@@ -27,8 +28,8 @@ app.deleteRequest("paralelosDeleteById", {
 	route: "paralelos/{paraleloId}",
 });
 
-// app.patch("paralelosUpdateById", {
-// 	authLevel: "anonymous",
-// 	handler: (req, ctx) => controller.paralelosUpdateById(req, ctx),
-// 	route: "paralelos/{paraleloId}",
-// });
+app.patch("paralelosUpdateById", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.paralelosUpdateById(req, ctx),
+	route: "paralelos/{paraleloId}",
+});

@@ -20,7 +20,7 @@
 
 ## Paralelo
 
-- [] Implementar metodo PATCH
+- [x] Implementar metodo PATCH
 
 ## Sesion
 
