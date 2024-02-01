@@ -76,7 +76,7 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 
 	async update({
 		id,
-		data: { modalidadId, tituloObtenidoId, ...data },
+		data: { tituloObtenidoId, ...data },
 	}: UpdateMallaCurricularParams) {
 		const malla = await this._client.mallaCurricular.update({
 			where: {
@@ -84,7 +84,6 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 			},
 			data: {
 				...data,
-				...(modalidadId ? { modalidad: { connect: { id: modalidadId } } } : {}),
 				...(tituloObtenidoId
 					? { tituloObtenido: { connect: { id: tituloObtenidoId } } }
 					: {}),

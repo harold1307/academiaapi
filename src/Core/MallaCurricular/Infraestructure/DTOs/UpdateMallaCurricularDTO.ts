@@ -10,7 +10,6 @@ const schema = z.object<ZodInferSchema<IUpdateMallaCurricular>>({
 	tipoDuracion: z.nativeEnum(TipoDuracion).optional(),
 	fechaAprobacion: z.date().optional(),
 	fechaLimiteVigencia: z.date().optional(),
-	niveles: z.number().optional(),
 	maximoMateriasMatricula: z.number().optional(),
 	cantidadLibreOpcionEgreso: z.number().optional(),
 	cantidadOptativasEgreso: z.number().optional(),

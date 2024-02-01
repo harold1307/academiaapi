@@ -353,7 +353,6 @@ const updateBodySchema = z.object<
 	tipoDuracion: z.nativeEnum(TipoDuracion).optional(),
 	fechaAprobacion: z.string().datetime().optional(),
 	fechaLimiteVigencia: z.string().datetime().optional(),
-	niveles: z.number().optional(),
 	maximoMateriasMatricula: z.number().optional(),
 	cantidadLibreOpcionEgreso: z.number().optional(),
 	cantidadOptativasEgreso: z.number().optional(),
