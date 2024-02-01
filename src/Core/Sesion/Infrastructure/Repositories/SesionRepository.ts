@@ -4,7 +4,10 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreateSesion } from "../../Domain/ICreateSesion";
 import type { ISesion } from "../../Domain/ISesion";
-import type { ISesionRepository } from "../../Domain/ISesionRepository";
+import type {
+	ISesionRepository,
+	UpdateSesionParams,
+} from "../../Domain/ISesionRepository";
 
 @injectable()
 export class SesionRepository implements ISesionRepository {
@@ -16,12 +19,13 @@ export class SesionRepository implements ISesionRepository {
 				cursoEscuelas: {
 					take: 1,
 				},
+				turnos: { take: 1 },
 			},
 		});
 
-		return sesiones.map(({ cursoEscuelas, ...rest }) => ({
+		return sesiones.map(({ cursoEscuelas, turnos, ...rest }) => ({
 			...rest,
-			enUso: cursoEscuelas.length > 0,
+			enUso: cursoEscuelas.length > 0 || turnos.length > 0,
 		}));
 	}
 	async getById(id: string): Promise<ISesion | null> {
@@ -31,16 +35,17 @@ export class SesionRepository implements ISesionRepository {
 				cursoEscuelas: {
 					take: 1,
 				},
+				turnos: { take: 1 },
 			},
 		});
 
 		if (!sesion) return null;
 
-		const { cursoEscuelas, ...rest } = sesion;
+		const { cursoEscuelas, turnos, ...rest } = sesion;
 
 		return {
 			...rest,
-			enUso: cursoEscuelas.length > 0,
+			enUso: cursoEscuelas.length > 0 || turnos.length > 0,
 		};
 	}
 	async deleteById(id: string): Promise<ISesion> {
@@ -62,7 +67,29 @@ export class SesionRepository implements ISesionRepository {
 			enUso: false,
 		};
 	}
-	// async update(params: IUpdateSesionParams): Promise<ISesion>; {
+	async update({
+		id,
+		data: { sedeId, ...data },
+	}: UpdateSesionParams): Promise<ISesion> {
+		const sesion = await this._client.sesion.update({
+			where: { id },
+			data: {
+				...data,
+				...(sedeId ? { sede: { connect: { id: sedeId } } } : {}),
+			},
+			include: {
+				cursoEscuelas: {
+					take: 1,
+				},
+				turnos: { take: 1 },
+			},
+		});
 
-	// }
+		const { cursoEscuelas, turnos, ...rest } = sesion;
+
+		return {
+			...rest,
+			enUso: cursoEscuelas.length > 0 || turnos.length > 0,
+		};
+	}
 }

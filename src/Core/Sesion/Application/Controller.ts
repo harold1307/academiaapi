@@ -6,23 +6,29 @@ import {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { SedeService } from "../../Sede/Application/Service";
+import type { ISedeService } from "../../Sede/Domain/ISedeService";
 import { TurnoService } from "../../Turno/Application/Service";
 import type { ICreateTurno } from "../../Turno/Domain/ICreateTurno";
 import type { ITurnoService } from "../../Turno/Domain/ITurnoService";
 import type { ICreateSesion } from "../Domain/ICreateSesion";
 import type { ISesionController } from "../Domain/ISesionController";
 import type { ISesionService } from "../Domain/ISesionService";
+import type { IUpdateSesion } from "../Domain/IUpdateSesion";
 import { SesionService } from "./Service";
 
 export class SesionController implements ISesionController {
 	private _sesionService: ISesionService;
 	private _turnoService: ITurnoService;
+	private _sedeService: ISedeService;
 
 	constructor() {
 		this._sesionService = StartupBuilder.resolve(SesionService);
 		this._turnoService = StartupBuilder.resolve(TurnoService);
+		this._sedeService = StartupBuilder.resolve(SedeService);
 	}
 
 	async sesionesGetAll(
@@ -34,10 +40,7 @@ export class SesionController implements ISesionController {
 
 			const sesiones = await this._sesionService.getAllSesiones();
 
-			return {
-				jsonBody: { data: sesiones, message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: sesiones });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -51,21 +54,11 @@ export class SesionController implements ISesionController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const sesionId = req.params.sesionId;
 
-			if (!sesionId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!sesionId) return CommonResponse.invalidId();
 
 			const sesion = await this._sesionService.getSesionById(sesionId);
 
-			return {
-				jsonBody: { data: sesion, message: "Solicitud exitosa." },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: sesion });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -78,21 +71,25 @@ export class SesionController implements ISesionController {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const body = await req.json();
-
 			const bodyVal = createBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const sede = await this._sedeService.getSedeById(bodyVal.data.sedeId);
+
+			if (!sede)
 				return {
-					jsonBody: "Peticion invalida",
+					jsonBody: {
+						message: "La sede no existe",
+					},
 					status: 400,
 				};
-			}
 
 			const newSesion = await this._sesionService.createSesion(bodyVal.data);
 
 			ctx.log({ newCurso: newSesion });
 
-			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -106,22 +103,38 @@ export class SesionController implements ISesionController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const sesionId = req.params.sesionId;
 
-			if (!sesionId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!sesionId) return CommonResponse.invalidId();
 
 			await this._sesionService.deleteSesionById(sesionId);
 
-			return {
-				jsonBody: { message: "Recurso eliminado con exito." },
-				status: 200,
-			};
+			return CommonResponse.successful();
 		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
+
+	async sesionesUpdateById(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+			const sesionId = req.params.sesionId;
+
+			if (!sesionId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = updateBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const sesion = await this._sesionService.updateSesionById({
+				id: sesionId,
+				data: bodyVal.data,
+			});
+
+			return CommonResponse.successful({ data: sesion });
+		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
@@ -135,24 +148,21 @@ export class SesionController implements ISesionController {
 
 			const sesionId = req.params.sesionId;
 
-			if (!sesionId) {
-				return {
-					jsonBody: {
-						message: "ID invalido o no especificado",
-					},
-					status: 400,
-				};
-			}
+			if (!sesionId) return CommonResponse.invalidId();
 
 			const body = await req.json();
-			const bodyVal = createTurnoSchema.safeParse(body);
+			const bodyVal = createTurnoBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const sesion = await this._sesionService.getSesionById(sesionId);
+
+			if (!sesion)
 				return {
-					jsonBody: "Peticion invalida",
-					status: 400,
+					jsonBody: {
+						message: "La sesion no existe",
+					},
 				};
-			}
 
 			const { data } = bodyVal;
 
@@ -165,7 +175,7 @@ export class SesionController implements ISesionController {
 
 			ctx.log({ newTurno });
 
-			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -175,7 +185,7 @@ export class SesionController implements ISesionController {
 const createBodySchema = z.object<ZodInferSchema<ICreateSesion>>({
 	nombre: z.string(),
 	sedeId: z.string(),
-	alias: z.string().nullable(),
+	alias: z.string(),
 	lunes: z.boolean(),
 	martes: z.boolean(),
 	miercoles: z.boolean(),
@@ -185,7 +195,20 @@ const createBodySchema = z.object<ZodInferSchema<ICreateSesion>>({
 	domingo: z.boolean(),
 });
 
-const createTurnoSchema = z.object<
+const updateBodySchema = z.object<ZodInferSchema<IUpdateSesion>>({
+	nombre: z.string().optional(),
+	sedeId: z.string().optional(),
+	alias: z.string().optional(),
+	lunes: z.boolean().optional(),
+	martes: z.boolean().optional(),
+	miercoles: z.boolean().optional(),
+	jueves: z.boolean().optional(),
+	viernes: z.boolean().optional(),
+	sabado: z.boolean().optional(),
+	domingo: z.boolean().optional(),
+});
+
+const createTurnoBodySchema = z.object<
 	ZodInferSchema<
 		Omit<ICreateTurno, "sesionId" | "comienza" | "termina"> & {
 			comienza: string;

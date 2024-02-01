@@ -24,7 +24,7 @@
 
 ## Sesion
 
-- [] Implementar metodo PATCH
+- [x] Implementar metodo PATCH
 - [x] Implementar conexion con Turno
 
 ## Turno

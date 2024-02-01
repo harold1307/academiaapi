@@ -1,4 +1,5 @@
 import { app } from "@azure/functions";
+
 import { SesionController } from "../../Core/Sesion/Application/Controller";
 
 const controller = new SesionController();
@@ -27,12 +28,13 @@ app.deleteRequest("sesionesDeleteById", {
 	route: "sesiones/{sesionId}",
 });
 
-// app.patch("sesionesUpdateById", {
-// 	authLevel: "anonymous",
-// 	handler: (req, ctx) => controller.sesionesUpdateById(req, ctx),
-// 	route: "sesiones/{sesionId}",
-// });
+app.patch("sesionesUpdateById", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.sesionesUpdateById(req, ctx),
+	route: "sesiones/{sesionId}",
+});
 
+// turnos
 app.post("sesionesCreateTurno", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.sesionesCreateTurno(req, ctx),

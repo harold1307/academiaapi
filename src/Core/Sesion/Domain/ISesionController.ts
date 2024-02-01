@@ -21,6 +21,10 @@ export type ISesionController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
+	sesionesUpdateById(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 
 	sesionesCreateTurno(
 		req: HttpRequest,

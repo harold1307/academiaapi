@@ -1,12 +1,13 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreateSesion } from "../../Domain/ICreateSesion";
 
 const schema = z.object<ZodInferSchema<ICreateSesion>>({
 	nombre: z.string(),
-	sedeId: z.string(),
-	alias: z.string().nullable(),
+	sedeId: z.string().uuid(),
+	alias: z.string(),
 	lunes: z.boolean(),
 	martes: z.boolean(),
 	miercoles: z.boolean(),
@@ -16,18 +17,19 @@ const schema = z.object<ZodInferSchema<ICreateSesion>>({
 	domingo: z.boolean(),
 });
 
-export class CreateSesionDTO {
-	private data: ICreateSesion | undefined;
+class CreateSesionDTOError extends BaseDTOError<ICreateSesion> {
+	constructor(error: z.ZodError<ICreateSesion>) {
+		super(error);
+		this.name = "CreateSesionDTOError";
+		this.message = "Error de validacion para crear la sesion";
+	}
+}
 
-	constructor(private input: unknown) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class CreateSesionDTO extends BaseValidatorDTO<
+	ICreateSesion,
+	CreateSesionDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateSesionDTOError, input);
 	}
 }
