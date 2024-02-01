@@ -3,38 +3,26 @@ to: src/Core/<%= name %>/Infrastructure/DTOs/Create<%= name %>DTO.ts
 ---
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreate<%= name %> } from "../../Domain/ICreate<%= name %>";
 
 const schema = z.object<ZodInferSchema<ICreate<%= name %>>>({})
 
-class Create<%= name %>DTOError extends Error {
-	public issues: z.ZodIssue[];
-
-	constructor(issues: z.ZodIssue[]) {
-		super();
-
+class Create<%= name %>DTOError extends BaseDTOError<ICreate<%= name %>> {
+	constructor(error: z.ZodError<ICreate<%= name %>>) {
+		super(error);
 		this.name = "Create<%= name %>DTOError";
 		this.message =
 			"Error de validacion para crear el <%= name %>";
-		this.issues = issues;
 	}
 }
 
-export class Create<%= name %>DTO {
-  private data: ICreate<%= name %>
-
-  constructor(private input: unknown) {
-		const parse = schema.safeParse(this.input);
-
-		if (!parse.success) {
-			throw new Create<%= name %>DTOError(parse.error.issues);
-		}
-
-		this.data = parse.data;
-	}
-
-	getData() {
-		return this.data;
+export class Create<%= name %>DTO extends BaseValidatorDTO<
+	ICreate<%= name %>,
+	Create<%= name %>DTOError
+> {
+	constructor(input: unknown) {
+		super(schema, Create<%= name %>DTOError, input);
 	}
 }
