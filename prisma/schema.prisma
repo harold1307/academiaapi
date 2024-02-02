@@ -156,8 +156,10 @@ model NivelMalla {
   id    String @id @default(uuid())
   nivel Int
 
-  mallaId String
-  malla   MallaCurricular @relation(fields: [mallaId], references: [id], onDelete: Cascade)
+  mallaId          String
+  malla            MallaCurricular @relation(fields: [mallaId], references: [id], onDelete: Cascade)
+  tituloObtenidoId String?
+  tituloObtenido   TituloObtenido? @relation(fields: [tituloObtenidoId], references: [id])
 
   practicaPreProfesional PracticaPreProfesionalEnMalla?
   practicaComunitaria    PracticaComunitariaEnMalla?
@@ -812,6 +814,7 @@ model TituloObtenido {
   programa   Programa @relation(fields: [programaId], references: [id])
 
   mallasCurriculares MallaCurricular[]
+  nivelesMalla       NivelMalla[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
