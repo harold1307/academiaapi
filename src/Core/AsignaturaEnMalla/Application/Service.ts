@@ -95,9 +95,9 @@ export class AsignaturaEnMallaService implements IAsignaturaEnMallaService {
 	}
 }
 
-class AsignaturaEnMallaServiceError extends Error {
-	constructor(message: string) {
-		super();
-		this.message = message;
-	}
-}
+// class AsignaturaEnMallaServiceError extends Error {
+// 	constructor(message: string) {
+// 		super();
+// 		this.message = message;
+// 	}
+// }
