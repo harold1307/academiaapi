@@ -166,6 +166,7 @@ model NivelMalla {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
+  @@unique([nivel, mallaId])
   @@map("niveles_mallas")
 }
 
