@@ -1,4 +1,3 @@
-import { TipoDuracion } from "@prisma/client";
 import { z } from "zod";
 
 import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
@@ -6,27 +5,25 @@ import type { ZodInferSchema } from "../../../../types";
 import type { ICreateMallaCurricular } from "../../Domain/ICreateMallaCurricular";
 
 const schema = z.object<ZodInferSchema<ICreateMallaCurricular>>({
-	modalidadId: z.string().uuid(),
-	tituloObtenidoId: z.string().uuid(),
-	programaId: z.string().uuid(),
-	tipoDuracion: z.nativeEnum(TipoDuracion),
+	tipoDuracion: z
+		.enum(["ANOS", "CREDITOS", "HORAS", "SEMESTRES"] as const)
+		.nullable(),
+	codigo: z.string().nullable(),
 	fechaAprobacion: z.date(),
 	fechaLimiteVigencia: z.date(),
-	niveles: z.number(),
-	maximoMateriasMatricula: z.number(),
-	cantidadLibreOpcionEgreso: z.number(),
-	cantidadOptativasEgreso: z.number(),
-	cantidadArrastres: z.number(),
-	practicasLigadasMaterias: z.boolean(),
-	horasPractica: z.number(),
-	registroPracticasDesde: z.number(),
-	horasVinculacion: z.number(),
-	registroVinculacionDesde: z.number(),
-	registroProyectosDesde: z.number(),
-	usaNivelacion: z.boolean(),
+	cantidadOtrasMateriasMatricula: z.number(),
+	limiteSeleccionMateriaPorAdministrativo: z.boolean(),
+	cantidadArrastres: z.number().nullable(),
+	porcentajeMinimoPasarNivel: z.number().nullable(),
+	maximoMateriasAdelantar: z.number().nullable(),
+	automatriculaModulos: z.boolean(),
 	plantillasSilabo: z.boolean(),
-	perfilEgreso: z.string(),
-	observaciones: z.string(),
+	modeloPlanificacion: z.boolean(),
+	perfilEgreso: z.string().nullable(),
+	observaciones: z.string().nullable(),
+	tituloObtenidoId: z.string().uuid().nullable(),
+	modalidadId: z.string().uuid(),
+	programaId: z.string().uuid(),
 });
 
 class CreateMallaCurricularDTOError extends BaseDTOError<ICreateMallaCurricular> {

@@ -1,12 +1,13 @@
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
+import type { IAsignatura } from "../Domain/IAsignatura";
 import type {
 	IAsignaturaRepository,
-	IUpdateAsignaturaParams,
+	UpdateAsignaturaParams,
 } from "../Domain/IAsignaturaRepository";
 import type { IAsignaturaService } from "../Domain/IAsignaturaService";
-import type { IAsignatura } from "../Domain/IAsignatura";
+import type { ICreateAsignatura } from "../Domain/ICreateAsignatura";
 import { CreateAsignaturaDTO } from "../Infrastructure/DTOs/CreateAsignaturaDTO";
 import { UpdateAsignaturaDTO } from "../Infrastructure/DTOs/UpdateAsignaturaDTO";
 
@@ -17,21 +18,10 @@ export class AsignaturaService implements IAsignaturaService {
 		private _asignaturaRepository: IAsignaturaRepository,
 	) {}
 
-	async createAsignatura(data: any): Promise<IAsignatura> {
+	async createAsignatura(data: ICreateAsignatura): Promise<IAsignatura> {
 		const dto = new CreateAsignaturaDTO(data);
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para crear de asignatura",
-				validation.error,
-			);
-			throw new AsignaturaServiceError(
-				"Esquema para crear de asignatura invalido.",
-			);
-		}
-
-		return this._asignaturaRepository.create(validation.data);
+		return this._asignaturaRepository.create(dto.getData());
 	}
 
 	async getAllAsignaturas(): Promise<IAsignatura[]> {
@@ -43,29 +33,39 @@ export class AsignaturaService implements IAsignaturaService {
 	}
 
 	async deleteAsignaturaById(id: string): Promise<IAsignatura> {
+		const asignatura = await this._asignaturaRepository.getById(id);
+
+		if (!asignatura)
+			throw new AsignaturaServiceError("La asignatura no existe");
+
+		if (asignatura.enUso)
+			throw new AsignaturaServiceError(
+				"La asignatura esta en uso, no se puede eliminar",
+			);
+
 		return this._asignaturaRepository.deleteById(id);
 	}
 
 	async updateAsignaturaById({
 		id,
 		data,
-	}: IUpdateAsignaturaParams): Promise<IAsignatura> {
+	}: UpdateAsignaturaParams): Promise<IAsignatura> {
 		const dto = new UpdateAsignaturaDTO(data);
-		const validation = dto.validate();
+		const valid = dto.getData();
 
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para actualizar asignatura",
-				JSON.stringify(validation.error),
-			);
+		const asignatura = await this._asignaturaRepository.getById(id);
+
+		if (!asignatura)
+			throw new AsignaturaServiceError("La asignatura no existe");
+
+		if (valid.nombre && valid.nombre !== asignatura.nombre && asignatura.enUso)
 			throw new AsignaturaServiceError(
-				"Esquema para actualizar asignatura invalido.",
+				"La asignatura esta en uso, no se puede cambiar el nombre",
 			);
-		}
 
 		return this._asignaturaRepository.update({
 			id: id,
-			data: validation.data,
+			data: dto.getData(),
 		});
 	}
 }

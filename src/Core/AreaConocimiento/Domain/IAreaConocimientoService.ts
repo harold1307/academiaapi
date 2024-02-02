@@ -1,5 +1,5 @@
 import type { IAreaConocimiento } from "./IAreaConocimiento";
-import type { IUpdateAreaConocimientoParams } from "./IAreaConocimientoRepository";
+import type { UpdateAreaConocimientoParams } from "./IAreaConocimientoRepository";
 import type { ICreateAreaConocimiento } from "./ICreateAreaConocimiento";
 
 export type IAreaConocimientoService = {
@@ -9,7 +9,7 @@ export type IAreaConocimientoService = {
 	getAllAreaConocimientos(): Promise<IAreaConocimiento[]>;
 	getAreaConocimientoById(id: string): Promise<IAreaConocimiento | null>;
 	updateAreaConocimientoById(
-		params: IUpdateAreaConocimientoParams,
+		params: UpdateAreaConocimientoParams,
 	): Promise<IAreaConocimiento>;
 	deleteAreaConocimientoById(id: string): Promise<IAreaConocimiento>;
 };

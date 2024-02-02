@@ -2,7 +2,10 @@ import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
 import type { IAreaConocimiento } from "../Domain/IAreaConocimiento";
-import type { IAreaConocimientoRepository } from "../Domain/IAreaConocimientoRepository";
+import type {
+	IAreaConocimientoRepository,
+	UpdateAreaConocimientoParams,
+} from "../Domain/IAreaConocimientoRepository";
 import type { IAreaConocimientoService } from "../Domain/IAreaConocimientoService";
 import { CreateAreaConocimientoDTO } from "../Infrastructure/DTOs/CreateAreaConocimiento";
 import { UpdateAreaConocimientoDTO } from "../Infrastructure/DTOs/UpdateAreaConocimientoDTO";
@@ -24,26 +27,17 @@ export class AreaConocimientoService implements IAreaConocimientoService {
 
 	createAreaConocimiento(data: any): Promise<IAreaConocimiento> {
 		const dto = new CreateAreaConocimientoDTO(data);
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para crear area de conocimiento",
-				validation.error,
-			);
-			throw new AreaConocimientoServiceError(
-				"Esquema para crear area de conocimiento invalido.",
-			);
-		}
-
-		return this._areaConocimientoRepository.create(validation.data);
+		return this._areaConocimientoRepository.create(dto.getData());
 	}
 
-	async updateAreaConocimientoById(params: {
-		id: string;
-		data: unknown;
-	}): Promise<IAreaConocimiento> {
-		const area = await this._areaConocimientoRepository.getById(params.id);
+	async updateAreaConocimientoById({
+		id,
+		data,
+	}: UpdateAreaConocimientoParams): Promise<IAreaConocimiento> {
+		const dto = new UpdateAreaConocimientoDTO(data);
+
+		const area = await this._areaConocimientoRepository.getById(id);
 
 		if (!area)
 			throw new AreaConocimientoServiceError(
@@ -52,25 +46,12 @@ export class AreaConocimientoService implements IAreaConocimientoService {
 
 		if (area.enUso)
 			throw new AreaConocimientoServiceError(
-				"El area de conocimiento esta en uso.",
+				"El area de conocimiento esta en uso, no se puede actualizar",
 			);
-
-		const dto = new UpdateAreaConocimientoDTO(params.data);
-		const validation = dto.validate();
-
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para actualizar area de conocimiento",
-				JSON.stringify(validation.error, null, 2),
-			);
-			throw new AreaConocimientoServiceError(
-				"Esquema para actualizar area de conocimiento invalido.",
-			);
-		}
 
 		return this._areaConocimientoRepository.update({
-			id: params.id,
-			data: validation.data,
+			id,
+			data: dto.getData(),
 		});
 	}
 
@@ -84,7 +65,7 @@ export class AreaConocimientoService implements IAreaConocimientoService {
 
 		if (area.enUso)
 			throw new AreaConocimientoServiceError(
-				"El area de conocimiento esta en uso.",
+				"El area de conocimiento esta en uso, no se puede eliminar",
 			);
 
 		return this._areaConocimientoRepository.deleteById(id);

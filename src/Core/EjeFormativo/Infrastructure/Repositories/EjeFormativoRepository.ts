@@ -4,7 +4,10 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreateEjeFormativo } from "../../Domain/ICreateEjeFormativo";
 import type { IEjeFormativo } from "../../Domain/IEjeFormativo";
-import type { IEjeFormativoRepository } from "../../Domain/IEjeFormativoRepository";
+import type {
+	IEjeFormativoRepository,
+	UpdateEjeFormativoParams,
+} from "../../Domain/IEjeFormativoRepository";
 
 @injectable()
 export class EjeFormativoRepository implements IEjeFormativoRepository {
@@ -13,17 +16,15 @@ export class EjeFormativoRepository implements IEjeFormativoRepository {
 	async getAll(): Promise<IEjeFormativo[]> {
 		const ejes = await this._client.ejeFormativo.findMany({
 			include: {
-				_count: {
-					select: {
-						asignaturasEnMalla: true,
-					},
+				asignaturasEnNivelMalla: {
+					take: 1,
 				},
 			},
 		});
 
-		return ejes.map(({ _count, ...e }) => ({
-			...e,
-			enUso: _count.asignaturasEnMalla > 0,
+		return ejes.map(({ asignaturasEnNivelMalla, ...rest }) => ({
+			...rest,
+			enUso: asignaturasEnNivelMalla.length > 0,
 		}));
 	}
 
@@ -31,20 +32,18 @@ export class EjeFormativoRepository implements IEjeFormativoRepository {
 		const eje = await this._client.ejeFormativo.findUnique({
 			where: { id },
 			include: {
-				_count: {
-					select: {
-						asignaturasEnMalla: true,
-					},
+				asignaturasEnNivelMalla: {
+					take: 1,
 				},
 			},
 		});
 
 		if (!eje) return eje;
 
-		const { _count, ...rest } = eje;
+		const { asignaturasEnNivelMalla, ...rest } = eje;
 		return {
 			...rest,
-			enUso: _count.asignaturasEnMalla > 0,
+			enUso: asignaturasEnNivelMalla.length > 0,
 		};
 	}
 
@@ -52,18 +51,16 @@ export class EjeFormativoRepository implements IEjeFormativoRepository {
 		const eje = await this._client.ejeFormativo.delete({
 			where: { id },
 			include: {
-				_count: {
-					select: {
-						asignaturasEnMalla: true,
-					},
+				asignaturasEnNivelMalla: {
+					take: 1,
 				},
 			},
 		});
 
-		const { _count, ...rest } = eje;
+		const { asignaturasEnNivelMalla, ...rest } = eje;
 		return {
 			...rest,
-			enUso: _count.asignaturasEnMalla > 0,
+			enUso: asignaturasEnNivelMalla.length > 0,
 		};
 	}
 
@@ -78,27 +75,22 @@ export class EjeFormativoRepository implements IEjeFormativoRepository {
 		};
 	}
 
-	async update(params: {
-		id: string;
-		ejeFormativo: Partial<ICreateEjeFormativo>;
-	}): Promise<IEjeFormativo> {
+	async update({ id, data }: UpdateEjeFormativoParams): Promise<IEjeFormativo> {
 		const eje = await this._client.ejeFormativo.update({
-			where: { id: params.id },
-			data: params.ejeFormativo,
+			where: { id: id },
+			data,
 			include: {
-				_count: {
-					select: {
-						asignaturasEnMalla: true,
-					},
+				asignaturasEnNivelMalla: {
+					take: 1,
 				},
 			},
 		});
 
-		const { _count, ...rest } = eje;
+		const { asignaturasEnNivelMalla, ...rest } = eje;
 
 		return {
 			...rest,
-			enUso: _count.asignaturasEnMalla > 0,
+			enUso: asignaturasEnNivelMalla.length > 0,
 		};
 	}
 }

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateCampoFormacion } from "../../Domain/IUpdateCampoFormacion";
 
@@ -7,18 +8,19 @@ const schema = z.object<ZodInferSchema<IUpdateCampoFormacion>>({
 	nombre: z.string().optional(),
 });
 
-export class UpdateCampoFormacionDTO {
-	private data: IUpdateCampoFormacion | undefined;
+class UpdateCampoFormacionDTOError extends BaseDTOError<IUpdateCampoFormacion> {
+	constructor(error: z.ZodError<IUpdateCampoFormacion>) {
+		super(error);
+		this.name = "UpdateCampoFormacionDTOError";
+		this.message = "Error de validacion para actualizar el campo de formacion";
+	}
+}
 
-	constructor(private input: unknown) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class UpdateCampoFormacionDTO extends BaseValidatorDTO<
+	IUpdateCampoFormacion,
+	UpdateCampoFormacionDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, UpdateCampoFormacionDTOError, input);
 	}
 }

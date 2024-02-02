@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreateEjeFormativo } from "../../Domain/ICreateEjeFormativo";
 
@@ -7,18 +8,19 @@ const schema = z.object<ZodInferSchema<ICreateEjeFormativo>>({
 	nombre: z.string(),
 });
 
-export class CreateEjeFormativoDTO {
-	data: ICreateEjeFormativo | undefined;
+class CreateEjeFormativoDTOError extends BaseDTOError<ICreateEjeFormativo> {
+	constructor(error: z.ZodError<ICreateEjeFormativo>) {
+		super(error);
+		this.name = "CreateEjeFormativoDTOError";
+		this.message = "Error de validacion para crear el eje formativo";
+	}
+}
 
-	constructor(private input: unknown) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class CreateEjeFormativoDTO extends BaseValidatorDTO<
+	ICreateEjeFormativo,
+	CreateEjeFormativoDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateEjeFormativoDTOError, input);
 	}
 }

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreateCampoFormacion } from "../../Domain/ICreateCampoFormacion";
 
@@ -7,18 +8,19 @@ const schema = z.object<ZodInferSchema<ICreateCampoFormacion>>({
 	nombre: z.string(),
 });
 
-export class CreateCampoFormacionDTO {
-	private data: ICreateCampoFormacion | undefined;
+class CreateCampoFormacionDTOError extends BaseDTOError<ICreateCampoFormacion> {
+	constructor(error: z.ZodError<ICreateCampoFormacion>) {
+		super(error);
+		this.name = "CreateCampoFormacionDTOError";
+		this.message = "Error de validacion para crear el campo de formacion";
+	}
+}
 
-	constructor(private input: unknown) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class CreateCampoFormacionDTO extends BaseValidatorDTO<
+	ICreateCampoFormacion,
+	CreateCampoFormacionDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateCampoFormacionDTOError, input);
 	}
 }
