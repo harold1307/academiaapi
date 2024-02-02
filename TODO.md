@@ -4,8 +4,14 @@
 
 - [] Implementar metodo PATCH
 - [] Implementar programas
+- [] Implementar costos
+- [] Implementar campo "enUso", parece no tener interaccion con sus submodulos, sino con los usuarios inscritos/matriculados
 - [x] Implementar sesiones
 - [] Implementar creacion mediante plantilla Curso
+  - [x] Materias
+  - [] Programas
+  - [] Costos
+- [] Implementar exclusion de creacion y actualizacion cuando este en uso el CursoEscuela en sus submodulos
   - [x] Materias
   - [] Programas
   - [] Costos
@@ -36,6 +42,7 @@
 
 - [] Implementar logica de exclusion para crear, actualizar y eliminar
 - [x] Implementar modelo evaluativo
+- [] Implementar edicion de profesor
 
 ## Modelo Evaluativo
 
