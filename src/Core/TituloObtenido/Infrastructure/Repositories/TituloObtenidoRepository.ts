@@ -14,20 +14,43 @@ export class TituloObtenidoRepository implements ITituloObtenidoRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
 	async getAll(): Promise<ITituloObtenido[]> {
-		const titulos = await this._client.tituloObtenido.findMany();
+		const titulos = await this._client.tituloObtenido.findMany({
+			include: {
+				mallasCurriculares: {
+					take: 1,
+				},
+				nivelesMalla: {
+					take: 1,
+				},
+			},
+		});
 
-		return titulos.map(rest => ({ ...rest, enUso: false }));
+		return titulos.map(({ mallasCurriculares, nivelesMalla, ...rest }) => ({
+			...rest,
+			enUso: mallasCurriculares.length > 0 || nivelesMalla.length > 0,
+		}));
 	}
 	async getById(id: string): Promise<ITituloObtenido | null> {
 		const titulo = await this._client.tituloObtenido.findUnique({
 			where: { id },
+			include: {
+				mallasCurriculares: {
+					take: 1,
+				},
+				nivelesMalla: {
+					take: 1,
+				},
+			},
 		});
 
 		if (!titulo) return null;
 
-		const { ...rest } = titulo;
+		const { mallasCurriculares, nivelesMalla, ...rest } = titulo;
 
-		return { ...rest, enUso: false };
+		return {
+			...rest,
+			enUso: mallasCurriculares.length > 0 || nivelesMalla.length > 0,
+		};
 	}
 	async deleteById(id: string): Promise<ITituloObtenido> {
 		const titulo = await this._client.tituloObtenido.delete({
@@ -60,9 +83,22 @@ export class TituloObtenidoRepository implements ITituloObtenidoRepository {
 	}: UpdateTituloObtenidoParams): Promise<ITituloObtenido> {
 		const titulo = await this._client.tituloObtenido.update({
 			where: { id },
+			include: {
+				mallasCurriculares: {
+					take: 1,
+				},
+				nivelesMalla: {
+					take: 1,
+				},
+			},
 			data,
 		});
 
-		return { ...titulo, enUso: false };
+		const { mallasCurriculares, nivelesMalla, ...rest } = titulo;
+
+		return {
+			...rest,
+			enUso: mallasCurriculares.length > 0 || nivelesMalla.length > 0,
+		};
 	}
 }
