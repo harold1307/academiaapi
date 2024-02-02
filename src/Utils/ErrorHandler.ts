@@ -39,7 +39,7 @@ export class ErrorHandler {
 
 		if (String(error.name).includes("DTOError")) {
 			ctx.error(error.message);
-			ctx.error(error.issues);
+			ctx.error(error.error.issues);
 
 			return {
 				jsonBody: { message: error.message },

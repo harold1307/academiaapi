@@ -14,6 +14,7 @@ import { AsignaturaService } from "../../Asignatura/Application/Service";
 import type { IAsignaturaService } from "../../Asignatura/Domain/IAsignaturaService";
 import { AsignaturaEnMallaService } from "../../AsignaturaEnMalla/Application/Service";
 import type { IAsignaturaEnMallaService } from "../../AsignaturaEnMalla/Domain/IAsignaturaEnMallaService";
+import { type ICreateAnexoAsignaturaEnMalla } from "../../AsignaturaEnMalla/Domain/ICreateAnexoAsignaturaEnMalla";
 import type { ICreateAsignaturaEnMalla } from "../../AsignaturaEnMalla/Domain/ICreateAsignaturaEnMalla";
 import { CompetenciaService } from "../../Competencia/Application/Service";
 import type { ICompetenciaService } from "../../Competencia/Domain/ICompetenciaService";
@@ -211,7 +212,10 @@ export class MallaCurricularController implements IMallaCurricularController {
 			const body = await req.json();
 			const bodyVal = createAsignaturaEnMallaBodySchema.safeParse(body);
 
-			if (!bodyVal.success) return CommonResponse.invalidBody();
+			if (!bodyVal.success) {
+				ctx.error(bodyVal.error.issues);
+				return CommonResponse.invalidBody();
+			}
 
 			const { data } = bodyVal;
 
@@ -227,9 +231,20 @@ export class MallaCurricularController implements IMallaCurricularController {
 				};
 			}
 
+			if (malla.enUso)
+				return {
+					jsonBody: {
+						message:
+							"La malla curricular está en uso, no se pueden crear asignaturas en la malla ni anexas a esta",
+					},
+					status: 400,
+				};
+
 			if (malla.niveles < data.nivel) {
 				return {
-					jsonBody: { message: "El nivel especificado es mayor a la malla" },
+					jsonBody: {
+						message: "El nivel especificado es mayor al de la malla",
+					},
 					status: 400,
 				};
 			}
@@ -244,44 +259,33 @@ export class MallaCurricularController implements IMallaCurricularController {
 				};
 			}
 
-			let newAsignaturaEnMallaId;
-
-			if (data.esAnexo && !data.ejeFormativoId) {
-				const asignaturaEnMalla =
+			if (data.esAnexo) {
+				const newAnexoAsignaturaEnMalla =
 					await this._asignaturaEnMallaService.createAnexoAsignaturaEnMalla({
 						mallaId: mallaCurricularId,
 						asignaturaId,
-						data,
+						data: {
+							...data,
+							// las asignaturas anexas obligatoriamente necesitan 0 como nivel
+							nivel: 0,
+						},
 					});
 
-				newAsignaturaEnMallaId = asignaturaEnMalla.id;
+				ctx.log({ newAnexoAsignaturaEnMalla });
 
 				return CommonResponse.successful({ status: 201 });
 			}
 
-			if (!data.esAnexo && data.ejeFormativoId) {
-				const asignaturaEnMalla =
-					await this._asignaturaEnMallaService.createAsignaturaEnMalla(
-						data,
-						mallaCurricularId,
-						asignaturaId,
-					);
+			const newAsignaturaEnMalla =
+				await this._asignaturaEnMallaService.createAsignaturaEnMalla({
+					data,
+					asignaturaId,
+					mallaId: mallaCurricularId,
+				});
 
-				newAsignaturaEnMallaId = asignaturaEnMalla.id;
-			}
+			ctx.log({ newAsignaturaEnMalla });
 
-			if (data.competenciaGenerica && newAsignaturaEnMallaId) {
-				await this._competenciaService.createCompetenciaForAsignaturaEnMalla(
-					{ nombre: data.competenciaGenerica },
-					newAsignaturaEnMallaId,
-				);
-			}
-
-			if (newAsignaturaEnMallaId) {
-				return CommonResponse.successful({ status: 201 });
-			}
-
-			return { jsonBody: { message: "Error desconocido" }, status: 500 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -380,7 +384,7 @@ const createLugarEjecucionBodySchema = z.object<
 const createAsignaturaEnMallaBodySchema = z.object<
 	ZodInferSchema<
 		Omit<
-			ICreateAsignaturaEnMalla,
+			ICreateAnexoAsignaturaEnMalla & ICreateAsignaturaEnMalla,
 			"mallaId" | "asignaturaId" | "esAnexo" | "ejeFormativoId"
 		> & {
 			competenciaGenerica: string | null;
@@ -390,6 +394,7 @@ const createAsignaturaEnMallaBodySchema = z.object<
 	>
 >({
 	esAnexo: z.boolean(),
+	// @ts-expect-error si es anexo el nivel sera 0, por lo tanto un numero
 	nivel: z.number(),
 	tipoAsignatura: z.nativeEnum(TipoAsignatura),
 	identificacion: z.string(),
@@ -415,6 +420,8 @@ const createAsignaturaEnMallaBodySchema = z.object<
 
 	competenciaGenerica: z.string().nullable(),
 	ejeFormativoId: z.string().nullable(),
-	areaConocimientoId: z.string(),
-	campoFormacionId: z.string(),
+	// @ts-expect-error si es anexo es nullable sino estricto
+	areaConocimientoId: z.string().nullable(),
+	// @ts-expect-error si es anexo es estricto sino nullable
+	campoFormacionId: z.string().nullable(),
 });

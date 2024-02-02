@@ -1,26 +1,36 @@
 import type { IAsignaturaEnMalla } from "./IAsignaturaEnMalla";
+import type { UpdateAsignaturaEnMallaParams } from "./IAsignaturaEnMallaRepository";
 import type { ICreateAnexoAsignaturaEnMalla } from "./ICreateAnexoAsignaturaEnMalla";
+import type { ICreateAsignaturaEnMalla } from "./ICreateAsignaturaEnMalla";
+import type { IUpdateAnexoAsignaturaEnMalla } from "./IUpdateAnexoAsignaturaEnMalla";
 
-export type ICreateAnexoAsignaturaEnMallaParams = {
+export type CreateAnexoAsignaturaEnMallaParams = {
 	data: ICreateAnexoAsignaturaEnMalla | any;
+	mallaId: string;
+	asignaturaId: string;
+};
+
+export type CreateAsignaturaEnMallaParams = {
+	data: ICreateAsignaturaEnMalla | any;
 	mallaId: string;
 	asignaturaId: string;
 };
 
 export type IAsignaturaEnMallaService = {
 	createAsignaturaEnMalla(
-		data: any,
-		mallaId: string,
-		asignaturaId: string,
+		params: CreateAsignaturaEnMallaParams,
 	): Promise<IAsignaturaEnMalla>;
-	// getAllMallasCurriculares(): Promise<IMallaCurricular[]>;
-	// getMallaCurricularById(id: string): Promise<IMallaCurricular | null>;
-	// updateMallaCurricularById(params: {
-	// 	id: string;
-	// 	mallaCurricular: any;
-	// }): Promise<IMallaCurricular>;
-	// deleteMallaCurricularById(id: string): Promise<IMallaCurricular>;
+	getAllAsignaturasEnMallas(): Promise<IAsignaturaEnMalla[]>;
+	getAsignaturaEnMallaById(id: string): Promise<IAsignaturaEnMalla | null>;
+	updateAsignaturaEnMallaById(
+		params: UpdateAsignaturaEnMallaParams,
+	): Promise<IAsignaturaEnMalla>;
+	updateAnexoAsignaturaEnMallaById(params: {
+		id: string;
+		data: IUpdateAnexoAsignaturaEnMalla;
+	}): Promise<IAsignaturaEnMalla>;
+	deleteAsignaturaEnMallaById(id: string): Promise<IAsignaturaEnMalla>;
 	createAnexoAsignaturaEnMalla(
-		params: ICreateAnexoAsignaturaEnMallaParams,
+		params: CreateAnexoAsignaturaEnMallaParams,
 	): Promise<IAsignaturaEnMalla>;
 };

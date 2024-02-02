@@ -56,6 +56,7 @@
 ## Malla Curricular
 
 - [x] Implementar logica de exclusion para eliminar y actualizar
+- [] Implementar enUso
 
 ## Titulo Obtenido
 

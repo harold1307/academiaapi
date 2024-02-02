@@ -1,22 +1,18 @@
-import type { $Enums } from "@prisma/client";
+import type { ICreateAsignaturaEnMalla } from "./ICreateAsignaturaEnMalla";
 
-export type IUpdateAsignaturaEnMalla = {
-	ejeFormativo: string;
-	areaConocimiento: string;
-	campoFormacion: string;
-	tipoAsignatura: $Enums.TipoAsignatura;
-	identificacion: string;
-
-	horasSemanales: number;
-	horasColaborativas: number;
-	horasAsistidasDocente: number;
-	horasAutonomas: number;
-	horasPracticas: number;
-
-	noValidaAsistencia: boolean;
-	materiaComun: boolean;
-
-	objetivos: string;
-	descripcion: string;
-	resultadosAprendizaje: string;
-};
+export type IUpdateAsignaturaEnMalla = Partial<
+	Omit<
+		ICreateAsignaturaEnMalla,
+		| "id"
+		| "enUso"
+		| "createdAt"
+		| "updatedAt"
+		| "esAnexo"
+		| "ejeFormativo"
+		| "areaConocimiento"
+		| "campoFormacion"
+		| "nivel"
+		| "asignaturaId"
+		| "mallaId"
+	>
+>;

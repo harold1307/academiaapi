@@ -34,43 +34,26 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 		};
 	}
 	async getAll() {
-		const mallas = await this._client.mallaCurricular.findMany({
-			include: {
-				asignaturasEnMalla: {
-					take: 1,
-				},
-				lugaresEjecucion: {
-					take: 1,
-				},
-			},
-		});
+		const mallas = await this._client.mallaCurricular.findMany({});
 
-		return mallas.map(({ asignaturasEnMalla, lugaresEjecucion, ...rest }) => ({
+		return mallas.map(({ ...rest }) => ({
 			...rest,
-			enUso: asignaturasEnMalla.length > 0 || lugaresEjecucion.length > 0,
+			enUso: false,
 		}));
 	}
 
 	async getById(id: string) {
 		const malla = await this._client.mallaCurricular.findUnique({
 			where: { id },
-			include: {
-				asignaturasEnMalla: {
-					take: 1,
-				},
-				lugaresEjecucion: {
-					take: 1,
-				},
-			},
 		});
 
 		if (!malla) return null;
 
-		const { asignaturasEnMalla, lugaresEjecucion, ...rest } = malla;
+		const { ...rest } = malla;
 
 		return {
 			...rest,
-			enUso: asignaturasEnMalla.length > 0 || lugaresEjecucion.length > 0,
+			enUso: false,
 		};
 	}
 
@@ -88,21 +71,13 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 					? { tituloObtenido: { connect: { id: tituloObtenidoId } } }
 					: {}),
 			},
-			include: {
-				asignaturasEnMalla: {
-					take: 1,
-				},
-				lugaresEjecucion: {
-					take: 1,
-				},
-			},
 		});
 
-		const { asignaturasEnMalla, lugaresEjecucion, ...rest } = malla;
+		const { ...rest } = malla;
 
 		return {
 			...rest,
-			enUso: asignaturasEnMalla.length > 0 || lugaresEjecucion.length > 0,
+			enUso: false,
 		};
 	}
 

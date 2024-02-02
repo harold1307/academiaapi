@@ -79,7 +79,7 @@ model Asignatura {
 }
 
 model AsignaturaEnMalla {
-  id                        String           @id @default(uuid())
+  id                        String         @id @default(uuid())
   nivel                     Int
   tipoAsignatura            TipoAsignatura
   identificacion            String
@@ -101,21 +101,22 @@ model AsignaturaEnMalla {
   objetivos                 String?
   descripcion               String?
   resultadosAprendizaje     String?
-  createdAt                 DateTime         @default(now())
-  updatedAt                 DateTime         @default(now()) @updatedAt
-  asignaturaId              String
-  mallaId                   String
-  areaConocimientoId        String
-  campoFormacionId          String
-  ejeFormativoId            String?
-  esAnexo                   Boolean          @default(false)
+  createdAt                 DateTime       @default(now())
+  updatedAt                 DateTime       @default(now()) @updatedAt
+  esAnexo                   Boolean        @default(false)
   sumaHoras                 Boolean
-  areaConocimiento          AreaConocimiento @relation(fields: [areaConocimientoId], references: [id])
-  asignatura                Asignatura       @relation(fields: [asignaturaId], references: [id])
-  campoFormacion            CampoFormacion   @relation(fields: [campoFormacionId], references: [id])
-  ejeFormativo              EjeFormativo?    @relation(fields: [ejeFormativoId], references: [id])
-  malla                     MallaCurricular  @relation(fields: [mallaId], references: [id])
-  competenciaGenerica       Competencia?
+  competenciaGenerica       String?
+
+  areaConocimientoId String
+  areaConocimiento   AreaConocimiento @relation(fields: [areaConocimientoId], references: [id])
+  asignaturaId       String
+  asignatura         Asignatura       @relation(fields: [asignaturaId], references: [id])
+  campoFormacionId   String?
+  campoFormacion     CampoFormacion?  @relation(fields: [campoFormacionId], references: [id])
+  ejeFormativoId     String?
+  ejeFormativo       EjeFormativo?    @relation(fields: [ejeFormativoId], references: [id])
+  mallaId            String
+  malla              MallaCurricular  @relation(fields: [mallaId], references: [id])
 
   @@index([areaConocimientoId], map: "asignaturas_en_mallas_areaConocimientoId_fkey")
   @@index([asignaturaId], map: "asignaturas_en_mallas_asignaturaId_fkey")
@@ -317,10 +318,8 @@ model Competencia {
   tipo   TipoCompetencia
   nombre String
 
-  asignaturaEnMallaId String?            @unique
-  asignaturaEnMalla   AsignaturaEnMalla? @relation(fields: [asignaturaEnMallaId], references: [id], onDelete: SetNull)
-  programaId          String?
-  programa            Programa?          @relation(fields: [programaId], references: [id], onDelete: SetNull)
+  programaId String?
+  programa   Programa? @relation(fields: [programaId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

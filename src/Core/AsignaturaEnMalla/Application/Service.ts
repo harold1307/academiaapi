@@ -2,14 +2,21 @@ import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
 import type { IAsignaturaEnMalla } from "../Domain/IAsignaturaEnMalla";
-import type { IAsignaturaEnMallaRepository } from "../Domain/IAsignaturaEnMallaRepository";
 import type {
+	IAsignaturaEnMallaRepository,
+	UpdateAsignaturaEnMallaParams,
+} from "../Domain/IAsignaturaEnMallaRepository";
+import type {
+	CreateAnexoAsignaturaEnMallaParams,
+	CreateAsignaturaEnMallaParams,
 	IAsignaturaEnMallaService,
-	ICreateAnexoAsignaturaEnMallaParams,
 } from "../Domain/IAsignaturaEnMallaService";
 import type { ICreateAsignaturaEnMalla } from "../Domain/ICreateAsignaturaEnMalla";
-import { CreateAsignaturaEnMallaDTO } from "../Infrastructure/DTOs/CreateAsignaturaEnMallaDTO";
+import type { IUpdateAnexoAsignaturaEnMalla } from "../Domain/IUpdateAnexoAsignaturaEnMalla";
 import { CreateAnexoAsignaturaEnMallaDTO } from "../Infrastructure/DTOs/CreateAnexoAsignaturaEnMallaDTO";
+import { CreateAsignaturaEnMallaDTO } from "../Infrastructure/DTOs/CreateAsignaturaEnMallaDTO";
+import { UpdateAnexoAsignaturaEnMallaDTO } from "../Infrastructure/DTOs/UpdateAnexoAsignaturaEnMallaDTO";
+import { UpdateAsignaturaEnMallaDTO } from "../Infrastructure/DTOs/UpdateAsignaturaEnMallaDTO";
 
 @injectable()
 export class AsignaturaEnMallaService implements IAsignaturaEnMallaService {
@@ -18,56 +25,73 @@ export class AsignaturaEnMallaService implements IAsignaturaEnMallaService {
 		private _asignaturaEnMallaRepository: IAsignaturaEnMallaRepository,
 	) {}
 
-	createAsignaturaEnMalla(
-		data: any,
-		mallaId: string,
-		asignaturaId: string,
-	): Promise<IAsignaturaEnMalla> {
+	createAsignaturaEnMalla({
+		data,
+		mallaId,
+		asignaturaId,
+	}: CreateAsignaturaEnMallaParams): Promise<IAsignaturaEnMalla> {
 		const dto = new CreateAsignaturaEnMallaDTO({
 			...data,
 			mallaId,
 			asignaturaId,
-		} as ICreateAsignaturaEnMalla);
-		const validation = dto.validate();
+		} satisfies ICreateAsignaturaEnMalla);
 
-		if (!validation.success) {
-			console.error(
-				"Error en la validacion del body de la peticion",
-				JSON.stringify(validation.error, null, 2),
-			);
-
-			throw new AsignaturaEnMallaServiceError(
-				"Error en la validacion del body de la peticion",
-			);
-		}
-
-		return this._asignaturaEnMallaRepository.create(validation.data);
+		return this._asignaturaEnMallaRepository.create(dto.getData());
 	}
 
 	createAnexoAsignaturaEnMalla({
 		asignaturaId,
 		data,
 		mallaId,
-	}: ICreateAnexoAsignaturaEnMallaParams): Promise<IAsignaturaEnMalla> {
+	}: CreateAnexoAsignaturaEnMallaParams): Promise<IAsignaturaEnMalla> {
 		const dto = new CreateAnexoAsignaturaEnMallaDTO({
 			...data,
 			asignaturaId,
 			mallaId,
 		});
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error en la validacion del esquema para crear anexo de asignatura en malla.",
-				JSON.stringify(validation.error, null, 2),
-			);
+		return this._asignaturaEnMallaRepository.create(dto.getData());
+	}
 
-			throw new AsignaturaEnMallaServiceError(
-				"Error en la validacion del esquema para crear anexo de asignatura en malla.",
-			);
-		}
+	updateAsignaturaEnMallaById({
+		id,
+		data,
+	}: UpdateAsignaturaEnMallaParams): Promise<IAsignaturaEnMalla> {
+		const dto = new UpdateAsignaturaEnMallaDTO(data);
 
-		return this._asignaturaEnMallaRepository.create(validation.data);
+		return this._asignaturaEnMallaRepository.update({
+			id,
+			data: dto.getData(),
+		});
+	}
+
+	updateAnexoAsignaturaEnMallaById({
+		id,
+		data,
+	}: {
+		id: string;
+		data: IUpdateAnexoAsignaturaEnMalla;
+	}) {
+		const dto = new UpdateAnexoAsignaturaEnMallaDTO(data);
+
+		return this._asignaturaEnMallaRepository.update({
+			id,
+			data: dto.getData(),
+		});
+	}
+
+	async getAsignaturaEnMallaById(
+		id: string,
+	): Promise<IAsignaturaEnMalla | null> {
+		return this._asignaturaEnMallaRepository.getById(id);
+	}
+
+	async deleteAsignaturaEnMallaById(id: string): Promise<IAsignaturaEnMalla> {
+		return this._asignaturaEnMallaRepository.deleteById(id);
+	}
+
+	getAllAsignaturasEnMallas(): Promise<IAsignaturaEnMalla[]> {
+		return this._asignaturaEnMallaRepository.getAll();
 	}
 }
 

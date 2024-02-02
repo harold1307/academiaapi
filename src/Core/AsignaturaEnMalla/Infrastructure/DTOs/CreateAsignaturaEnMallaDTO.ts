@@ -1,6 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreateAsignaturaEnMalla } from "../../Domain/ICreateAsignaturaEnMalla";
 
@@ -32,26 +33,28 @@ const schema = z.object<ZodInferSchema<ICreateAsignaturaEnMalla>>({
 	objetivos: z.string().nullable(),
 	descripcion: z.string().nullable(),
 	resultadosAprendizaje: z.string().nullable(),
+	competenciaGenerica: z.string().nullable(),
 
-	asignaturaId: z.string(),
-	mallaId: z.string(),
-	ejeFormativoId: z.string(),
-	areaConocimientoId: z.string(),
-	campoFormacionId: z.string(),
+	asignaturaId: z.string().uuid(),
+	mallaId: z.string().uuid(),
+	ejeFormativoId: z.string().uuid(),
+	areaConocimientoId: z.string().uuid(),
+	campoFormacionId: z.string().uuid().nullable(),
 });
 
-export class CreateAsignaturaEnMallaDTO {
-	private asignaturaEnMalla: ICreateAsignaturaEnMalla | undefined;
+class CreateAsignaturaEnMallaDTOError extends BaseDTOError<ICreateAsignaturaEnMalla> {
+	constructor(error: z.ZodError<ICreateAsignaturaEnMalla>) {
+		super(error);
+		this.name = "CreateAsignaturaEnMallaDTOError";
+		this.message = "Error de validacion para crear la asignatura en malla";
+	}
+}
 
-	constructor(private input: any) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.asignaturaEnMalla = parse.data;
-		}
-
-		return parse;
+export class CreateAsignaturaEnMallaDTO extends BaseValidatorDTO<
+	ICreateAsignaturaEnMalla,
+	CreateAsignaturaEnMallaDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateAsignaturaEnMallaDTOError, input);
 	}
 }
