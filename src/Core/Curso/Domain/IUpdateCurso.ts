@@ -1,6 +1,7 @@
-export interface IUpdateCurso {
-	estado?: boolean;
-	nombre?: string;
-	certificado?: string | null;
-	alias?: string | null;
-}
+import type { ICreateCurso } from "./ICreateCurso";
+
+export type IUpdateCurso = Partial<
+	ICreateCurso & {
+		estado: boolean;
+	}
+>;

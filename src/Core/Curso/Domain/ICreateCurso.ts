@@ -1,6 +1,6 @@
-export interface ICreateCurso {
-	estado: boolean;
-	nombre: string;
-	certificado: string | null;
-	alias: string | null;
-}
+import type { ICurso } from "./ICurso";
+
+export type ICreateCurso = Omit<
+	ICurso,
+	"id" | "estado" | "createdAt" | "updatedAt" | "variantesCount"
+>;

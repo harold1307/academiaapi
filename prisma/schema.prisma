@@ -246,7 +246,7 @@ model AsignaturaEnCursoEscuela {
   asignaturaId       String
   asignatura         Asignatura        @relation(fields: [asignaturaId], references: [id])
   cursoEscuelaId     String
-  cursoEscuela       CursoEscuela      @relation(fields: [cursoEscuelaId], references: [id])
+  cursoEscuela       CursoEscuela      @relation(fields: [cursoEscuelaId], references: [id], onDelete: Cascade)
   profesorId         String?
   profesor           User?             @relation(fields: [profesorId], references: [id])
   modeloEvaluativoId String?

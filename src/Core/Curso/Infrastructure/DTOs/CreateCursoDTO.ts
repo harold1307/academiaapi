@@ -1,27 +1,28 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreateCurso } from "../../Domain/ICreateCurso";
 
 const schema = z.object<ZodInferSchema<ICreateCurso>>({
-	estado: z.boolean(),
 	nombre: z.string(),
 	certificado: z.string().nullable(),
 	alias: z.string().nullable(),
 });
 
-export class CreateCursoDTO {
-	private curso: ICreateCurso | undefined;
+class CreateCursoError extends BaseDTOError<ICreateCurso> {
+	constructor(error: z.ZodError<ICreateCurso>) {
+		super(error);
+		this.name = "CreateCursoError";
+		this.message = "Error de validacion para crear la plantilla de curso";
+	}
+}
 
-	constructor(private input: any) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.curso = parse.data;
-		}
-
-		return parse;
+export class CreateCursoDTO extends BaseValidatorDTO<
+	ICreateCurso,
+	CreateCursoError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateCursoError, input);
 	}
 }

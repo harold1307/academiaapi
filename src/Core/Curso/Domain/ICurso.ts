@@ -1,8 +1,5 @@
-export interface ICurso {
-	id: string;
-	estado: boolean;
-	nombre: string;
-	certificado: string | null;
-	alias: string | null;
+import type { Curso } from "@prisma/client";
+
+export type ICurso = Curso & {
 	variantesCount: number;
-}
+};

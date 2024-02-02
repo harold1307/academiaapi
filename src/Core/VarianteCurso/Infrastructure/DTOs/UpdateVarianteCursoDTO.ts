@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateVarianteCurso } from "../../Domain/IUpdateVarianteCurso";
 
@@ -15,43 +16,28 @@ const schema = z.object<ZodInferSchema<IUpdateVarianteCurso>>({
 	edadMinima: z.number().nullable().optional(),
 	//@ts-expect-error el type helper ZodInferSchema no contempla los fields nullables
 	edadMaxima: z.number().nullable().optional(),
-	fechaAprobacion: z.string().datetime().optional(),
+	fechaAprobacion: z.date().optional(),
 	registroDesdeOtraSede: z.boolean().optional(),
 	costoPorMateria: z.boolean().optional(),
 	cumpleRequisitosMalla: z.boolean().optional(),
 	pasarRecord: z.boolean().optional(),
 	aprobarCursoPrevio: z.boolean().optional(),
 	estado: z.boolean().optional(),
-	//@ts-expect-error el type helper ZodInferSchema no contempla los fields nullables
-	cursoId: z.string().nullable().optional(),
 });
 
-class UpdateVarianteCursoError extends Error {
-	public issues: z.ZodIssue[];
-
-	constructor(issues: z.ZodIssue[]) {
-		super();
-
+class UpdateVarianteCursoError extends BaseDTOError<IUpdateVarianteCurso> {
+	constructor(error: z.ZodError<IUpdateVarianteCurso>) {
+		super(error);
 		this.name = "UpdateVarianteCursoError";
 		this.message = "Error de validacion para actualizar la variante de curso";
-		this.issues = issues;
 	}
 }
 
-export class UpdateVarianteCursoDTO {
-	private data: IUpdateVarianteCurso;
-
-	constructor(private input: unknown) {
-		const parse = schema.safeParse(this.input);
-
-		if (!parse.success) {
-			throw new UpdateVarianteCursoError(parse.error.issues);
-		}
-
-		this.data = parse.data;
-	}
-
-	getData() {
-		return this.data;
+export class UpdateVarianteCursoDTO extends BaseValidatorDTO<
+	IUpdateVarianteCurso,
+	UpdateVarianteCursoError
+> {
+	constructor(input: unknown) {
+		super(schema, UpdateVarianteCursoError, input);
 	}
 }

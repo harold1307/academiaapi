@@ -1,51 +1,60 @@
 import { z } from "zod";
 
-import type { ICreateVarianteCurso } from "../../Domain/ICreateVarianteCurso";
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
+import type { ICreateVarianteCurso } from "../../Domain/ICreateVarianteCurso";
 
-const schema = z.object<ZodInferSchema<ICreateVarianteCurso>>({
-	nombre: z.string(),
-	codigoBase: z.string(),
-	descripcion: z.string(),
-	registroExterno: z.boolean(),
-	registroInterno: z.boolean(),
-	verificarSesion: z.boolean(),
-	edadMinima: z.number().nullable(),
-	edadMaxima: z.number().nullable(),
-	fechaAprobacion: z.string().datetime(),
-	registroDesdeOtraSede: z.boolean(),
-	costoPorMateria: z.boolean(),
-	cumpleRequisitosMalla: z.boolean(),
-	pasarRecord: z.boolean(),
-	aprobarCursoPrevio: z.boolean(),
-});
+const schema = z
+	.object<ZodInferSchema<ICreateVarianteCurso>>({
+		nombre: z.string(),
+		codigoBase: z.string(),
+		descripcion: z.string(),
+		registroExterno: z.boolean(),
+		registroInterno: z.boolean(),
+		verificarSesion: z.boolean(),
+		edadMinima: z.number().nullable(),
+		edadMaxima: z.number().nullable(),
+		fechaAprobacion: z.date(),
+		registroDesdeOtraSede: z.boolean(),
+		costoPorMateria: z.boolean(),
+		cumpleRequisitosMalla: z.boolean(),
+		pasarRecord: z.boolean(),
+		aprobarCursoPrevio: z.boolean(),
+	})
+	.superRefine(({ edadMaxima, edadMinima }, ctx) => {
+		if (
+			(edadMaxima !== null && edadMinima === null) ||
+			(edadMaxima === null && edadMinima !== null)
+		) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: "Edad maxima y edad minima deben ser ambos null o numeros",
+			});
 
-class CreateVarianteCursoError extends Error {
-	public issues: z.ZodIssue[];
+			return;
+		}
 
-	constructor(issues: z.ZodIssue[]) {
-		super();
+		if (edadMaxima !== null && edadMinima !== null && edadMaxima < edadMinima) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: "Si verificar edad, la edad maxima debe ser mayor.",
+			});
+		}
+	});
 
+class CreateVarianteCursoError extends BaseDTOError<ICreateVarianteCurso> {
+	constructor(error: z.ZodError<ICreateVarianteCurso>) {
+		super(error);
 		this.name = "CreateVarianteCursoError";
 		this.message = "Error de validacion para crear la variante de curso";
-		this.issues = issues;
 	}
 }
 
-export class CreateVarianteCursoDTO {
-	private data: ICreateVarianteCurso;
-
-	constructor(private input: unknown) {
-		const parse = schema.safeParse(this.input);
-
-		if (!parse.success) {
-			throw new CreateVarianteCursoError(parse.error.issues);
-		}
-
-		this.data = parse.data;
-	}
-
-	getData() {
-		return this.data;
+export class CreateVarianteCursoDTO extends BaseValidatorDTO<
+	ICreateVarianteCurso,
+	CreateVarianteCursoError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateVarianteCursoError, input);
 	}
 }

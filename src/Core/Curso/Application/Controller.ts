@@ -6,13 +6,16 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
 import { VarianteCursoService } from "../../VarianteCurso/Application/Service";
 import type { ICreateVarianteCurso } from "../../VarianteCurso/Domain/ICreateVarianteCurso";
 import type { IVarianteCursoService } from "../../VarianteCurso/Domain/IVarianteCursoService";
+import type { ICreateCurso } from "../Domain/ICreateCurso";
 import type { ICursoController } from "../Domain/ICursoController";
 import type { ICursoService } from "../Domain/ICursoService";
+import type { IUpdateCurso } from "../Domain/IUpdateCurso";
 import { CursoService } from "./Service";
 
 export class CursoController implements ICursoController {
@@ -32,10 +35,7 @@ export class CursoController implements ICursoController {
 
 			const cursos = await this._cursoService.getAllCursos();
 
-			return {
-				jsonBody: { data: cursos, message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: cursos });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -49,21 +49,11 @@ export class CursoController implements ICursoController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const cursoId = req.params.cursoId;
 
-			if (!cursoId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!cursoId) return CommonResponse.invalidId();
 
 			const curso = await this._cursoService.getCursoById(cursoId);
 
-			return {
-				jsonBody: { data: curso, message: "Solicitud exitosa." },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: curso });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -74,15 +64,19 @@ export class CursoController implements ICursoController {
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit> {
 		try {
-			ctx.log(`Http function processed request for url "${req.url}"`);
-			const body = await req.json();
+			ctx.log(`Http function processed request for url '${req.url}'`);
 
-			const newCurso = await this._cursoService.createCurso(body);
+			const body = await req.json();
+			const bodyVal = createBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const newCurso = await this._cursoService.createCurso(bodyVal.data);
 
 			ctx.log({ newCurso });
 
-			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
-		} catch (error) {
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
@@ -95,21 +89,11 @@ export class CursoController implements ICursoController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const cursoId = req.params.cursoId;
 
-			if (!cursoId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!cursoId) return CommonResponse.invalidId();
 
 			await this._cursoService.deleteCursoById(cursoId);
 
-			return {
-				jsonBody: { message: "Recurso eliminado con exito." },
-				status: 200,
-			};
+			return CommonResponse.successful();
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -120,30 +104,23 @@ export class CursoController implements ICursoController {
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit> {
 		try {
-			ctx.log(`Http function processed request for url "${req.url}"`);
+			ctx.log(`Http function processed request for url '${req.url}'`);
 			const cursoId = req.params.cursoId;
 
-			if (!cursoId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!cursoId) return CommonResponse.invalidId();
 
 			const body = await req.json();
+			const bodyVal = updateBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const curso = await this._cursoService.updateCursoById({
 				id: cursoId,
-				curso: body,
+				data: bodyVal.data,
 			});
 
-			return {
-				jsonBody: { data: curso, message: "Actualizacion exitosa." },
-				status: 200,
-			};
-		} catch (error: any) {
+			return CommonResponse.successful({ data: curso });
+		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
@@ -154,22 +131,26 @@ export class CursoController implements ICursoController {
 	): Promise<HttpResponseInit> {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
-			const body = await req.json();
-
-			const bodyVal = createVarianteCursoBodySchema.safeParse(body);
 			const cursoId = req.params.cursoId;
 
-			if (!bodyVal.success || !cursoId) {
-				if (!bodyVal.success) {
-					console.error(JSON.stringify(bodyVal.error, null, 2));
-				}
+			if (!cursoId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createVarianteCursoBodySchema.safeParse(body);
+
+			if (!bodyVal.success) {
+				ctx.error(bodyVal.error.issues);
+
+				return CommonResponse.invalidBody();
+			}
+
+			const curso = await this._cursoService.getCursoById(cursoId);
+
+			if (!curso)
 				return {
-					jsonBody: {
-						message: "Peticion invalida",
-					},
+					jsonBody: { message: "La plantilla de curso no existe." },
 					status: 400,
 				};
-			}
 
 			const { data } = bodyVal;
 
@@ -181,7 +162,7 @@ export class CursoController implements ICursoController {
 
 			ctx.log({ varianteCurso });
 
-			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -196,62 +177,52 @@ export class CursoController implements ICursoController {
 
 			const cursoId = req.params.cursoId;
 
-			if (!cursoId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!cursoId) return CommonResponse.invalidId();
 
 			const curso =
 				await this._cursoService.getCursoWithAllVarianteCursos(cursoId);
 
-			return {
-				jsonBody: { data: curso, message: "Solicitud exitosa." },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: curso });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 }
 
-const createVarianteCursoBodySchema = z
-	.object<ZodInferSchema<ICreateVarianteCurso>>({
-		nombre: z.string(),
-		codigoBase: z.string(),
-		descripcion: z.string(),
-		registroExterno: z.boolean(),
-		registroInterno: z.boolean(),
-		verificarSesion: z.boolean(),
-		edadMinima: z.number().nullable(),
-		edadMaxima: z.number().nullable(),
-		fechaAprobacion: z.string().datetime(),
-		registroDesdeOtraSede: z.boolean(),
-		costoPorMateria: z.boolean(),
-		cumpleRequisitosMalla: z.boolean(),
-		pasarRecord: z.boolean(),
-		aprobarCursoPrevio: z.boolean(),
-	})
-	.superRefine(({ edadMaxima, edadMinima }, ctx) => {
-		if (
-			(edadMaxima !== null && edadMinima === null) ||
-			(edadMaxima === null && edadMinima !== null)
-		) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: "Edad maxima y edad minima deben ser ambos null o numeros",
-			});
+const createBodySchema = z.object<ZodInferSchema<ICreateCurso>>({
+	nombre: z.string(),
+	certificado: z.string().nullable(),
+	alias: z.string().nullable(),
+});
 
-			return;
-		}
+const updateBodySchema = z.object<ZodInferSchema<IUpdateCurso>>({
+	estado: z.boolean().optional(),
+	nombre: z.string().optional(),
+	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+	certificado: z.string().nullable().optional(),
+	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+	alias: z.string().nullable().optional(),
+});
 
-		if (edadMaxima !== null && edadMinima !== null && edadMaxima < edadMinima) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: "Si verificar edad, la edad maxima debe ser mayor.",
-			});
+const createVarianteCursoBodySchema = z.object<
+	ZodInferSchema<
+		Omit<ICreateVarianteCurso, "fechaAprobacion"> & {
+			fechaAprobacion: string;
 		}
-	});
+	>
+>({
+	nombre: z.string(),
+	codigoBase: z.string(),
+	descripcion: z.string(),
+	registroExterno: z.boolean(),
+	registroInterno: z.boolean(),
+	verificarSesion: z.boolean(),
+	edadMinima: z.number().nullable(),
+	edadMaxima: z.number().nullable(),
+	fechaAprobacion: z.string().datetime(),
+	registroDesdeOtraSede: z.boolean(),
+	costoPorMateria: z.boolean(),
+	cumpleRequisitosMalla: z.boolean(),
+	pasarRecord: z.boolean(),
+	aprobarCursoPrevio: z.boolean(),
+});

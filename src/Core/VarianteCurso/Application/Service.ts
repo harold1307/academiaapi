@@ -65,11 +65,13 @@ export class VarianteCursoService implements IVarianteCursoService {
 			throw new VarianteCursoServiceError("La variante de curso no existe");
 
 		if (varianteWithAsignaturas.estado)
-			throw new VarianteCursoServiceError("La variante de curso esta activada");
+			throw new VarianteCursoServiceError(
+				"La variante de curso esta activada, no se puede eliminar",
+			);
 
 		if (varianteWithAsignaturas.asignaturas.length > 0)
 			throw new VarianteCursoServiceError(
-				"La variante de curso tiene asignaturas enlazadas",
+				"La variante de curso tiene asignaturas enlazadas, no se puede eliminar",
 			);
 
 		return this._varianteCursoRepository.deleteById(id);
