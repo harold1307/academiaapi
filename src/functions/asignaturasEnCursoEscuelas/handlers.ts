@@ -1,4 +1,5 @@
 import { app } from "@azure/functions";
+
 import { AsignaturaEnCursoEscuelaController } from "../../Core/AsignaturaEnCursoEscuela/Application/Controller";
 
 const controller = new AsignaturaEnCursoEscuelaController();

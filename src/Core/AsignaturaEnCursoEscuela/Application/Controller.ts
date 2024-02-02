@@ -6,8 +6,11 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { CursoEscuelaService } from "../../CursoEscuela/Application/Service";
+import type { ICursoEscuelaService } from "../../CursoEscuela/Domain/ICursoEscuelaService";
 import type { IAsignaturaEnCursoEscuelaController } from "../Domain/IAsignaturaEnCursoEscuelaController";
 import type { IAsignaturaEnCursoEscuelaService } from "../Domain/IAsignaturaEnCursoEscuelaService";
 import type { IUpdateAsignaturaEnCursoEscuela } from "../Domain/IUpdateAsignaturaEnCursoEscuela";
@@ -17,11 +20,13 @@ export class AsignaturaEnCursoEscuelaController
 	implements IAsignaturaEnCursoEscuelaController
 {
 	private _asignaturaEnCursoEscuelaService: IAsignaturaEnCursoEscuelaService;
+	private _cursoEscuelaService: ICursoEscuelaService;
 
 	constructor() {
 		this._asignaturaEnCursoEscuelaService = StartupBuilder.resolve(
 			AsignaturaEnCursoEscuelaService,
 		);
+		this._cursoEscuelaService = StartupBuilder.resolve(CursoEscuelaService);
 	}
 
 	async asignaturasEnCursoEscuelasGetAll(
@@ -34,13 +39,7 @@ export class AsignaturaEnCursoEscuelaController
 			const asignaturasEnCursoEscuelas =
 				await this._asignaturaEnCursoEscuelaService.getAllAsignaturaEnCursoEscuelas();
 
-			return {
-				jsonBody: {
-					data: asignaturasEnCursoEscuelas,
-					message: "Solicitud exitosa",
-				},
-				status: 200,
-			};
+			return CommonResponse.successful({ data: asignaturasEnCursoEscuelas });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -55,27 +54,14 @@ export class AsignaturaEnCursoEscuelaController
 
 			const asignaturaEnCursoEscuelaId = req.params.asignaturaEnCursoEscuelaId;
 
-			if (!asignaturaEnCursoEscuelaId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!asignaturaEnCursoEscuelaId) return CommonResponse.invalidId();
 
 			const asignaturaEnCursoEscuela =
 				await this._asignaturaEnCursoEscuelaService.getAsignaturaEnCursoEscuelaById(
 					asignaturaEnCursoEscuelaId,
 				);
 
-			return {
-				jsonBody: {
-					data: asignaturaEnCursoEscuela,
-					message: "Solicitud exitosa",
-				},
-				status: 200,
-			};
+			return CommonResponse.successful({ data: asignaturaEnCursoEscuela });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -90,24 +76,46 @@ export class AsignaturaEnCursoEscuelaController
 
 			const asignaturaEnCursoEscuelaId = req.params.asignaturaEnCursoEscuelaId;
 
-			if (!asignaturaEnCursoEscuelaId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!asignaturaEnCursoEscuelaId) return CommonResponse.invalidId();
 
 			const body = await req.json();
 			const bodyVal = updateBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const asignaturaEnCursoEscuela =
+				await this._asignaturaEnCursoEscuelaService.getAsignaturaEnCursoEscuelaById(
+					asignaturaEnCursoEscuelaId,
+				);
+
+			if (!asignaturaEnCursoEscuela)
 				return {
-					jsonBody: { message: "Peticion invalida" },
+					jsonBody: {
+						message: "La asignatura en curso escuela no existe",
+					},
 					status: 400,
 				};
-			}
+
+			const cursoEscuela = await this._cursoEscuelaService.getCursoEscuelaById(
+				asignaturaEnCursoEscuela.cursoEscuelaId,
+			);
+
+			if (!cursoEscuela)
+				return {
+					jsonBody: {
+						message:
+							"La asignatura en curso escuela no tiene un curso escuela enlazado, contacte con soporte",
+					},
+					status: 400,
+				};
+
+			if (cursoEscuela.enUso)
+				return {
+					jsonBody: {
+						message: "El curso escuela esta en uso, no se puede actualizar",
+					},
+					status: 400,
+				};
 
 			const newAsignaturaEnCursoEscuela =
 				await this._asignaturaEnCursoEscuelaService.updateAsignaturaEnCursoEscuelaById(
@@ -116,13 +124,7 @@ export class AsignaturaEnCursoEscuelaController
 
 			ctx.log({ newAsignaturaEnCursoEscuela });
 
-			return {
-				jsonBody: {
-					data: newAsignaturaEnCursoEscuela,
-					message: "Solicitud exitosa",
-				},
-				status: 200,
-			};
+			return CommonResponse.successful({ data: newAsignaturaEnCursoEscuela });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -137,23 +139,47 @@ export class AsignaturaEnCursoEscuelaController
 
 			const asignaturaEnCursoEscuelaId = req.params.asignaturaEnCursoEscuelaId;
 
-			if (!asignaturaEnCursoEscuelaId) {
+			if (!asignaturaEnCursoEscuelaId) return CommonResponse.invalidId();
+
+			const asignaturaEnCursoEscuela =
+				await this._asignaturaEnCursoEscuelaService.getAsignaturaEnCursoEscuelaById(
+					asignaturaEnCursoEscuelaId,
+				);
+
+			if (!asignaturaEnCursoEscuela)
 				return {
 					jsonBody: {
-						message: "ID invalido o no identificado",
+						message: "La asignatura en curso escuela no existe",
 					},
 					status: 400,
 				};
-			}
+
+			const cursoEscuela = await this._cursoEscuelaService.getCursoEscuelaById(
+				asignaturaEnCursoEscuela.cursoEscuelaId,
+			);
+
+			if (!cursoEscuela)
+				return {
+					jsonBody: {
+						message:
+							"La asignatura en curso escuela no tiene un curso escuela enlazado, contacte con soporte",
+					},
+					status: 400,
+				};
+
+			if (cursoEscuela.enUso)
+				return {
+					jsonBody: {
+						message: "El curso escuela esta en uso, no se puede eliminar",
+					},
+					status: 400,
+				};
 
 			await this._asignaturaEnCursoEscuelaService.deleteAsignaturaEnCursoEscuelaById(
 				asignaturaEnCursoEscuelaId,
 			);
 
-			return {
-				jsonBody: { message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful();
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}

@@ -3,12 +3,18 @@ import type { DefaultArgs } from "@prisma/client/runtime/library";
 
 import type { ICreateCursoEscuela } from "./ICreateCursoEscuela";
 import type { ICursoEscuela } from "./ICursoEscuela";
+import type { IUpdateCursoEscuela } from "./IUpdateCursoEscuela";
+
+export type UpdateCursoEscuelaParams = {
+	id: string;
+	data: IUpdateCursoEscuela;
+};
 
 export type ICursoEscuelaRepository = {
 	create(data: ICreateCursoEscuela): Promise<ICursoEscuela>;
 	getAll(): Promise<ICursoEscuela[]>;
 	getById(id: string): Promise<ICursoEscuela | null>;
-	// update(params: IUpdateCursoEscuelaParams): Promise<ICursoEscuela>;
+	update(params: UpdateCursoEscuelaParams): Promise<ICursoEscuela>;
 	deleteById(id: string): Promise<ICursoEscuela>;
 
 	transaction(

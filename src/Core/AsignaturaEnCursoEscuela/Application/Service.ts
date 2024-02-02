@@ -4,7 +4,7 @@ import { TYPES } from "../../../Main/Inversify/types";
 import type { IAsignaturaEnCursoEscuela } from "../Domain/IAsignaturaEnCursoEscuela";
 import type {
 	IAsignaturaEnCursoEscuelaRepository,
-	IUpdateAsignaturaEnCursoEscuelaParams,
+	UpdateAsignaturaEnCursoEscuelaParams,
 } from "../Domain/IAsignaturaEnCursoEscuelaRepository";
 import type { IAsignaturaEnCursoEscuelaService } from "../Domain/IAsignaturaEnCursoEscuelaService";
 import type { ICreateAsignaturaEnCursoEscuela } from "../Domain/ICreateAsignaturaEnCursoEscuela";
@@ -40,25 +40,15 @@ export class AsignaturaEnCursoEscuelaService
 		data: ICreateAsignaturaEnCursoEscuela,
 	): Promise<IAsignaturaEnCursoEscuela> {
 		const dto = new CreateAsignaturaEnCursoEscuelaDTO(data);
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error en la validacion del esquema para crear asignatura en curso escuela",
-				JSON.stringify(validation.error, null, 2),
-			);
-
-			throw new AsignaturaEnCursoEscuelaServiceError(
-				"Error en la validacion del esquema para crear asignatura en curso escuela",
-			);
-		}
-
-		return this._asignaturaEnCursoEscuelaRepository.create(data);
+		return this._asignaturaEnCursoEscuelaRepository.create(dto.getData());
 	}
 	async updateAsignaturaEnCursoEscuelaById({
 		id,
 		data,
-	}: IUpdateAsignaturaEnCursoEscuelaParams): Promise<IAsignaturaEnCursoEscuela> {
+	}: UpdateAsignaturaEnCursoEscuelaParams): Promise<IAsignaturaEnCursoEscuela> {
+		const dto = new UpdateAsignaturaEnCursoEscuelaDTO(data);
+
 		const asignaturaEnCursoEscuela =
 			await this._asignaturaEnCursoEscuelaRepository.getById(id);
 
@@ -68,9 +58,10 @@ export class AsignaturaEnCursoEscuelaService
 			);
 		}
 
-		const { profesorId, asignaturaId, ...restData } = data;
+		const { profesorId, asignaturaId, modeloEvaluativoId, ...restData } =
+			dto.getData();
 
-		const dto = new UpdateAsignaturaEnCursoEscuelaDTO({
+		const newData = {
 			...restData,
 			profesorId:
 				profesorId === asignaturaEnCursoEscuela.profesorId
@@ -80,23 +71,15 @@ export class AsignaturaEnCursoEscuelaService
 				asignaturaId === asignaturaEnCursoEscuela.asignaturaId
 					? undefined
 					: asignaturaId,
-		});
-		const validation = dto.validate();
-
-		if (!validation.success) {
-			console.error(
-				"Error en la validacion del esquema para actualizar asignatura en curso escuela",
-				JSON.stringify(validation.error, null, 2),
-			);
-
-			throw new AsignaturaEnCursoEscuelaServiceError(
-				"Error en la validacion del esquema para actualizar asignatura en curso escuela",
-			);
-		}
+			modeloEvaluativoId:
+				modeloEvaluativoId === asignaturaEnCursoEscuela.modeloEvaluativoId
+					? undefined
+					: modeloEvaluativoId,
+		};
 
 		return this._asignaturaEnCursoEscuelaRepository.update({
 			id,
-			data: validation.data,
+			data: newData,
 		});
 	}
 }
