@@ -87,4 +87,8 @@ export const TYPES = {
 		"AsignaturaEnNivelMallaRepository",
 	),
 	AsignaturaEnNivelMallaService: Symbol.for("AsignaturaEnNivelMallaService"),
+	AsignaturaModuloEnMallaRepository: Symbol.for(
+		"AsignaturaModuloEnMallaRepository",
+	),
+	AsignaturaModuloEnMallaService: Symbol.for("AsignaturaModuloEnMallaService"),
 } as const;

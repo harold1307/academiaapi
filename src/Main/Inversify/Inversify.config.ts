@@ -195,6 +195,12 @@ import type { IAsignaturaEnNivelMallaRepository } from "../../Core/AsignaturaEnN
 import type { IAsignaturaEnNivelMallaService } from "../../Core/AsignaturaEnNivelMalla/Domain/IAsignaturaEnNivelMallaService";
 import { AsignaturaEnNivelMallaRepository } from "../../Core/AsignaturaEnNivelMalla/Infrastructure/Repositories/AsignaturaEnNivelMallaRepository";
 
+// asignaturas modulo en malla
+import { AsignaturaModuloEnMallaService } from "../../Core/AsignaturaModuloEnMalla/Application/Service";
+import type { IAsignaturaModuloEnMallaRepository } from "../../Core/AsignaturaModuloEnMalla/Domain/IAsignaturaModuloEnMallaRepository";
+import type { IAsignaturaModuloEnMallaService } from "../../Core/AsignaturaModuloEnMalla/Domain/IAsignaturaModuloEnMallaService";
+import { AsignaturaModuloEnMallaRepository } from "../../Core/AsignaturaModuloEnMalla/Infrastructure/Repositories/AsignaturaModuloEnMallaRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -510,6 +516,18 @@ StartupBuilder.bind<IAsignaturaEnNivelMallaService>(
 	TYPES.AsignaturaEnNivelMallaService,
 )
 	.to(AsignaturaEnNivelMallaService)
+	.inSingletonScope();
+
+// asignaturas modulo en malla
+StartupBuilder.bind<IAsignaturaModuloEnMallaRepository>(
+	TYPES.AsignaturaModuloEnMallaRepository,
+)
+	.to(AsignaturaModuloEnMallaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsignaturaModuloEnMallaService>(
+	TYPES.AsignaturaModuloEnMallaService,
+)
+	.to(AsignaturaModuloEnMallaService)
 	.inSingletonScope();
 
 export { StartupBuilder };
