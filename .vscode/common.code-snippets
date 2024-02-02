@@ -15,7 +15,8 @@
 	"Return ErrorHandler": {
 		"prefix": ["errhand", "eh"],
 		"body": ["return ErrorHandler.handle({ ctx, error })"],
-		"description": "Create a Return ErroHandler."
+		"description": "Create a Return ErroHandler.",
+		"scope": "typescript"
 	},
 	"Return Body Validation Error": {
 		"prefix": ["bval"],
@@ -29,7 +30,8 @@
 			"		};",
 			"	}"
 		],
-		"description": "Create a Return Body Validation Error"
+		"description": "Create a Return Body Validation Error",
+		"scope": "typescript"
 	},
 	"Return ID existence Error": {
 		"prefix": ["iderr"],
@@ -43,6 +45,7 @@
 			"	};",
 			"	}"
 		],
-		"description": "Create a Return ID existence Error"
+		"description": "Create a Return ID existence Error",
+		"scope": "typescript"
 	}
 }

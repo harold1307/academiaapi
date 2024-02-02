@@ -32,7 +32,8 @@
 			"	return ErrorHandler.handle({ ctx, error })",
 			"}"
 		],
-		"description": "Create a CREATE action Endpoint Controller."
+		"description": "Create a CREATE action Endpoint Controller.",
+		"scope": "typescript"
 	},
 	"GET ALL Endpoint Controller": {
 		"prefix": "gaec",
@@ -47,7 +48,8 @@
 			"	return ErrorHandler.handle({ ctx, error })",
 			"}"
 		],
-		"description": "Create a GET ALL action Endpoint Controller."
+		"description": "Create a GET ALL action Endpoint Controller.",
+		"scope": "typescript"
 	},
 	"GET BY ID Endpoint Controller": {
 		"prefix": "gbiec",
@@ -66,7 +68,8 @@
 			"	return ErrorHandler.handle({ ctx, error });",
 			"}"
 		],
-		"description": "Create a GET BY ID action Endpoint Controller."
+		"description": "Create a GET BY ID action Endpoint Controller.",
+		"scope": "typescript"
 	},
 	"UPDATE BY ID Endpoint Controller": {
 		"prefix": "ubiec",
@@ -92,7 +95,8 @@
 			"	return ErrorHandler.handle({ ctx, error });",
 			"}"
 		],
-		"description": "Create a UPDATE BY ID action Endpoint Controller."
+		"description": "Create a UPDATE BY ID action Endpoint Controller.",
+		"scope": "typescript"
 	},
 	"DELETE BY ID Endpoint Controller": {
 		"prefix": "dbiec",
@@ -111,6 +115,7 @@
 			"	return ErrorHandler.handle({ ctx, error });",
 			"}"
 		],
-		"description": "Create a DELETE BY ID action Endpoint Controller."
+		"description": "Create a DELETE BY ID action Endpoint Controller.",
+		"scope": "typescript"
 	}
 }
