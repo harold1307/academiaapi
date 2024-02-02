@@ -81,4 +81,6 @@ export const TYPES = {
 	ProgramaService: Symbol.for("ProgramaService"),
 	CoordinacionRepository: Symbol.for("CoordinacionRepository"),
 	CoordinacionService: Symbol.for("CoordinacionService"),
+	NivelMallaRepository: Symbol.for("NivelMallaRepository"),
+	NivelMallaService: Symbol.for("NivelMallaService"),
 } as const;

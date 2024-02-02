@@ -183,6 +183,12 @@ import type { ICoordinacionRepository } from "../../Core/Coordinacion/Domain/ICo
 import type { ICoordinacionService } from "../../Core/Coordinacion/Domain/ICoordinacionService";
 import { CoordinacionRepository } from "../../Core/Coordinacion/Infrastructure/Repositories/CoordinacionRepository";
 
+// niveles de malla
+import { NivelMallaService } from "../../Core/NivelMalla/Application/Service";
+import type { INivelMallaRepository } from "../../Core/NivelMalla/Domain/INivelMallaRepository";
+import type { INivelMallaService } from "../../Core/NivelMalla/Domain/INivelMallaService";
+import { NivelMallaRepository } from "../../Core/NivelMalla/Infrastructure/Repositories/NivelMallaRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -478,6 +484,14 @@ StartupBuilder.bind<ICoordinacionRepository>(TYPES.CoordinacionRepository)
 	.inSingletonScope();
 StartupBuilder.bind<ICoordinacionService>(TYPES.CoordinacionService)
 	.to(CoordinacionService)
+	.inSingletonScope();
+
+// niveles de malla
+StartupBuilder.bind<INivelMallaRepository>(TYPES.NivelMallaRepository)
+	.to(NivelMallaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<INivelMallaService>(TYPES.NivelMallaService)
+	.to(NivelMallaService)
 	.inSingletonScope();
 
 export { StartupBuilder };
