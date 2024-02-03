@@ -10,7 +10,7 @@ on: workflow_dispatch
 #
 # 2. Change these variables for your configuration:
 env:
-  AZURE_FUNCTIONAPP_NAME: "tecdu-api-dev" # set this to your function app name on Azure
+  AZURE_FUNCTIONAPP_NAME: "tecdu-api" # set this to your function app name on Azure
   AZURE_FUNCTIONAPP_PACKAGE_PATH: "." # set this to the path to your function app project, defaults to the repository root
   NODE_VERSION: "18.x" # set this to the node version to use (e.g. '8.x', '10.x', '12.x')
 
@@ -19,7 +19,6 @@ jobs:
     runs-on: windows-latest
     if: github.ref == 'refs/heads/dev'
     env:
-      AZURE_FUNCTIONAPP_NAME: "tecdu-api" # set this to your function app name on Azure
       AZURE_FUNCTIONAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE_DEV }}
       DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
       SHADOW_DATABASE_URL_DEV: ${{ secrets.SHADOW_DATABASE_URL_DEV }}
@@ -84,4 +83,5 @@ jobs:
           publish-profile: ${{ env.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
           scm-do-build-during-deployment: true
           slot-name: dev
+          respect-funcignore: true
 # For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
