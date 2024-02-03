@@ -91,4 +91,16 @@ export const TYPES = {
 		"AsignaturaModuloEnMallaRepository",
 	),
 	AsignaturaModuloEnMallaService: Symbol.for("AsignaturaModuloEnMallaService"),
+	PracticaPreProfesionalEnMallaRepository: Symbol.for(
+		"PracticaPreProfesionalEnMallaRepository",
+	),
+	PracticaPreProfesionalEnMallaService: Symbol.for(
+		"PracticaPreProfesionalEnMallaService",
+	),
+	PracticaComunitariaEnMallaRepository: Symbol.for(
+		"PracticaComunitariaEnMallaRepository",
+	),
+	PracticaComunitariaEnMallaService: Symbol.for(
+		"PracticaComunitariaEnMallaService",
+	),
 } as const;
