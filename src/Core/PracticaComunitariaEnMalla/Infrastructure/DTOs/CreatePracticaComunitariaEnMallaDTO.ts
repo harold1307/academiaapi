@@ -4,22 +4,22 @@ import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreatePracticaComunitariaEnMalla } from "../../Domain/ICreatePracticaComunitariaEnMalla";
 
-const schema = z
+export const createPracticaComunitariaEnMallaSchema = z
 	.object<ZodInferSchema<ICreatePracticaComunitariaEnMalla>>({
 		requiereAutorizacion: z.boolean(),
 		creditos: z.number().nullable(),
 		horas: z.number().nullable(),
-		registroDesdeNivelId: z.string().uuid().nullable(),
+		registroDesdeNivel: z.number().min(1).max(10).nullable(),
 		mallaCurricularId: z.string().uuid(),
 		registroPracticasAdelantadas: z.boolean(),
 		registroMultiple: z.boolean(),
 	})
-	.superRefine(({ horas, creditos, registroDesdeNivelId }, ctx) => {
-		if (horas !== null && creditos !== null && registroDesdeNivelId !== null) {
+	.superRefine(({ horas, creditos, registroDesdeNivel }, ctx) => {
+		if (horas !== null && creditos !== null && registroDesdeNivel !== null) {
 			return;
 		}
 
-		if (horas === null && creditos === null && registroDesdeNivelId === null) {
+		if (horas === null && creditos === null && registroDesdeNivel === null) {
 			return;
 		}
 
@@ -27,7 +27,7 @@ const schema = z
 			code: z.ZodIssueCode.custom,
 			message:
 				"Si se realizan practicas comunitarias y no estan ligadas a las materias, se deben especificar las horas, creditos y desde que nivel sera el registro",
-			path: ["horas", "creditos", "registroDesdeNivelId"],
+			path: ["horas", "creditos", "registroDesdeNivel"],
 		});
 	});
 
@@ -45,6 +45,10 @@ export class CreatePracticaComunitariaEnMallaDTO extends BaseValidatorDTO<
 	CreatePracticaComunitariaEnMallaDTOError
 > {
 	constructor(input: unknown) {
-		super(schema, CreatePracticaComunitariaEnMallaDTOError, input);
+		super(
+			createPracticaComunitariaEnMallaSchema,
+			CreatePracticaComunitariaEnMallaDTOError,
+			input,
+		);
 	}
 }

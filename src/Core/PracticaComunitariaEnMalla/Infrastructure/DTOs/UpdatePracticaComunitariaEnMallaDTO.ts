@@ -11,9 +11,10 @@ const schema = z.object<ZodInferSchema<IUpdatePracticaComunitariaEnMalla>>({
 	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
 	horas: z.number().nullable().optional(),
 	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
-	registroDesdeNivelId: z.string().uuid().nullable().optional(),
+	registroDesdeNivel: z.number().min(1).max(10).nullable().optional(),
 	registroPracticasAdelantadas: z.boolean().optional(),
 	registroMultiple: z.boolean().optional(),
+	mallaCurricularId: z.string().uuid(),
 });
 
 class UpdatePracticaComunitariaEnMallaDTOError extends BaseDTOError<IUpdatePracticaComunitariaEnMalla> {

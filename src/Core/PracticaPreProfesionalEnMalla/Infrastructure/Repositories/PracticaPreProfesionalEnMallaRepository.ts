@@ -31,15 +31,22 @@ export class PracticaPreProfesionalEnMallaRepository
 
 	create({
 		mallaCurricularId,
-		registroDesdeNivelId,
+		registroDesdeNivel,
 		...data
 	}: ICreatePracticaPreProfesionalEnMalla): Promise<IPracticaPreProfesionalEnMalla> {
 		return this._client.practicaPreProfesionalEnMalla.create({
 			data: {
 				...data,
 				mallaCurricular: { connect: { id: mallaCurricularId } },
-				registroDesdeNivel: registroDesdeNivelId
-					? { connect: { id: registroDesdeNivelId } }
+				registroDesdeNivel: registroDesdeNivel
+					? {
+							connect: {
+								nivel_mallaId: {
+									mallaId: mallaCurricularId,
+									nivel: registroDesdeNivel,
+								},
+							},
+						}
 					: undefined,
 			},
 		});
@@ -47,16 +54,23 @@ export class PracticaPreProfesionalEnMallaRepository
 
 	update({
 		id,
-		data: { registroDesdeNivelId, ...data },
+		data: { registroDesdeNivel, mallaCurricularId, ...data },
 	}: UpdatePracticaPreProfesionalEnMallaParams): Promise<IPracticaPreProfesionalEnMalla> {
 		return this._client.practicaPreProfesionalEnMalla.update({
 			where: { id },
 			data: {
 				...data,
 				registroDesdeNivel:
-					registroDesdeNivelId !== undefined
-						? registroDesdeNivelId
-							? { connect: { id: registroDesdeNivelId } }
+					registroDesdeNivel !== undefined
+						? registroDesdeNivel
+							? {
+									connect: {
+										nivel_mallaId: {
+											nivel: registroDesdeNivel,
+											mallaId: mallaCurricularId,
+										},
+									},
+								}
 							: { disconnect: true }
 						: undefined,
 			},

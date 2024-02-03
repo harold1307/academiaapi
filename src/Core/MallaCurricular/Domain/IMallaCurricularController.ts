@@ -26,7 +26,7 @@ export type IMallaCurricularController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	mallasCurricularesCreateAsignaturaEnMalla(
+	mallasCurricularesCreateAsignaturaEnNivelMalla(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;

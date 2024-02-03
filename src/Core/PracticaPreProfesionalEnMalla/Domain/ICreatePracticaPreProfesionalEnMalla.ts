@@ -2,5 +2,7 @@ import type { IPracticaPreProfesionalEnMalla } from "./IPracticaPreProfesionalEn
 
 export type ICreatePracticaPreProfesionalEnMalla = Omit<
 	IPracticaPreProfesionalEnMalla,
-	"id" | "createdAt" | "updatedAt"
->;
+	"id" | "createdAt" | "updatedAt" | "registroDesdeNivelId"
+> & {
+	registroDesdeNivel: number | null;
+};

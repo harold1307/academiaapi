@@ -3,23 +3,29 @@ import type {
 	HttpResponseInit,
 	InvocationContext,
 } from "@azure/functions";
-import { TipoAsignatura, TipoDuracion } from "@prisma/client";
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { AreaConocimientoService } from "../../AreaConocimiento/Application/Service";
+import type { IAreaConocimientoService } from "../../AreaConocimiento/Domain/IAreaConocimientoService";
 import { AsignaturaService } from "../../Asignatura/Application/Service";
 import type { IAsignaturaService } from "../../Asignatura/Domain/IAsignaturaService";
-import { AsignaturaEnMallaService } from "../../AsignaturaEnMalla/Application/Service";
-import type { IAsignaturaEnMallaService } from "../../AsignaturaEnMalla/Domain/IAsignaturaEnMallaService";
-import { type ICreateAnexoAsignaturaEnMalla } from "../../AsignaturaEnMalla/Domain/ICreateAnexoAsignaturaEnMalla";
-import type { ICreateAsignaturaEnMalla } from "../../AsignaturaEnMalla/Domain/ICreateAsignaturaEnMalla";
+import { AsignaturaEnNivelMallaService } from "../../AsignaturaEnNivelMalla/Application/Service";
+import type { IAsignaturaEnNivelMallaService } from "../../AsignaturaEnNivelMalla/Domain/IAsignaturaEnNivelMallaService";
+import type { ICreateAsignaturaEnNivelMalla } from "../../AsignaturaEnNivelMalla/Domain/ICreateAsignaturaEnNivelMalla";
+import { CampoFormacionService } from "../../CampoFormacion/Application/Service";
+import type { ICampoFormacionService } from "../../CampoFormacion/Domain/ICampoFormacionService";
 import { CompetenciaService } from "../../Competencia/Application/Service";
 import type { ICompetenciaService } from "../../Competencia/Domain/ICompetenciaService";
+import { EjeFormativoService } from "../../EjeFormativo/Application/Service";
+import type { IEjeFormativoService } from "../../EjeFormativo/Domain/IEjeFormativoService";
 import { ModalidadService } from "../../Modalidad/Application/Service";
 import type { IModalidadService } from "../../Modalidad/Domain/IModalidadService";
+import { NivelMallaService } from "../../NivelMalla/Application/Service";
+import type { INivelMallaService } from "../../NivelMalla/Domain/INivelMallaService";
 import { SedeService } from "../../Sede/Application/Service";
 import type { ISedeService } from "../../Sede/Domain/ISedeService";
 import type { ICreateLugarEjecucion } from "../Domain/ICreateLugarEjecucion";
@@ -31,9 +37,13 @@ import { MallaCurricularService } from "./Service";
 export class MallaCurricularController implements IMallaCurricularController {
 	private _mallaCurricularService: IMallaCurricularService;
 	private _asignaturaService: IAsignaturaService;
-	private _asignaturaEnMallaService: IAsignaturaEnMallaService;
 	private _competenciaService: ICompetenciaService;
 	private _modalidadService: IModalidadService;
+	private _asignaturaEnNivelMallaService: IAsignaturaEnNivelMallaService;
+	private _nivelMallaService: INivelMallaService;
+	private _ejeFormativoService: IEjeFormativoService;
+	private _campoFormacionService: ICampoFormacionService;
+	private _areaConocimientoService: IAreaConocimientoService;
 	private _sedeService: ISedeService;
 
 	constructor() {
@@ -41,11 +51,17 @@ export class MallaCurricularController implements IMallaCurricularController {
 			MallaCurricularService,
 		);
 		this._asignaturaService = StartupBuilder.resolve(AsignaturaService);
-		this._asignaturaEnMallaService = StartupBuilder.resolve(
-			AsignaturaEnMallaService,
-		);
 		this._competenciaService = StartupBuilder.resolve(CompetenciaService);
 		this._modalidadService = StartupBuilder.resolve(ModalidadService);
+		this._asignaturaEnNivelMallaService = StartupBuilder.resolve(
+			AsignaturaEnNivelMallaService,
+		);
+		this._nivelMallaService = StartupBuilder.resolve(NivelMallaService);
+		this._ejeFormativoService = StartupBuilder.resolve(EjeFormativoService);
+		this._campoFormacionService = StartupBuilder.resolve(CampoFormacionService);
+		this._areaConocimientoService = StartupBuilder.resolve(
+			AreaConocimientoService,
+		);
 		this._sedeService = StartupBuilder.resolve(SedeService);
 	}
 
@@ -197,27 +213,33 @@ export class MallaCurricularController implements IMallaCurricularController {
 		}
 	}
 
-	async mallasCurricularesCreateAsignaturaEnMalla(
+	async mallasCurricularesCreateAsignaturaEnNivelMalla(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit> {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const mallaCurricularId = req.params.mallaCurricularId;
-			const asignaturaId = req.params.asignaturaId;
+			const nivelMallaId = req.params.nivelMallaId;
 
-			if (!mallaCurricularId || !asignaturaId)
+			if (!mallaCurricularId || !nivelMallaId)
 				return CommonResponse.invalidId();
 
 			const body = await req.json();
-			const bodyVal = createAsignaturaEnMallaBodySchema.safeParse(body);
+			const bodyVal = createAsignaturaEnNivelMallaBodySchema.safeParse(body);
 
 			if (!bodyVal.success) {
 				ctx.error(bodyVal.error.issues);
 				return CommonResponse.invalidBody();
 			}
 
-			const { data } = bodyVal;
+			const {
+				asignaturaId,
+				ejeFormativoId,
+				campoFormacionId,
+				areaConocimientoId,
+				...data
+			} = bodyVal.data;
 
 			const malla =
 				await this._mallaCurricularService.getMallaCurricularById(
@@ -235,19 +257,19 @@ export class MallaCurricularController implements IMallaCurricularController {
 				return {
 					jsonBody: {
 						message:
-							"La malla curricular está en uso, no se pueden crear asignaturas en la malla ni anexas a esta",
+							"La malla curricular está en uso, no se pueden crear asignaturas en el nivel de la malla",
 					},
 					status: 400,
 				};
 
-			if (malla.niveles < data.nivel) {
+			const nivelMalla =
+				await this._nivelMallaService.getNivelMallaById(nivelMallaId);
+
+			if (!nivelMalla)
 				return {
-					jsonBody: {
-						message: "El nivel especificado es mayor al de la malla",
-					},
+					jsonBody: { message: "El nivel de la malla no existe" },
 					status: 400,
 				};
-			}
 
 			const asignatura =
 				await this._asignaturaService.getAsignaturaById(asignaturaId);
@@ -259,31 +281,52 @@ export class MallaCurricularController implements IMallaCurricularController {
 				};
 			}
 
-			if (data.esAnexo) {
-				const newAnexoAsignaturaEnMalla =
-					await this._asignaturaEnMallaService.createAnexoAsignaturaEnMalla({
-						mallaId: mallaCurricularId,
-						asignaturaId,
-						data: {
-							...data,
-							// las asignaturas anexas obligatoriamente necesitan 0 como nivel
-							nivel: 0,
-						},
-					});
+			const ejeFormativo =
+				await this._ejeFormativoService.getEjeFormativoById(ejeFormativoId);
 
-				ctx.log({ newAnexoAsignaturaEnMalla });
+			if (!ejeFormativo)
+				return {
+					jsonBody: {
+						message: "El eje formativo no existe",
+					},
+					status: 400,
+				};
 
-				return CommonResponse.successful({ status: 201 });
+			if (campoFormacionId) {
+				const campoFormacion =
+					await this._campoFormacionService.getCampoFormacionById(
+						campoFormacionId,
+					);
+
+				if (!campoFormacion)
+					return {
+						jsonBody: { message: "El campo de formación no existe" },
+						status: 400,
+					};
 			}
 
-			const newAsignaturaEnMalla =
-				await this._asignaturaEnMallaService.createAsignaturaEnMalla({
-					data,
+			const areaConocimiento =
+				await this._areaConocimientoService.getAreaConocimientoById(
+					areaConocimientoId,
+				);
+
+			if (!areaConocimiento)
+				return {
+					jsonBody: { message: "El área de conocimiento no existe" },
+					status: 400,
+				};
+
+			const newAsignaturaEnNivelMalla =
+				await this._asignaturaEnNivelMallaService.createAsignaturaEnNivelMalla({
+					...data,
 					asignaturaId,
-					mallaId: mallaCurricularId,
+					nivelMallaId,
+					ejeFormativoId,
+					campoFormacionId,
+					areaConocimientoId,
 				});
 
-			ctx.log({ newAsignaturaEnMalla });
+			ctx.log({ newAsignaturaEnNivelMalla });
 
 			return CommonResponse.successful({ status: 201 });
 		} catch (error) {
@@ -354,24 +397,32 @@ const updateBodySchema = z.object<
 	>
 >({
 	estado: z.boolean().optional(),
-	tituloObtenidoId: z.string().optional(),
-	tipoDuracion: z.nativeEnum(TipoDuracion).optional(),
+	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+	tipoDuracion: z
+		.enum(["ANOS", "CREDITOS", "HORAS", "SEMESTRES"] as const)
+		.nullable()
+		.optional(),
+	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+	codigo: z.string().nullable().optional(),
 	fechaAprobacion: z.string().datetime().optional(),
 	fechaLimiteVigencia: z.string().datetime().optional(),
-	maximoMateriasMatricula: z.number().optional(),
-	cantidadLibreOpcionEgreso: z.number().optional(),
-	cantidadOptativasEgreso: z.number().optional(),
-	cantidadArrastres: z.number().optional(),
-	practicasLigadasMaterias: z.boolean().optional(),
-	horasPractica: z.number().optional(),
-	registroPracticasDesde: z.number().optional(),
-	horasVinculacion: z.number().optional(),
-	registroVinculacionDesde: z.number().optional(),
-	registroProyectosDesde: z.number().optional(),
-	usaNivelacion: z.boolean().optional(),
+	cantidadOtrasMateriasMatricula: z.number().optional(),
+	limiteSeleccionMateriaPorAdministrativo: z.boolean().optional(),
+	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+	cantidadArrastres: z.number().nullable().optional(),
+	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+	porcentajeMinimoPasarNivel: z.number().nullable().optional(),
+	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+	maximoMateriasAdelantar: z.number().nullable().optional(),
+	automatriculaModulos: z.boolean().optional(),
 	plantillasSilabo: z.boolean().optional(),
-	perfilEgreso: z.string().optional(),
-	observaciones: z.string().optional(),
+	modeloPlanificacion: z.boolean().optional(),
+	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+	perfilEgreso: z.string().nullable().optional(),
+	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+	observaciones: z.string().nullable().optional(),
+	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+	tituloObtenidoId: z.string().uuid().nullable().optional(),
 });
 
 const createLugarEjecucionBodySchema = z.object<
@@ -381,47 +432,42 @@ const createLugarEjecucionBodySchema = z.object<
 	codigo: z.string().nullable(),
 });
 
-const createAsignaturaEnMallaBodySchema = z.object<
-	ZodInferSchema<
-		Omit<
-			ICreateAnexoAsignaturaEnMalla & ICreateAsignaturaEnMalla,
-			"mallaId" | "asignaturaId" | "esAnexo" | "ejeFormativoId"
-		> & {
-			competenciaGenerica: string | null;
-			esAnexo: boolean;
-			ejeFormativoId: string | null;
-		}
-	>
+const createAsignaturaEnNivelMallaBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateAsignaturaEnNivelMalla, "nivelMallaId">>
 >({
-	esAnexo: z.boolean(),
-	// @ts-expect-error si es anexo el nivel sera 0, por lo tanto un numero
-	nivel: z.number(),
-	tipoAsignatura: z.nativeEnum(TipoAsignatura),
+	tipoAsignatura: z.enum(["PRACTICA", "TEORICA", "TEORICA_PRACTICA"] as const),
 	identificacion: z.string(),
 	permiteMatriculacion: z.boolean(),
-	validaCredito: z.boolean(),
-	validaPromedio: z.boolean(),
+	calculoNivel: z.boolean(),
+	validaParaCredito: z.boolean(),
+	validaParaPromedio: z.boolean(),
 	costoEnMatricula: z.boolean(),
-	practicasPreProfesionales: z.boolean(),
-	requeridaEgreso: z.boolean(),
+	requeridaParaEgresar: z.boolean(),
 	cantidadMatriculas: z.number(),
-	horasSemanales: z.number(),
+	cantidadMatriculasAutorizadas: z.number().nullable(),
+	minimoCreditosRequeridos: z.number().nullable(),
+	maximaCantidadHorasSemanalas: z.number(),
 	horasColaborativas: z.number(),
 	horasAsistidasDocente: z.number(),
 	horasAutonomas: z.number(),
 	horasPracticas: z.number(),
 	sumaHoras: z.boolean(),
 	creditos: z.number(),
+	horasProyectoIntegrador: z.number(),
 	noValidaAsistencia: z.boolean(),
 	materiaComun: z.boolean(),
-	objetivos: z.string().nullable(),
+	guiaPracticaMetodologiaObligatoria: z.boolean(),
+	aprobarGuiaPracticaMetodologica: z.boolean(),
 	descripcion: z.string().nullable(),
+	objetivoGeneral: z.string().nullable(),
 	resultadosAprendizaje: z.string().nullable(),
-
+	aporteAsignaturaAlPerfil: z.string().nullable(),
 	competenciaGenerica: z.string().nullable(),
-	ejeFormativoId: z.string().nullable(),
-	// @ts-expect-error si es anexo es nullable sino estricto
-	areaConocimientoId: z.string().nullable(),
-	// @ts-expect-error si es anexo es estricto sino nullable
+	objetivosEspecificos: z.string().nullable(),
+	observaciones: z.string().nullable(),
+
+	ejeFormativoId: z.string(),
+	asignaturaId: z.string(),
+	areaConocimientoId: z.string(),
 	campoFormacionId: z.string().nullable(),
 });

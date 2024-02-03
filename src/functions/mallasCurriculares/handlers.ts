@@ -42,12 +42,12 @@ app.get("mallasCurricularesGetByIdWithLugaresEjecucion", {
 	route: "mallas-curriculares/{mallaCurricularId}/lugares-ejecucion",
 });
 
-// asignaturas en malla
-app.post("mallasCurricularesCreateAsignaturaEnMalla", {
+// asignaturas en niveles de la malla
+app.post("mallasCurricularesCreateAsignaturaEnNivelMalla", {
 	authLevel: "anonymous",
 	handler: (req, ctx) =>
-		controller.mallasCurricularesCreateAsignaturaEnMalla(req, ctx),
-	route: "mallas-curriculares/{mallaCurricularId}/asignaturas/{asignaturaId}",
+		controller.mallasCurricularesCreateAsignaturaEnNivelMalla(req, ctx),
+	route: "mallas-curriculares/{mallaCurricularId}/niveles/{nivelMallaId}",
 });
 app.get("mallasCurricularesGetByIdWithAsignaturas", {
 	authLevel: "anonymous",

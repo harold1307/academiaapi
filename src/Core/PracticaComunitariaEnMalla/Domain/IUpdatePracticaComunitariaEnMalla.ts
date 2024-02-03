@@ -2,4 +2,6 @@ import type { ICreatePracticaComunitariaEnMalla } from "./ICreatePracticaComunit
 
 export type IUpdatePracticaComunitariaEnMalla = Partial<
 	Omit<ICreatePracticaComunitariaEnMalla, "mallaCurricularId">
->;
+> & {
+	mallaCurricularId: string;
+};

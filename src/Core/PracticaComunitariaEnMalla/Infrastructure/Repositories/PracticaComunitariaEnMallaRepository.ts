@@ -29,15 +29,22 @@ export class PracticaComunitariaEnMallaRepository
 
 	create({
 		mallaCurricularId,
-		registroDesdeNivelId,
+		registroDesdeNivel,
 		...data
 	}: ICreatePracticaComunitariaEnMalla): Promise<IPracticaComunitariaEnMalla> {
 		return this._client.practicaComunitariaEnMalla.create({
 			data: {
 				...data,
 				mallaCurricular: { connect: { id: mallaCurricularId } },
-				registroDesdeNivel: registroDesdeNivelId
-					? { connect: { id: registroDesdeNivelId } }
+				registroDesdeNivel: registroDesdeNivel
+					? {
+							connect: {
+								nivel_mallaId: {
+									nivel: registroDesdeNivel,
+									mallaId: mallaCurricularId,
+								},
+							},
+						}
 					: undefined,
 			},
 		});
@@ -45,16 +52,23 @@ export class PracticaComunitariaEnMallaRepository
 
 	update({
 		id,
-		data: { registroDesdeNivelId, ...data },
+		data: { registroDesdeNivel, mallaCurricularId, ...data },
 	}: UpdatePracticaComunitariaEnMallaParams): Promise<IPracticaComunitariaEnMalla> {
 		return this._client.practicaComunitariaEnMalla.update({
 			where: { id },
 			data: {
 				...data,
 				registroDesdeNivel:
-					registroDesdeNivelId !== undefined
-						? registroDesdeNivelId
-							? { connect: { id: registroDesdeNivelId } }
+					registroDesdeNivel !== undefined
+						? registroDesdeNivel
+							? {
+									connect: {
+										nivel_mallaId: {
+											nivel: registroDesdeNivel,
+											mallaId: mallaCurricularId,
+										},
+									},
+								}
 							: { disconnect: true }
 						: undefined,
 			},

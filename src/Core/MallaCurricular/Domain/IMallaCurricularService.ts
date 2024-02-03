@@ -1,14 +1,18 @@
-import type { IAsignatura } from "../../Asignatura/Domain/IAsignatura";
-import type { IAsignaturaEnMalla } from "../../AsignaturaEnMalla/Domain/IAsignaturaEnMalla";
+import type { IAsignaturaEnNivelMalla } from "../../AsignaturaEnNivelMalla/Domain/IAsignaturaEnNivelMalla";
+import type { IAsignaturaModuloEnMalla } from "../../AsignaturaModuloEnMalla/Domain/IAsignaturaModuloEnMalla";
+import type { INivelMalla } from "../../NivelMalla/Domain/INivelMalla";
+import type { ICreatePracticaComunitariaEnMalla } from "../../PracticaComunitariaEnMalla/Domain/ICreatePracticaComunitariaEnMalla";
+import type { ICreatePracticaPreProfesionalEnMalla } from "../../PracticaPreProfesionalEnMalla/Domain/ICreatePracticaPreProfesionalEnMalla";
 import type { ICreateMallaCurricular } from "./ICreateMallaCurricular";
 import type { ILugarEjecucion } from "./ILugarEjecucion";
 import type { IMallaCurricular } from "./IMallaCurricular";
 import type { UpdateMallaCurricularParams } from "./IMallaCurricularRepository";
 
 export type MallaCurricularWithAsignaturas = IMallaCurricular & {
-	asignaturasEnMalla: (IAsignaturaEnMalla & {
-		asignatura: IAsignatura;
+	niveles: (INivelMalla & {
+		asignaturas: IAsignaturaEnNivelMalla[];
 	})[];
+	modulos: IAsignaturaModuloEnMalla[];
 };
 
 export type MallaCurricularWithLugaresEjecucion = IMallaCurricular & {
@@ -16,9 +20,12 @@ export type MallaCurricularWithLugaresEjecucion = IMallaCurricular & {
 };
 
 export type IMallaCurricularService = {
-	createMallaCurricular(
-		data: ICreateMallaCurricular,
-	): Promise<IMallaCurricular>;
+	createMallaCurricular: (
+		data: ICreateMallaCurricular & {
+			practicasPreProfesionales: ICreatePracticaPreProfesionalEnMalla | null;
+			practicasComunitarias: ICreatePracticaComunitariaEnMalla | null;
+		},
+	) => Promise<IMallaCurricular>;
 	getAllMallasCurriculares(): Promise<IMallaCurricular[]>;
 	getMallaCurricularById(id: string): Promise<IMallaCurricular | null>;
 	updateMallaCurricularById(

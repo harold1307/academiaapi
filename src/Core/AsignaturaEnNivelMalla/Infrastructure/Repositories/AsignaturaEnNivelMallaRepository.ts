@@ -15,20 +15,136 @@ export class AsignaturaEnNivelMallaRepository
 {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	getAll(): Promise<IAsignaturaEnNivelMalla[]> {
-		return this._client.asignaturaEnNivelMalla.findMany();
+	async getAll(): Promise<IAsignaturaEnNivelMalla[]> {
+		const asignaturas = await this._client.asignaturaEnNivelMalla.findMany({
+			include: {
+				ejeFormativo: true,
+				areaConocimiento: true,
+				campoFormacion: true,
+				asignatura: true,
+			},
+		});
+
+		return asignaturas.map(
+			({
+				ejeFormativo,
+				areaConocimiento,
+				campoFormacion,
+				asignatura,
+				...rest
+			}) => ({
+				...rest,
+				asignatura: {
+					...asignatura,
+					enUso: true,
+				},
+				ejeFormativo: {
+					...ejeFormativo,
+					enUso: true,
+				},
+				areaConocimiento: {
+					...areaConocimiento,
+					enUso: true,
+				},
+				campoFormacion: campoFormacion
+					? {
+							...campoFormacion,
+							enUso: true,
+						}
+					: null,
+			}),
+		);
 	}
-	getById(id: string): Promise<IAsignaturaEnNivelMalla | null> {
-		return this._client.asignaturaEnNivelMalla.findFirst({ where: { id } });
+	async getById(id: string): Promise<IAsignaturaEnNivelMalla | null> {
+		const asignaturaEnNivel =
+			await this._client.asignaturaEnNivelMalla.findUnique({
+				where: { id },
+				include: {
+					ejeFormativo: true,
+					areaConocimiento: true,
+					campoFormacion: true,
+					asignatura: true,
+				},
+			});
+
+		if (!asignaturaEnNivel) return null;
+
+		const {
+			ejeFormativo,
+			areaConocimiento,
+			campoFormacion,
+			asignatura,
+			...rest
+		} = asignaturaEnNivel;
+
+		return {
+			...rest,
+			asignatura: {
+				...asignatura,
+				enUso: true,
+			},
+			ejeFormativo: {
+				...ejeFormativo,
+				enUso: true,
+			},
+			areaConocimiento: {
+				...areaConocimiento,
+				enUso: true,
+			},
+			campoFormacion: campoFormacion
+				? {
+						...campoFormacion,
+						enUso: true,
+					}
+				: null,
+		};
 	}
-	deleteById(id: string): Promise<IAsignaturaEnNivelMalla> {
-		return this._client.asignaturaEnNivelMalla.delete({ where: { id } });
+	async deleteById(id: string): Promise<IAsignaturaEnNivelMalla> {
+		const asignaturaEnNivel = await this._client.asignaturaEnNivelMalla.delete({
+			where: { id },
+			include: {
+				ejeFormativo: true,
+				areaConocimiento: true,
+				campoFormacion: true,
+				asignatura: true,
+			},
+		});
+
+		const {
+			ejeFormativo,
+			areaConocimiento,
+			campoFormacion,
+			asignatura,
+			...rest
+		} = asignaturaEnNivel;
+
+		return {
+			...rest,
+			asignatura: {
+				...asignatura,
+				enUso: true,
+			},
+			ejeFormativo: {
+				...ejeFormativo,
+				enUso: true,
+			},
+			areaConocimiento: {
+				...areaConocimiento,
+				enUso: true,
+			},
+			campoFormacion: campoFormacion
+				? {
+						...campoFormacion,
+						enUso: true,
+					}
+				: null,
+		};
 	}
-	update({
+	async update({
 		id,
 		data: { ejeFormativoId, campoFormacionId, areaConocimientoId },
 	}: UpdateAsignaturaEnNivelMallaParams): Promise<IAsignaturaEnNivelMalla> {
-		return this._client.asignaturaEnNivelMalla.update({
+		const asignaturaEnNivel = await this._client.asignaturaEnNivelMalla.update({
 			where: { id },
 			data: {
 				ejeFormativo: { connect: { id: ejeFormativoId } },
@@ -40,10 +156,46 @@ export class AsignaturaEnNivelMallaRepository
 						: undefined,
 				areaConocimiento: { connect: { id: areaConocimientoId } },
 			},
+			include: {
+				ejeFormativo: true,
+				areaConocimiento: true,
+				campoFormacion: true,
+				asignatura: true,
+			},
 		});
+
+		const {
+			ejeFormativo,
+			areaConocimiento,
+			campoFormacion,
+			asignatura,
+			...rest
+		} = asignaturaEnNivel;
+
+		return {
+			...rest,
+			asignatura: {
+				...asignatura,
+				enUso: true,
+			},
+			ejeFormativo: {
+				...ejeFormativo,
+				enUso: true,
+			},
+			areaConocimiento: {
+				...areaConocimiento,
+				enUso: true,
+			},
+			campoFormacion: campoFormacion
+				? {
+						...campoFormacion,
+						enUso: true,
+					}
+				: null,
+		};
 	}
 
-	create({
+	async create({
 		asignaturaId,
 		nivelMallaId,
 		ejeFormativoId,
@@ -51,7 +203,7 @@ export class AsignaturaEnNivelMallaRepository
 		areaConocimientoId,
 		...data
 	}: ICreateAsignaturaEnNivelMalla): Promise<IAsignaturaEnNivelMalla> {
-		return this._client.asignaturaEnNivelMalla.create({
+		const asignaturaEnNivel = await this._client.asignaturaEnNivelMalla.create({
 			data: {
 				...data,
 				asignatura: { connect: { id: asignaturaId } },
@@ -62,6 +214,42 @@ export class AsignaturaEnNivelMallaRepository
 					: undefined,
 				areaConocimiento: { connect: { id: areaConocimientoId } },
 			},
+			include: {
+				ejeFormativo: true,
+				areaConocimiento: true,
+				campoFormacion: true,
+				asignatura: true,
+			},
 		});
+
+		const {
+			ejeFormativo,
+			areaConocimiento,
+			campoFormacion,
+			asignatura,
+			...rest
+		} = asignaturaEnNivel;
+
+		return {
+			...rest,
+			asignatura: {
+				...asignatura,
+				enUso: true,
+			},
+			ejeFormativo: {
+				...ejeFormativo,
+				enUso: true,
+			},
+			areaConocimiento: {
+				...areaConocimiento,
+				enUso: true,
+			},
+			campoFormacion: campoFormacion
+				? {
+						...campoFormacion,
+						enUso: true,
+					}
+				: null,
+		};
 	}
 }

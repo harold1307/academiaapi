@@ -15,24 +15,100 @@ export class AsignaturaModuloEnMallaRepository
 {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	getAll(): Promise<IAsignaturaModuloEnMalla[]> {
-		return this._client.asignaturaModuloEnMalla.findMany();
+	async getAll(): Promise<IAsignaturaModuloEnMalla[]> {
+		const modulos = await this._client.asignaturaModuloEnMalla.findMany({
+			include: {
+				campoFormacion: true,
+				areaConocimiento: true,
+				asignatura: true,
+			},
+		});
+
+		return modulos.map(
+			({ campoFormacion, areaConocimiento, asignatura, ...rest }) => ({
+				...rest,
+				campoFormacion: {
+					...campoFormacion,
+					enUso: true,
+				},
+				areaConocimiento: {
+					...areaConocimiento,
+					enUso: true,
+				},
+				asignatura: {
+					...asignatura,
+					enUso: true,
+				},
+			}),
+		);
 	}
-	getById(id: string): Promise<IAsignaturaModuloEnMalla | null> {
-		return this._client.asignaturaModuloEnMalla.findFirst({ where: { id } });
+	async getById(id: string): Promise<IAsignaturaModuloEnMalla | null> {
+		const modulo = await this._client.asignaturaModuloEnMalla.findFirst({
+			where: { id },
+			include: {
+				campoFormacion: true,
+				areaConocimiento: true,
+				asignatura: true,
+			},
+		});
+
+		if (!modulo) return null;
+
+		const { campoFormacion, areaConocimiento, asignatura, ...rest } = modulo;
+
+		return {
+			...rest,
+			campoFormacion: {
+				...campoFormacion,
+				enUso: true,
+			},
+			areaConocimiento: {
+				...areaConocimiento,
+				enUso: true,
+			},
+			asignatura: {
+				...asignatura,
+				enUso: true,
+			},
+		};
 	}
-	deleteById(id: string): Promise<IAsignaturaModuloEnMalla> {
-		return this._client.asignaturaModuloEnMalla.delete({ where: { id } });
+	async deleteById(id: string): Promise<IAsignaturaModuloEnMalla> {
+		const modulo = await this._client.asignaturaModuloEnMalla.delete({
+			where: { id },
+			include: {
+				campoFormacion: true,
+				areaConocimiento: true,
+				asignatura: true,
+			},
+		});
+
+		const { campoFormacion, areaConocimiento, asignatura, ...rest } = modulo;
+
+		return {
+			...rest,
+			campoFormacion: {
+				...campoFormacion,
+				enUso: true,
+			},
+			areaConocimiento: {
+				...areaConocimiento,
+				enUso: true,
+			},
+			asignatura: {
+				...asignatura,
+				enUso: true,
+			},
+		};
 	}
 
-	create({
+	async create({
 		mallaId,
 		asignaturaId,
 		campoFormacionId,
 		areaConocimientoId,
 		...data
 	}: ICreateAsignaturaModuloEnMalla): Promise<IAsignaturaModuloEnMalla> {
-		return this._client.asignaturaModuloEnMalla.create({
+		const modulo = await this._client.asignaturaModuloEnMalla.create({
 			data: {
 				...data,
 				malla: { connect: { id: mallaId } },
@@ -40,13 +116,36 @@ export class AsignaturaModuloEnMallaRepository
 				campoFormacion: { connect: { id: campoFormacionId } },
 				areaConocimiento: { connect: { id: areaConocimientoId } },
 			},
+			include: {
+				campoFormacion: true,
+				areaConocimiento: true,
+				asignatura: true,
+			},
 		});
+
+		const { campoFormacion, areaConocimiento, asignatura, ...rest } = modulo;
+
+		return {
+			...rest,
+			campoFormacion: {
+				...campoFormacion,
+				enUso: true,
+			},
+			areaConocimiento: {
+				...areaConocimiento,
+				enUso: true,
+			},
+			asignatura: {
+				...asignatura,
+				enUso: true,
+			},
+		};
 	}
-	update({
+	async update({
 		id,
 		data: { campoFormacionId, areaConocimientoId, ...data },
 	}: UpdateAsignaturaModuloEnMallaParams): Promise<IAsignaturaModuloEnMalla> {
-		return this._client.asignaturaModuloEnMalla.update({
+		const modulo = await this._client.asignaturaModuloEnMalla.update({
 			where: { id },
 			data: {
 				...data,
@@ -57,6 +156,29 @@ export class AsignaturaModuloEnMallaRepository
 					? { connect: { id: areaConocimientoId } }
 					: undefined,
 			},
+			include: {
+				campoFormacion: true,
+				areaConocimiento: true,
+				asignatura: true,
+			},
 		});
+
+		const { campoFormacion, areaConocimiento, asignatura, ...rest } = modulo;
+
+		return {
+			...rest,
+			campoFormacion: {
+				...campoFormacion,
+				enUso: true,
+			},
+			areaConocimiento: {
+				...areaConocimiento,
+				enUso: true,
+			},
+			asignatura: {
+				...asignatura,
+				enUso: true,
+			},
+		};
 	}
 }

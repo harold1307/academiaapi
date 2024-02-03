@@ -6,7 +6,6 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
-import { TipoDuracion } from "@prisma/client";
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
@@ -15,6 +14,8 @@ import { type ICreateMallaCurricular } from "../../MallaCurricular/Domain/ICreat
 import type { IMallaCurricularService } from "../../MallaCurricular/Domain/IMallaCurricularService";
 import { ModalidadService } from "../../Modalidad/Application/Service";
 import type { IModalidadService } from "../../Modalidad/Domain/IModalidadService";
+import type { ICreatePracticaComunitariaEnMalla } from "../../PracticaComunitariaEnMalla/Domain/ICreatePracticaComunitariaEnMalla";
+import type { ICreatePracticaPreProfesionalEnMalla } from "../../PracticaPreProfesionalEnMalla/Domain/ICreatePracticaPreProfesionalEnMalla";
 import { TipoDocumentoService } from "../../TipoDocumento/Application/Service";
 import type { ITipoDocumentoService } from "../../TipoDocumento/Domain/ITipoDocumentoService";
 import { TipoDocumentoEnProgramaService } from "../../TipoDocumentoEnPrograma/Application/Service";
@@ -218,20 +219,28 @@ export class ProgramaController implements IProgramaController {
 			if (!programaId) return CommonResponse.invalidId();
 
 			const body = await req.json();
-			const bodyVal = createBodySchema.safeParse(body);
+			const bodyVal = createMallaCurricularBodySchema.safeParse(body);
 
 			if (!bodyVal.success) return CommonResponse.invalidBody();
 
-			const { fechaAprobacion, fechaLimiteVigencia, ...data } = bodyVal.data;
+			const {
+				fechaAprobacion,
+				fechaLimiteVigencia,
+				modalidadId,
+				tituloObtenidoId,
+				practicasComunitarias,
+				practicasPreProfesionales,
+				niveles,
+				...data
+			} = bodyVal.data;
 
 			const programa = await this._programaService.getProgramaById(programaId);
 
 			if (!programa)
 				return { jsonBody: { message: "El programa no existe" }, status: 400 };
 
-			const modalidad = await this._modalidadService.getModalidadById(
-				data.modalidadId,
-			);
+			const modalidad =
+				await this._modalidadService.getModalidadById(modalidadId);
 
 			if (!modalidad)
 				return {
@@ -239,16 +248,65 @@ export class ProgramaController implements IProgramaController {
 					status: 400,
 				};
 
-			const tituloObtenido =
-				await this._tituloObtenidoService.getTituloObtenidoById(
-					data.tituloObtenidoId,
-				);
-
-			if (!tituloObtenido)
+			if (
+				practicasComunitarias &&
+				practicasComunitarias.registroDesdeNivel &&
+				practicasComunitarias.registroDesdeNivel > niveles
+			) {
 				return {
-					jsonBody: { message: "El titulo obtenido no existe" },
+					jsonBody: {
+						message:
+							"El registro desde nivel de las practicas comunitarias no puede ser mayor al número de niveles",
+					},
 					status: 400,
 				};
+			}
+
+			if (
+				practicasPreProfesionales &&
+				practicasPreProfesionales.registroDesdeNivel &&
+				practicasPreProfesionales.registroDesdeNivel > niveles
+			) {
+				return {
+					jsonBody: {
+						message:
+							"El registro desde nivel de las practicas pre profesionales no puede ser mayor al número de niveles",
+					},
+					status: 400,
+				};
+			}
+
+			if (tituloObtenidoId) {
+				const tituloObtenido =
+					await this._tituloObtenidoService.getTituloObtenidoById(
+						tituloObtenidoId,
+					);
+
+				if (!tituloObtenido)
+					return {
+						jsonBody: { message: "El titulo obtenido no existe" },
+						status: 400,
+					};
+
+				const programa = await this._programaService.getProgramaById(
+					tituloObtenido.programaId,
+				);
+
+				if (!programa)
+					return {
+						jsonBody: {
+							message:
+								"El titulo obtenido no tiene un programa enlazado, no se puede asignar",
+						},
+					};
+
+				if (programa.id !== programaId)
+					return {
+						jsonBody: {
+							message: "El titulo obtenido no pertenece al programa",
+						},
+					};
+			}
 
 			const newMallaCurricular =
 				await this._mallaCurricularService.createMallaCurricular({
@@ -256,6 +314,11 @@ export class ProgramaController implements IProgramaController {
 					fechaAprobacion: new Date(fechaAprobacion),
 					fechaLimiteVigencia: new Date(fechaLimiteVigencia),
 					programaId,
+					modalidadId,
+					tituloObtenidoId,
+					practicasComunitarias,
+					practicasPreProfesionales,
+					niveles,
 				});
 
 			ctx.log({ newMallaCurricular });
@@ -288,7 +351,7 @@ const createTituloObtenidoBodySchema = z.object<
 	nombre: z.string(),
 });
 
-const createBodySchema = z.object<
+const createMallaCurricularBodySchema = z.object<
 	ZodInferSchema<
 		Omit<
 			ICreateMallaCurricular,
@@ -296,27 +359,58 @@ const createBodySchema = z.object<
 		> & {
 			fechaAprobacion: string;
 			fechaLimiteVigencia: string;
+			practicasPreProfesionales:
+				| (ICreatePracticaPreProfesionalEnMalla & {
+						registroDesdeNivel: number | null;
+				  })
+				| null;
+			practicasComunitarias:
+				| (ICreatePracticaComunitariaEnMalla & {
+						registroDesdeNivel: number | null;
+				  })
+				| null;
 		}
 	>
 >({
-	modalidadId: z.string(),
-	tituloObtenidoId: z.string(),
-	tipoDuracion: z.nativeEnum(TipoDuracion),
+	tipoDuracion: z
+		.enum(["ANOS", "CREDITOS", "HORAS", "SEMESTRES"] as const)
+		.nullable(),
+	codigo: z.string().nullable(),
 	fechaAprobacion: z.string().datetime(),
 	fechaLimiteVigencia: z.string().datetime(),
-	niveles: z.number(),
-	maximoMateriasMatricula: z.number(),
-	cantidadLibreOpcionEgreso: z.number(),
-	cantidadOptativasEgreso: z.number(),
-	cantidadArrastres: z.number(),
-	practicasLigadasMaterias: z.boolean(),
-	horasPractica: z.number(),
-	registroPracticasDesde: z.number(),
-	horasVinculacion: z.number(),
-	registroVinculacionDesde: z.number(),
-	registroProyectosDesde: z.number(),
-	usaNivelacion: z.boolean(),
+	cantidadOtrasMateriasMatricula: z.number(),
+	limiteSeleccionMateriaPorAdministrativo: z.boolean(),
+	cantidadArrastres: z.number().nullable(),
+	porcentajeMinimoPasarNivel: z.number().nullable(),
+	maximoMateriasAdelantar: z.number().nullable(),
+	automatriculaModulos: z.boolean(),
 	plantillasSilabo: z.boolean(),
-	perfilEgreso: z.string(),
-	observaciones: z.string(),
+	modeloPlanificacion: z.boolean(),
+	perfilEgreso: z.string().nullable(),
+	observaciones: z.string().nullable(),
+	tituloObtenidoId: z.string().nullable(),
+	modalidadId: z.string(),
+
+	niveles: z.number(),
+	practicasComunitarias: z
+		.object({
+			requiereAutorizacion: z.boolean(),
+			creditos: z.number().nullable(),
+			horas: z.number().nullable(),
+			registroDesdeNivel: z.number().min(0).max(10).nullable(),
+			mallaCurricularId: z.string().uuid(),
+			registroPracticasAdelantadas: z.boolean(),
+			registroMultiple: z.boolean(),
+		})
+		.nullable(),
+	practicasPreProfesionales: z
+		.object({
+			requiereAutorizacion: z.boolean(),
+			creditos: z.number().nullable(),
+			horas: z.number().nullable(),
+			registroDesdeNivel: z.number().min(0).max(10).nullable(),
+			mallaCurricularId: z.string().uuid(),
+			registroPracticasAdelantadas: z.boolean(),
+		})
+		.nullable(),
 });
