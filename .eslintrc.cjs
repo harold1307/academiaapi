@@ -22,6 +22,14 @@ const config = {
     "@typescript-eslint/no-explicit-any": "off",
   },
   ignorePatterns: ["node_modules", "dist"],
+  overrides: [
+    {
+      "files": ["tests/**/*"],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
 };
 
 module.exports = config;
