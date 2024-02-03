@@ -35,10 +35,10 @@ export class NivelMallaService implements INivelMallaService {
 	}
 }
 
-class NivelMallaServiceError extends Error {
-	constructor(message: string) {
-		super();
-		this.message = message;
-		this.name = "NivelMallaServiceError";
-	}
-}
+// class NivelMallaServiceError extends Error {
+// 	constructor(message: string) {
+// 		super();
+// 		this.message = message;
+// 		this.name = "NivelMallaServiceError";
+// 	}
+// }

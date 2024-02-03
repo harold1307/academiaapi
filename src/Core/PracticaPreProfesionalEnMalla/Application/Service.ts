@@ -57,10 +57,10 @@ export class PracticaPreProfesionalEnMallaService
 	}
 }
 
-class PracticaPreProfesionalEnMallaServiceError extends Error {
-	constructor(message: string) {
-		super();
-		this.message = message;
-		this.name = "PracticaPreProfesionalEnMallaServiceError";
-	}
-}
+// class PracticaPreProfesionalEnMallaServiceError extends Error {
+// 	constructor(message: string) {
+// 		super();
+// 		this.message = message;
+// 		this.name = "PracticaPreProfesionalEnMallaServiceError";
+// 	}
+// }

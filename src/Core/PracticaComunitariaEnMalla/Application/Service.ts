@@ -56,10 +56,10 @@ export class PracticaComunitariaEnMallaService
 	}
 }
 
-class PracticaComunitariaEnMallaServiceError extends Error {
-	constructor(message: string) {
-		super();
-		this.message = message;
-		this.name = "PracticaComunitariaEnMallaServiceError";
-	}
-}
+// class PracticaComunitariaEnMallaServiceError extends Error {
+// 	constructor(message: string) {
+// 		super();
+// 		this.message = message;
+// 		this.name = "PracticaComunitariaEnMallaServiceError";
+// 	}
+// }
