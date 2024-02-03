@@ -60,8 +60,8 @@ jobs:
           echo SHADOW_DATABASE_URL_DEV=${{ secrets.SHADOW_DATABASE_URL_DEV }} >> .env
           cat .env
 
-      - name: Apply all pending migrations to the database
-        run: pnpm dlx prisma migrate deploy
+      # - name: Apply all pending migrations to the database
+      #   run: pnpm dlx prisma migrate deploy
 
       - name: Resolve Project Dependencies Using pnpm
         shell: pwsh
