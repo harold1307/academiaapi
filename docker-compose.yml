@@ -1,0 +1,21 @@
+# Set the version of docker compose to use
+version: "3.9"
+
+# The containers that compose the project
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    container_name: integration-tests-prisma
+    hostname: localhost
+    ports:
+      - 42069:3306
+    volumes:
+      - my-db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: prisma
+      MYSQL_DATABASE: tests
+
+volumes:
+  my-db:
+    driver: "local"
