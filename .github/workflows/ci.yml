@@ -3,6 +3,7 @@ name: ci
 on:
   pull_request:
     branches: ["main", "test", "dev"]
+  workflow_dispatch:
 
 env:
   NODE_VERSION: "18.x"
@@ -49,3 +50,12 @@ jobs:
 
       - name: Run tsc
         run: pnpm run build --noEmit
+
+      - name: "Create .env.test file"
+        run: |
+          touch .env.test
+          echo DATABASE_URL="mysql://root:prisma@localhost:42069/tests?schema=public" >> .env.test
+          cat .env.test
+
+      - name: Run tests
+        run: pnpm run test

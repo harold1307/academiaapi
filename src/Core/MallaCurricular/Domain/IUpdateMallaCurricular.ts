@@ -13,5 +13,7 @@ export type IUpdateMallaCurricular = Partial<
 		| "practicaPreProfesional"
 		| "practicaComunitaria"
 		| "tituloObtenido"
+		| "niveles"
+		| "modulos"
 	>
 >;

@@ -8,7 +8,7 @@
 		"clean": "rimraf dist",
 		"prestart": "npm run clean && npm run build",
 		"start": "func start",
-		"test": "pnpm docker:up && pnpm db:test && jest -i",
+		"test": "pnpm docker:up && dotenv -e .env.test -- prisma db push && dotenv -e .env.test -- jest -i",
 		"create:modulo": "hygen modulo new",
 		"create:controller": "hygen controller new",
 		"db:pull": "prisma db pull",
@@ -19,7 +19,6 @@
 		"lint:fix": "pnpm lint --fix",
 		"docker:up": "docker-compose up -d",
 		"docker:down": "docker-compose down",
-		"db:test": "dotenv -e .env.test -- prisma db push",
 		"postinstall": "prisma generate"
 	},
 	"dependencies": {

@@ -360,12 +360,12 @@ const createMallaCurricularBodySchema = z.object<
 			fechaAprobacion: string;
 			fechaLimiteVigencia: string;
 			practicasPreProfesionales:
-				| (ICreatePracticaPreProfesionalEnMalla & {
+				| (Omit<ICreatePracticaPreProfesionalEnMalla, "mallaCurricularId"> & {
 						registroDesdeNivel: number | null;
 				  })
 				| null;
 			practicasComunitarias:
-				| (ICreatePracticaComunitariaEnMalla & {
+				| (Omit<ICreatePracticaComunitariaEnMalla, "mallaCurricularId"> & {
 						registroDesdeNivel: number | null;
 				  })
 				| null;
@@ -398,7 +398,6 @@ const createMallaCurricularBodySchema = z.object<
 			creditos: z.number().nullable(),
 			horas: z.number().nullable(),
 			registroDesdeNivel: z.number().min(0).max(10).nullable(),
-			mallaCurricularId: z.string().uuid(),
 			registroPracticasAdelantadas: z.boolean(),
 			registroMultiple: z.boolean(),
 		})
@@ -409,7 +408,6 @@ const createMallaCurricularBodySchema = z.object<
 			creditos: z.number().nullable(),
 			horas: z.number().nullable(),
 			registroDesdeNivel: z.number().min(0).max(10).nullable(),
-			mallaCurricularId: z.string().uuid(),
 			registroPracticasAdelantadas: z.boolean(),
 		})
 		.nullable(),

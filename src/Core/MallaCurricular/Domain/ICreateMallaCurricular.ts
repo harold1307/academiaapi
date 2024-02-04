@@ -10,6 +10,8 @@ export type ICreateMallaCurricular = Omit<
 	| "practicaPreProfesional"
 	| "practicaComunitaria"
 	| "tituloObtenido"
+	| "niveles"
+	| "modulos"
 > & {
 	niveles: number;
 };

@@ -52,6 +52,12 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 				practicaComunitaria: true,
 				practicaPreProfesional: true,
 				tituloObtenido: true,
+				niveles: {
+					include: {
+						asignaturas: true,
+					},
+				},
+				modulos: true,
 			},
 		});
 
@@ -71,6 +77,12 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 				practicaComunitaria: true,
 				practicaPreProfesional: true,
 				tituloObtenido: true,
+				niveles: {
+					include: {
+						asignaturas: true,
+					},
+				},
+				modulos: true,
 			},
 		});
 
@@ -105,6 +117,12 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 				practicaComunitaria: true,
 				practicaPreProfesional: true,
 				tituloObtenido: true,
+				niveles: {
+					include: {
+						asignaturas: true,
+					},
+				},
+				modulos: true,
 			},
 		});
 
@@ -126,6 +144,12 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 				practicaComunitaria: true,
 				practicaPreProfesional: true,
 				tituloObtenido: true,
+				niveles: {
+					include: {
+						asignaturas: true,
+					},
+				},
+				modulos: true,
 			},
 		});
 

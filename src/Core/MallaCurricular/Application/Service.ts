@@ -16,7 +16,6 @@ import type {
 } from "../Domain/IMallaCurricularRepository";
 import type {
 	IMallaCurricularService,
-	MallaCurricularWithAsignaturas,
 	MallaCurricularWithLugaresEjecucion,
 } from "../Domain/IMallaCurricularService";
 import { CreateLugarEjecucionDTO } from "../Infraestructure/DTOs/CreateLugarEjecucionDTO";
@@ -39,8 +38,14 @@ export class MallaCurricularService implements IMallaCurricularService {
 		practicasPreProfesionales,
 		...data
 	}: ICreateMallaCurricular & {
-		practicasPreProfesionales: ICreatePracticaPreProfesionalEnMalla | null;
-		practicasComunitarias: ICreatePracticaComunitariaEnMalla | null;
+		practicasPreProfesionales: Omit<
+			ICreatePracticaPreProfesionalEnMalla,
+			"mallaCurricularId"
+		> | null;
+		practicasComunitarias: Omit<
+			ICreatePracticaComunitariaEnMalla,
+			"mallaCurricularId"
+		> | null;
 	}) {
 		const dto = new CreateMallaCurricularDTO(data);
 		const { niveles, programaId, modalidadId, tituloObtenidoId, ...valid } =
@@ -139,6 +144,12 @@ export class MallaCurricularService implements IMallaCurricularService {
 					practicaComunitaria: true,
 					practicaPreProfesional: true,
 					tituloObtenido: true,
+					niveles: {
+						include: {
+							asignaturas: true,
+						},
+					},
+					modulos: true,
 				},
 			});
 
@@ -163,9 +174,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 		return this._mallaCurricularRepository.getAll();
 	}
 
-	async getAllMallasCurricularesWithAsignaturas(): Promise<
-		MallaCurricularWithAsignaturas[]
-	> {
+	async getAllMallasCurricularesWithAsignaturas(): Promise<IMallaCurricular[]> {
 		const mallas = await this._client.mallaCurricular.findMany({
 			include: {
 				niveles: {
@@ -369,6 +378,12 @@ export class MallaCurricularService implements IMallaCurricularService {
 				practicaComunitaria: true,
 				practicaPreProfesional: true,
 				tituloObtenido: true,
+				niveles: {
+					include: {
+						asignaturas: true,
+					},
+				},
+				modulos: true,
 			},
 		});
 
