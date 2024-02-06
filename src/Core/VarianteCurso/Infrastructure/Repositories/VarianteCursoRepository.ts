@@ -59,15 +59,34 @@ export class VarianteCursoRepository implements IVarianteCursoRepository {
 		});
 	}
 
-	withAsignaturasGetById(
+	async withAsignaturasGetById(
 		id: string,
 	): Promise<IVarianteCursoWithAsignaturas | null> {
-		return this._client.varianteCurso.findUnique({
+		const variante = await this._client.varianteCurso.findUnique({
 			where: { id },
 			include: {
-				asignaturas: true,
+				asignaturas: {
+					include: {
+						asignatura: true,
+					},
+				},
 			},
 		});
+
+		if (!variante) return null;
+
+		const { asignaturas, ...rest } = variante;
+
+		return {
+			...rest,
+			asignaturas: asignaturas.map(({ asignatura, ...a }) => ({
+				...a,
+				asignatura: {
+					...asignatura,
+					enUso: true,
+				},
+			})),
+		};
 	}
 
 	updateById({

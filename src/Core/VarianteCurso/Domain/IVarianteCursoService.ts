@@ -1,3 +1,4 @@
+import type { ICreateVarianteCurso } from "./ICreateVarianteCurso";
 import type { IVarianteCurso } from "./IVarianteCurso";
 import type { IVarianteCursoWithAsignaturas } from "./IVarianteCursoWithAsignaturas";
 import type { IVarianteCursoWithCurso } from "./IVarianteCursoWithCurso";
@@ -9,7 +10,7 @@ export type IUpdateVarianteCursoByIdParams = {
 
 export type ICreateVarianteCursoParams = {
 	cursoId: string;
-	data: unknown;
+	data: ICreateVarianteCurso;
 };
 
 export type IVarianteCursoService = {

@@ -5,7 +5,6 @@ import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateModalidad } from "../../Domain/IUpdateModalidad";
 
 const schema = z.object<ZodInferSchema<IUpdateModalidad>>({
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
 	alias: z.string().nullable().optional(),
 	nombre: z.string().optional(),
 });

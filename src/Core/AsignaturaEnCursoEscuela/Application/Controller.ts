@@ -198,8 +198,11 @@ const updateBodySchema = z.object<
 	sumaHoras: z.boolean().optional(),
 	creditos: z.number().optional(),
 	requeridoAprobar: z.boolean().optional(),
-	asistenciaAprobar: z.number().optional(),
+	asistenciaAprobar: z.number().nullable().optional(),
 	asignaturaId: z.string().optional(),
-	// @ts-expect-error ZodInferSchema doesnt work with nullable and optional types
 	profesorId: z.string().nullable().optional(),
+	modeloEvaluativoId: z.string().uuid().nullable().optional(),
+	cantidadDecimales: z.number().nullable().optional(),
+	notaMaxima: z.number().nullable().optional(),
+	notaMinima: z.number().nullable().optional(),
 });

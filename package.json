@@ -9,6 +9,7 @@
 		"prestart": "npm run clean && npm run build",
 		"start": "func start",
 		"test": "pnpm docker:up && dotenv -e .env.test -- prisma db push && dotenv -e .env.test -- jest -i",
+		"test:unit": "jest --maxWorkers 1 --watch --testPathPattern=src/Tests/Unit",
 		"create:modulo": "hygen modulo new",
 		"create:controller": "hygen controller new",
 		"db:pull": "prisma db pull",

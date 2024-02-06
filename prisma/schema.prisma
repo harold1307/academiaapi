@@ -263,14 +263,18 @@ model AsignaturaEnVarianteCurso {
   horasAsistidasDocente Float
   horasAutonomas        Float
   horasPracticas        Float
-  sumaHoras             Boolean
   creditos              Float
   requeridoAprobar      Boolean
-  asistenciaAprobar     Int
+  sumaHoras             Boolean
+
+  asistenciaAprobar Int?
+  notaMaxima        Float?
+  notaMinima        Float?
+  cantidadDecimales Int?
 
   asignaturaId       String
-  varianteCursoId    String
   asignatura         Asignatura        @relation(fields: [asignaturaId], references: [id])
+  varianteCursoId    String
   varianteCurso      VarianteCurso     @relation(fields: [varianteCursoId], references: [id], onDelete: Cascade)
   modeloEvaluativoId String?
   modeloEvaluativo   ModeloEvaluativo? @relation(fields: [modeloEvaluativoId], references: [id])
@@ -338,14 +342,13 @@ model CursoEscuela {
 
   registroExterno       Boolean
   registroInterno       Boolean
-  verificarSesion       Boolean
+  verificaSesion        Boolean
   registroDesdeOtraSede Boolean
   edadMinima            Int?
   edadMaxima            Int?
   costoPorMateria       Boolean
   cumpleRequisitosMalla Boolean
   pasarRecord           Boolean
-  aprobarCursoPrevio    Boolean
 
   plantillaId String?
   plantilla   VarianteCurso? @relation(fields: [plantillaId], references: [id])
@@ -370,7 +373,11 @@ model AsignaturaEnCursoEscuela {
   sumaHoras             Boolean
   creditos              Float
   requeridoAprobar      Boolean
-  asistenciaAprobar     Int
+
+  asistenciaAprobar Int?
+  notaMaxima        Float?
+  notaMinima        Float?
+  cantidadDecimales Int?
 
   asignaturaId       String
   asignatura         Asignatura        @relation(fields: [asignaturaId], references: [id])
@@ -400,12 +407,10 @@ model Paralelo {
 }
 
 model Curso {
-  id          String          @id @default(uuid())
-  estado      Boolean         @default(true)
-  nombre      String
-  certificado String?
-  alias       String?
-  variantes   VarianteCurso[]
+  id        String          @id @default(uuid())
+  estado    Boolean         @default(true)
+  nombre    String
+  variantes VarianteCurso[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -414,26 +419,29 @@ model Curso {
 }
 
 model VarianteCurso {
-  id                    String                      @id @default(uuid())
-  nombre                String
-  codigoBase            String
-  descripcion           String
-  registroExterno       Boolean
-  registroInterno       Boolean
-  verificarSesion       Boolean
-  edadMinima            Int?
-  edadMaxima            Int?
-  cursoId               String
-  aprobarCursoPrevio    Boolean
-  costoPorMateria       Boolean
-  cumpleRequisitosMalla Boolean
-  fechaAprobacion       DateTime
-  pasarRecord           Boolean
-  registroDesdeOtraSede Boolean
-  estado                Boolean                     @default(false)
-  asignaturas           AsignaturaEnVarianteCurso[]
-  curso                 Curso                       @relation(fields: [cursoId], references: [id], onDelete: Cascade)
-  cursoEscuelas         CursoEscuela[]
+  id          String  @id @default(uuid())
+  estado      Boolean @default(false)
+  nombre      String
+  codigoBase  String
+  descripcion String
+
+  registroExterno         Boolean
+  registroInterno         Boolean
+  registroDesdeOtraSede   Boolean
+  costoPorMateria         Boolean
+  costoPorCantidadMateria Boolean
+  verificaSesion          Boolean
+  edadMinima              Int?
+  edadMaxima              Int?
+  cumpleRequisitosMalla   Boolean
+  fechaAprobacion         DateTime
+  pasarRecord             Boolean
+
+  cursoId String
+  curso   Curso  @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+
+  asignaturas   AsignaturaEnVarianteCurso[]
+  cursoEscuelas CursoEscuela[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

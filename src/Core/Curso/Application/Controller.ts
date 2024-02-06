@@ -152,12 +152,15 @@ export class CursoController implements ICursoController {
 					status: 400,
 				};
 
-			const { data } = bodyVal;
+			const { fechaAprobacion, ...data } = bodyVal.data;
 
 			const varianteCurso =
 				await this._varianteCursoService.createVarianteCurso({
 					cursoId,
-					data,
+					data: {
+						...data,
+						fechaAprobacion: new Date(fechaAprobacion),
+					},
 				});
 
 			ctx.log({ varianteCurso });
@@ -191,17 +194,11 @@ export class CursoController implements ICursoController {
 
 const createBodySchema = z.object<ZodInferSchema<ICreateCurso>>({
 	nombre: z.string(),
-	certificado: z.string().nullable(),
-	alias: z.string().nullable(),
 });
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateCurso>>({
 	estado: z.boolean().optional(),
 	nombre: z.string().optional(),
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
-	certificado: z.string().nullable().optional(),
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
-	alias: z.string().nullable().optional(),
 });
 
 const createVarianteCursoBodySchema = z.object<
@@ -216,7 +213,6 @@ const createVarianteCursoBodySchema = z.object<
 	descripcion: z.string(),
 	registroExterno: z.boolean(),
 	registroInterno: z.boolean(),
-	verificarSesion: z.boolean(),
 	edadMinima: z.number().nullable(),
 	edadMaxima: z.number().nullable(),
 	fechaAprobacion: z.string().datetime(),
@@ -224,5 +220,6 @@ const createVarianteCursoBodySchema = z.object<
 	costoPorMateria: z.boolean(),
 	cumpleRequisitosMalla: z.boolean(),
 	pasarRecord: z.boolean(),
-	aprobarCursoPrevio: z.boolean(),
+	costoPorCantidadMateria: z.boolean(),
+	verificaSesion: z.boolean(),
 });

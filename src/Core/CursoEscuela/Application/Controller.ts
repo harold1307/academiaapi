@@ -271,9 +271,12 @@ const createAsignaturaBodySchema = z.object<
 	sumaHoras: z.boolean(),
 	creditos: z.number(),
 	requeridoAprobar: z.boolean(),
-	asistenciaAprobar: z.number(),
+	asistenciaAprobar: z.number().nullable(),
 	profesorId: z.string().nullable(),
 	modeloEvaluativoId: z.string().nullable(),
+	cantidadDecimales: z.number().nullable(),
+	notaMaxima: z.number().nullable(),
+	notaMinima: z.number().nullable(),
 });
 
 const createBodySchema = z.object<
@@ -306,12 +309,11 @@ const createBodySchema = z.object<
 	legalizarMatriculas: z.boolean(),
 	registroExterno: z.boolean(),
 	registroInterno: z.boolean(),
-	verificarSesion: z.boolean(),
+	verificaSesion: z.boolean(),
 	registroDesdeOtraSede: z.boolean(),
 	edadMinima: z.number().nullable(),
 	edadMaxima: z.number().nullable(),
 	costoPorMateria: z.boolean(),
 	cumpleRequisitosMalla: z.boolean(),
 	pasarRecord: z.boolean(),
-	aprobarCursoPrevio: z.boolean(),
 });

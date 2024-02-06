@@ -5,11 +5,11 @@ import type { IUpdatePerfilPractica } from "../../Domain/IUpdatePerfilPractica";
 
 const schema = z.object<ZodInferSchema<IUpdatePerfilPractica>>({
 	nombre: z.string().optional(),
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+
 	actividades: z.string().nullable().optional(),
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+
 	capacidades: z.string().nullable().optional(),
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+
 	resultados: z.string().nullable().optional(),
 });
 

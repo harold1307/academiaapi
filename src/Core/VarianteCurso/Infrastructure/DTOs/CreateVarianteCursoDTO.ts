@@ -11,7 +11,6 @@ const schema = z
 		descripcion: z.string(),
 		registroExterno: z.boolean(),
 		registroInterno: z.boolean(),
-		verificarSesion: z.boolean(),
 		edadMinima: z.number().nullable(),
 		edadMaxima: z.number().nullable(),
 		fechaAprobacion: z.date(),
@@ -19,7 +18,8 @@ const schema = z
 		costoPorMateria: z.boolean(),
 		cumpleRequisitosMalla: z.boolean(),
 		pasarRecord: z.boolean(),
-		aprobarCursoPrevio: z.boolean(),
+		verificaSesion: z.boolean(),
+		costoPorCantidadMateria: z.boolean(),
 	})
 	.superRefine(({ edadMaxima, edadMinima }, ctx) => {
 		if (
@@ -42,19 +42,19 @@ const schema = z
 		}
 	});
 
-class CreateVarianteCursoError extends BaseDTOError<ICreateVarianteCurso> {
+class CreateVarianteCursoDTOError extends BaseDTOError<ICreateVarianteCurso> {
 	constructor(error: z.ZodError<ICreateVarianteCurso>) {
 		super(error);
-		this.name = "CreateVarianteCursoError";
+		this.name = "CreateVarianteCursoDTOError";
 		this.message = "Error de validacion para crear la variante de curso";
 	}
 }
 
 export class CreateVarianteCursoDTO extends BaseValidatorDTO<
 	ICreateVarianteCurso,
-	CreateVarianteCursoError
+	CreateVarianteCursoDTOError
 > {
 	constructor(input: unknown) {
-		super(schema, CreateVarianteCursoError, input);
+		super(schema, CreateVarianteCursoDTOError, input);
 	}
 }

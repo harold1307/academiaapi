@@ -6,8 +6,6 @@ import type { ICreateCurso } from "../../Domain/ICreateCurso";
 
 const schema = z.object<ZodInferSchema<ICreateCurso>>({
 	nombre: z.string(),
-	certificado: z.string().nullable(),
-	alias: z.string().nullable(),
 });
 
 class CreateCursoError extends BaseDTOError<ICreateCurso> {

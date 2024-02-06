@@ -14,7 +14,11 @@ const schema = z.object<ZodInferSchema<ICreateAsignaturaEnCursoEscuela>>({
 	sumaHoras: z.boolean(),
 	creditos: z.number(),
 	requeridoAprobar: z.boolean(),
-	asistenciaAprobar: z.number(),
+	asistenciaAprobar: z.number().nullable(),
+	cantidadDecimales: z.number().nullable(),
+	notaMaxima: z.number().nullable(),
+	notaMinima: z.number().nullable(),
+
 	asignaturaId: z.string(),
 	cursoEscuelaId: z.string(),
 	profesorId: z.string().nullable(),

@@ -10,19 +10,16 @@ const schema = z.object<ZodInferSchema<IUpdateVarianteCurso>>({
 	descripcion: z.string().optional(),
 	registroExterno: z.boolean().optional(),
 	registroInterno: z.boolean().optional(),
-	verificarSesion: z.boolean().optional(),
-	verificarEdad: z.boolean().optional(),
-	//@ts-expect-error el type helper ZodInferSchema no contempla los fields nullables
 	edadMinima: z.number().nullable().optional(),
-	//@ts-expect-error el type helper ZodInferSchema no contempla los fields nullables
 	edadMaxima: z.number().nullable().optional(),
 	fechaAprobacion: z.date().optional(),
 	registroDesdeOtraSede: z.boolean().optional(),
 	costoPorMateria: z.boolean().optional(),
 	cumpleRequisitosMalla: z.boolean().optional(),
 	pasarRecord: z.boolean().optional(),
-	aprobarCursoPrevio: z.boolean().optional(),
 	estado: z.boolean().optional(),
+	costoPorCantidadMateria: z.boolean().optional(),
+	verificaSesion: z.boolean().optional(),
 });
 
 class UpdateVarianteCursoError extends BaseDTOError<IUpdateVarianteCurso> {

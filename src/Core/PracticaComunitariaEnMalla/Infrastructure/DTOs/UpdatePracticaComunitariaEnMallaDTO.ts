@@ -6,11 +6,11 @@ import type { IUpdatePracticaComunitariaEnMalla } from "../../Domain/IUpdatePrac
 
 const schema = z.object<ZodInferSchema<IUpdatePracticaComunitariaEnMalla>>({
 	requiereAutorizacion: z.boolean().optional(),
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+
 	creditos: z.number().nullable().optional(),
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+
 	horas: z.number().nullable().optional(),
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+
 	registroDesdeNivel: z.number().min(1).max(10).nullable().optional(),
 	registroPracticasAdelantadas: z.boolean().optional(),
 	registroMultiple: z.boolean().optional(),

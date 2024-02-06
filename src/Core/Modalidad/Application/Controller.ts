@@ -132,7 +132,6 @@ const createBodySchema = z.object<ZodInferSchema<ICreateModalidad>>({
 });
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateModalidad>>({
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
 	alias: z.string().nullable().optional(),
 	nombre: z.string().optional(),
 });

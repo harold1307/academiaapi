@@ -6,7 +6,7 @@ import type { IUpdateCampoProyectoIntegrador } from "../../Domain/IUpdateCampoPr
 const schema = z.object<ZodInferSchema<IUpdateCampoProyectoIntegrador>>({
 	nombre: z.string().optional(),
 	codigo: z.string().optional(),
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
+
 	observaciones: z.string().nullable().optional(),
 	ordenActa: z.number().optional(),
 	notaMaxima: z.number().optional(),

@@ -134,6 +134,6 @@ const createBodySchema = z.object<ZodInferSchema<ICreateAsignatura>>({
 });
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateAsignatura>>({
-	codigo: z.string().optional(),
+	codigo: z.string().nullable().optional(),
 	nombre: z.string().optional(),
 });

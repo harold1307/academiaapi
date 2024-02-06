@@ -17,10 +17,10 @@
 	},
 	"exclude": [
 		"node_modules",
-		"dist"
-		// "**/*.test.*",
-		// "**/__mocks__/*",
-		// "**/__tests__/*"
+		"dist",
+		"**/*.test.*",
+		"**/__mocks__/*",
+		"**/__tests__/*"
 	],
 	"include": [".eslintrc.cjs", "prettier.config.cjs", "**/*.ts"]
 }
