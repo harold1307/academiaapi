@@ -27,9 +27,13 @@ import { TituloObtenidoController } from "../../Core/TituloObtenido/Application/
 import type { ICreateTituloObtenido } from "../../Core/TituloObtenido/Domain/ICreateTituloObtenido";
 import type { ITituloObtenido } from "../../Core/TituloObtenido/Domain/ITituloObtenido";
 import { Prisma } from "../../Main/Prisma/PrismaClient";
+import { StartupBuilder } from "../../Main/Inversify/Inversify.config";
+import type { PrismaClient } from "@prisma/client";
+import { TYPES } from "../../Main/Inversify/types";
 
 afterAll(async () => {
 	const deleteMalla = Prisma.mallaCurricular.deleteMany();
+	const deleteNivelesMalla = Prisma.nivelMalla.deleteMany();
 	const deleteTitulosObtenidos = Prisma.tituloObtenido.deleteMany();
 	const deleteModalidad = Prisma.modalidad.deleteMany();
 	const deleteProgramas = Prisma.programa.deleteMany();
@@ -40,6 +44,7 @@ afterAll(async () => {
 	const deleteSedes = Prisma.sede.deleteMany();
 
 	await Prisma.$transaction([
+		deleteNivelesMalla,
 		deleteMalla,
 		deleteTitulosObtenidos,
 		deleteModalidad,
@@ -54,6 +59,10 @@ afterAll(async () => {
 });
 
 describe("Flujo de creacion de mallas", () => {
+	StartupBuilder.rebind<PrismaClient>(TYPES.PrismaClient).toConstantValue(
+		Prisma,
+	);
+
 	const sedeController = new SedeController();
 	const coordinacionController = new CoordinacionController();
 	const nivelTitulacionController = new NivelTitulacionController();

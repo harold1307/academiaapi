@@ -10,3 +10,6 @@ test
 tsconfig.json
 src/Test
 dist/src/Tests
+**/*.test.*
+**/__mocks__/*
+**/__tests__/*

@@ -63,7 +63,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 					...valid,
 					niveles: {
 						createMany: {
-							data: new Array(nivelesNum - 1).fill(0).map((_, i) => ({
+							data: new Array(nivelesNum).fill(0).map((_, i) => ({
 								nivel: i + 1,
 							})),
 						},
