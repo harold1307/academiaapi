@@ -4,6 +4,7 @@ import type { DefaultArgs } from "@prisma/client/runtime/library";
 import type { IUpdateMallaCurricular } from "../Domain/IUpdateMallaCurricular";
 // import type { ICreateMallaCurricular } from "./ICreateMallaCurricular";
 import type { IMallaCurricular } from "./IMallaCurricular";
+import type { IMallaCurricularQueryFilter } from "./IMallaCurricularQueryFilter";
 
 export type UpdateMallaCurricularParams = {
 	id: string;
@@ -14,7 +15,7 @@ export interface IMallaCurricularRepository {
 	// create(
 	// 	data: Omit<ICreateMallaCurricular, "niveles">,
 	// ): Promise<IMallaCurricular>;
-	getAll(): Promise<IMallaCurricular[]>;
+	getAll(filters?: IMallaCurricularQueryFilter): Promise<IMallaCurricular[]>;
 	getById(id: string): Promise<IMallaCurricular | null>;
 	update(params: UpdateMallaCurricularParams): Promise<IMallaCurricular>;
 	deleteById(id: string): Promise<IMallaCurricular>;

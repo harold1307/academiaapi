@@ -6,6 +6,10 @@ export type Equals<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
 	? true
 	: false;
 
+export type NonNullableObject<T extends object> = {
+	[K in keyof T]: Exclude<T[K], null>;
+};
+
 type IsNullable<T> = null extends T ? true : false;
 type IsOptional<T> = undefined extends T ? true : false;
 

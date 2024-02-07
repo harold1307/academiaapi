@@ -73,7 +73,9 @@ export class MallaCurricularController implements IMallaCurricularController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 
 			const mallaCurriculares =
-				await this._mallaCurricularService.getAllMallasCurricularesWithAsignaturas();
+				await this._mallaCurricularService.getAllMallasCurriculares(
+					Object.fromEntries(req.query.entries()),
+				);
 
 			return CommonResponse.successful({ data: mallaCurriculares });
 		} catch (error) {

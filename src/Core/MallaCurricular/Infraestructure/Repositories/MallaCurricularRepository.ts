@@ -5,6 +5,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../Main/Inversify/types";
 // import type { ICreateMallaCurricular } from "../../Domain/ICreateMallaCurricular";
 import type { IMallaCurricular } from "../../Domain/IMallaCurricular";
+import type { IMallaCurricularQueryFilter } from "../../Domain/IMallaCurricularQueryFilter";
 import type {
 	IMallaCurricularRepository,
 	UpdateMallaCurricularParams,
@@ -46,23 +47,76 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 	// 		enUso: false,
 	// 	};
 	// }
-	async getAll() {
+	async getAll(filters: IMallaCurricularQueryFilter) {
 		const mallas = await this._client.mallaCurricular.findMany({
+			where: {
+				...(filters || {}),
+			},
 			include: {
 				practicaComunitaria: true,
 				practicaPreProfesional: true,
 				tituloObtenido: true,
 				niveles: {
 					include: {
-						asignaturas: true,
+						asignaturas: {
+							include: {
+								asignatura: true,
+								campoFormacion: true,
+								areaConocimiento: true,
+								ejeFormativo: true,
+							},
+						},
 					},
 				},
-				modulos: true,
+				modulos: {
+					include: {
+						asignatura: true,
+					},
+				},
 			},
 		});
 
-		return mallas.map(({ tituloObtenido, ...rest }) => ({
+		return mallas.map(({ tituloObtenido, niveles, modulos, ...rest }) => ({
 			...rest,
+			modulos: modulos.map(({ asignatura, ...m }) => ({
+				...m,
+				asignatura: {
+					...asignatura,
+					enUso: true,
+				},
+			})),
+			niveles: niveles.map(({ asignaturas, ...n }) => ({
+				...n,
+				asignaturas: asignaturas.map(
+					({
+						asignatura,
+						campoFormacion,
+						areaConocimiento,
+						ejeFormativo,
+						...a
+					}) => ({
+						...a,
+						asignatura: {
+							...asignatura,
+							enUso: true,
+						},
+						campoFormacion: campoFormacion
+							? {
+									...campoFormacion,
+									enUso: true,
+								}
+							: null,
+						areaConocimiento: {
+							...areaConocimiento,
+							enUso: true,
+						},
+						ejeFormativo: {
+							...ejeFormativo,
+							enUso: true,
+						},
+					}),
+				),
+			})),
 			tituloObtenido: tituloObtenido
 				? { ...tituloObtenido, enUso: true }
 				: null,
@@ -79,19 +133,69 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 				tituloObtenido: true,
 				niveles: {
 					include: {
-						asignaturas: true,
+						asignaturas: {
+							include: {
+								asignatura: true,
+								campoFormacion: true,
+								areaConocimiento: true,
+								ejeFormativo: true,
+							},
+						},
 					},
 				},
-				modulos: true,
+				modulos: {
+					include: {
+						asignatura: true,
+					},
+				},
 			},
 		});
 
 		if (!malla) return null;
 
-		const { tituloObtenido, ...rest } = malla;
+		const { tituloObtenido, niveles, modulos, ...rest } = malla;
 
 		return {
 			...rest,
+			modulos: modulos.map(({ asignatura, ...m }) => ({
+				...m,
+				asignatura: {
+					...asignatura,
+					enUso: true,
+				},
+			})),
+			niveles: niveles.map(({ asignaturas, ...n }) => ({
+				...n,
+				asignaturas: asignaturas.map(
+					({
+						asignatura,
+						campoFormacion,
+						areaConocimiento,
+						ejeFormativo,
+						...a
+					}) => ({
+						...a,
+						asignatura: {
+							...asignatura,
+							enUso: true,
+						},
+						campoFormacion: campoFormacion
+							? {
+									...campoFormacion,
+									enUso: true,
+								}
+							: null,
+						areaConocimiento: {
+							...areaConocimiento,
+							enUso: true,
+						},
+						ejeFormativo: {
+							...ejeFormativo,
+							enUso: true,
+						},
+					}),
+				),
+			})),
 			tituloObtenido: tituloObtenido
 				? { ...tituloObtenido, enUso: true }
 				: null,
@@ -119,17 +223,67 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 				tituloObtenido: true,
 				niveles: {
 					include: {
-						asignaturas: true,
+						asignaturas: {
+							include: {
+								asignatura: true,
+								campoFormacion: true,
+								areaConocimiento: true,
+								ejeFormativo: true,
+							},
+						},
 					},
 				},
-				modulos: true,
+				modulos: {
+					include: {
+						asignatura: true,
+					},
+				},
 			},
 		});
 
-		const { tituloObtenido, ...rest } = malla;
+		const { tituloObtenido, niveles, modulos, ...rest } = malla;
 
 		return {
 			...rest,
+			modulos: modulos.map(({ asignatura, ...m }) => ({
+				...m,
+				asignatura: {
+					...asignatura,
+					enUso: true,
+				},
+			})),
+			niveles: niveles.map(({ asignaturas, ...n }) => ({
+				...n,
+				asignaturas: asignaturas.map(
+					({
+						asignatura,
+						campoFormacion,
+						areaConocimiento,
+						ejeFormativo,
+						...a
+					}) => ({
+						...a,
+						asignatura: {
+							...asignatura,
+							enUso: true,
+						},
+						campoFormacion: campoFormacion
+							? {
+									...campoFormacion,
+									enUso: true,
+								}
+							: null,
+						areaConocimiento: {
+							...areaConocimiento,
+							enUso: true,
+						},
+						ejeFormativo: {
+							...ejeFormativo,
+							enUso: true,
+						},
+					}),
+				),
+			})),
 			tituloObtenido: tituloObtenido
 				? { ...tituloObtenido, enUso: true }
 				: null,
@@ -146,17 +300,67 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 				tituloObtenido: true,
 				niveles: {
 					include: {
-						asignaturas: true,
+						asignaturas: {
+							include: {
+								asignatura: true,
+								campoFormacion: true,
+								areaConocimiento: true,
+								ejeFormativo: true,
+							},
+						},
 					},
 				},
-				modulos: true,
+				modulos: {
+					include: {
+						asignatura: true,
+					},
+				},
 			},
 		});
 
-		const { tituloObtenido, ...rest } = malla;
+		const { tituloObtenido, niveles, modulos, ...rest } = malla;
 
 		return {
 			...rest,
+			modulos: modulos.map(({ asignatura, ...m }) => ({
+				...m,
+				asignatura: {
+					...asignatura,
+					enUso: true,
+				},
+			})),
+			niveles: niveles.map(({ asignaturas, ...n }) => ({
+				...n,
+				asignaturas: asignaturas.map(
+					({
+						asignatura,
+						campoFormacion,
+						areaConocimiento,
+						ejeFormativo,
+						...a
+					}) => ({
+						...a,
+						asignatura: {
+							...asignatura,
+							enUso: true,
+						},
+						campoFormacion: campoFormacion
+							? {
+									...campoFormacion,
+									enUso: true,
+								}
+							: null,
+						areaConocimiento: {
+							...areaConocimiento,
+							enUso: true,
+						},
+						ejeFormativo: {
+							...ejeFormativo,
+							enUso: true,
+						},
+					}),
+				),
+			})),
 			tituloObtenido: tituloObtenido
 				? { ...tituloObtenido, enUso: true }
 				: null,

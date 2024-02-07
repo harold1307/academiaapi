@@ -22,7 +22,9 @@ export type IMallaCurricularService = {
 			> | null;
 		},
 	) => Promise<IMallaCurricular>;
-	getAllMallasCurriculares(): Promise<IMallaCurricular[]>;
+	getAllMallasCurriculares(
+		filters?: Record<string, string>,
+	): Promise<IMallaCurricular[]>;
 	getMallaCurricularById(id: string): Promise<IMallaCurricular | null>;
 	updateMallaCurricularById(
 		params: UpdateMallaCurricularParams,

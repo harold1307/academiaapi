@@ -1,4 +1,5 @@
 import type { MallaCurricular } from "@prisma/client";
+
 import type { IAsignaturaEnNivelMalla } from "../../AsignaturaEnNivelMalla/Domain/IAsignaturaEnNivelMalla";
 import type { IAsignaturaModuloEnMalla } from "../../AsignaturaModuloEnMalla/Domain/IAsignaturaModuloEnMalla";
 import type { INivelMalla } from "../../NivelMalla/Domain/INivelMalla";
@@ -12,13 +13,10 @@ export type IMallaCurricular = MallaCurricular & {
 	practicaComunitaria: IPracticaComunitariaEnMalla | null;
 	tituloObtenido: ITituloObtenido | null;
 	niveles: (INivelMalla & {
-		asignaturas: Omit<
-			IAsignaturaEnNivelMalla,
-			"ejeFormativo" | "areaConocimiento" | "campoFormacion" | "asignatura"
-		>[];
+		asignaturas: IAsignaturaEnNivelMalla[];
 	})[];
 	modulos: Omit<
 		IAsignaturaModuloEnMalla,
-		"asignatura" | "areaConocimiento" | "campoFormacion"
+		"areaConocimiento" | "campoFormacion"
 	>[];
 };
