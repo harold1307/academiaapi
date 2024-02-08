@@ -28,3 +28,10 @@ app.post("nivelesMallaCreateAsignatura", {
 	handler: (req, ctx) => controller.nivelesMallaCreateAsignatura(req, ctx),
 	route: "niveles-malla/{nivelMallaId}/asignaturas/{asignaturaId}",
 });
+
+// niveles academicos
+app.post("nivelesMallaCreateNivelAcademico", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.nivelesMallaCreateNivelAcademico(req, ctx),
+	route: "niveles-malla/{nivelMallaId}/sesiones/{sesionId}",
+});

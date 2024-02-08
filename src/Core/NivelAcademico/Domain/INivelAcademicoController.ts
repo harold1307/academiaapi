@@ -4,33 +4,24 @@ import type {
 	InvocationContext,
 } from "@azure/functions";
 
-export type INivelMallaController = {
-	// nivelesMallaCreate(
+export type INivelAcademicoController = {
+	// nivelesAcademicosCreate(
 	// 	req: HttpRequest,
 	// 	ctx: InvocationContext,
 	// ): Promise<HttpResponseInit>;
-	// nivelesMallaDeleteById(
-	// 	req: HttpRequest,
-	// 	ctx: InvocationContext,
-	// ): Promise<HttpResponseInit>;
-	nivelesMallaGetAll(
+	nivelesAcademicosDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	nivelesMallaGetById(
+	nivelesAcademicosGetAll(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	nivelesMallaUpdateById(
+	nivelesAcademicosGetById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-
-	nivelesMallaCreateAsignatura(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-	nivelesMallaCreateNivelAcademico(
+	nivelesAcademicosUpdateById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;

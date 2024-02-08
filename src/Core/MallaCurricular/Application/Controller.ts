@@ -211,18 +211,9 @@ export class MallaCurricularController implements IMallaCurricularController {
 
 			if (!mallaCurricularId) return CommonResponse.invalidId();
 
-			const { query } = req;
-
 			const mallaCurricular =
-				await this._mallaCurricularService.getMallaCurricularByIdWithAsignaturas(
+				await this._mallaCurricularService.getMallaCurricularById(
 					mallaCurricularId,
-					{
-						asignaturas_esAnexo: query.get("asignaturas_esAnexo")
-							? query.get("asignaturas_esAnexo") === "true"
-								? true
-								: false
-							: undefined,
-					},
 				);
 
 			return CommonResponse.successful({ data: mallaCurricular });
