@@ -20,7 +20,8 @@
 		"dist",
 		"**/*.test.*",
 		"**/__mocks__/*",
-		"**/__tests__/*"
+		"**/__tests__/*",
+		"coverage"
 	],
 	"include": [".eslintrc.cjs", "prettier.config.cjs", "**/*.ts"]
 }
