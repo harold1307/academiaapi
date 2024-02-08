@@ -25,6 +25,9 @@ export class ModeloEvaluativoRepository implements IModeloEvaluativoRepository {
 				nivelesAcademicos: {
 					take: 1,
 				},
+				materiasNivelesAcademicos: {
+					take: 1,
+				},
 			},
 		});
 
@@ -33,13 +36,15 @@ export class ModeloEvaluativoRepository implements IModeloEvaluativoRepository {
 				asignaturasEnCursoEscuela,
 				asignaturasEnVarianteCurso,
 				nivelesAcademicos,
+				materiasNivelesAcademicos,
 				...rest
 			}) => ({
 				...rest,
 				enUso:
 					asignaturasEnCursoEscuela.length > 0 ||
 					asignaturasEnVarianteCurso.length > 0 ||
-					nivelesAcademicos.length > 0,
+					nivelesAcademicos.length > 0 ||
+					materiasNivelesAcademicos.length > 0,
 			}),
 		);
 	}
@@ -56,6 +61,9 @@ export class ModeloEvaluativoRepository implements IModeloEvaluativoRepository {
 				nivelesAcademicos: {
 					take: 1,
 				},
+				materiasNivelesAcademicos: {
+					take: 1,
+				},
 			},
 		});
 
@@ -65,6 +73,7 @@ export class ModeloEvaluativoRepository implements IModeloEvaluativoRepository {
 			asignaturasEnCursoEscuela,
 			asignaturasEnVarianteCurso,
 			nivelesAcademicos,
+			materiasNivelesAcademicos,
 			...rest
 		} = modelo;
 
@@ -73,7 +82,8 @@ export class ModeloEvaluativoRepository implements IModeloEvaluativoRepository {
 			enUso:
 				asignaturasEnCursoEscuela.length > 0 ||
 				asignaturasEnVarianteCurso.length > 0 ||
-				nivelesAcademicos.length > 0,
+				nivelesAcademicos.length > 0 ||
+				materiasNivelesAcademicos.length > 0,
 		};
 	}
 	async deleteById(id: string): Promise<IModeloEvaluativo> {
@@ -112,6 +122,9 @@ export class ModeloEvaluativoRepository implements IModeloEvaluativoRepository {
 				nivelesAcademicos: {
 					take: 1,
 				},
+				materiasNivelesAcademicos: {
+					take: 1,
+				},
 			},
 		});
 
@@ -119,6 +132,7 @@ export class ModeloEvaluativoRepository implements IModeloEvaluativoRepository {
 			asignaturasEnCursoEscuela,
 			asignaturasEnVarianteCurso,
 			nivelesAcademicos,
+			materiasNivelesAcademicos,
 			...rest
 		} = modelo;
 
@@ -127,7 +141,8 @@ export class ModeloEvaluativoRepository implements IModeloEvaluativoRepository {
 			enUso:
 				asignaturasEnCursoEscuela.length > 0 ||
 				asignaturasEnVarianteCurso.length > 0 ||
-				nivelesAcademicos.length > 0,
+				nivelesAcademicos.length > 0 ||
+				materiasNivelesAcademicos.length > 0,
 		};
 	}
 }

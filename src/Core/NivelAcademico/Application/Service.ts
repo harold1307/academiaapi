@@ -88,6 +88,9 @@ export class NivelAcademicoService implements INivelAcademicoService {
 						practicasPermitidas: false,
 						asignaturaEnNivelMallaId: id,
 						nivelAcademicoId: newNivelAcademico.id,
+						modeloEvaluativoId: newNivelAcademico.modeloEvaluativoId,
+						fechaInicio: valid.fechaFin,
+						fechaFin: valid.fechaFin,
 					}),
 				),
 			});
