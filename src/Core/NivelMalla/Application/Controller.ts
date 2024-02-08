@@ -259,6 +259,13 @@ export class NivelMallaController implements INivelMallaController {
 
 			if (!nivelMallaId || !sesionId) return CommonResponse.invalidId();
 
+			const body = await req.json();
+			const bodyVal = createNivelAcademicoBodySchema.safeParse(body);
+			if (!bodyVal.success) {
+				ctx.error(bodyVal.error.issues);
+				return CommonResponse.invalidBody();
+			}
+
 			const nivelMalla =
 				await this._nivelMallaService.getNivelMallaById(nivelMallaId);
 
@@ -282,11 +289,6 @@ export class NivelMallaController implements INivelMallaController {
 
 			if (!sesion)
 				return { jsonBody: { message: "La sesion no existe" }, status: 400 };
-
-			const body = await req.json();
-			const bodyVal = createNivelAcademicoBodySchema.safeParse(body);
-
-			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const {
 				paraleloId,
