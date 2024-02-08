@@ -907,6 +907,7 @@ model MateriaEnNivelAcademico {
 model NivelAcademico {
   id                      String  @id @default(uuid())
   nombre                  String?
+  estado                  Boolean @default(true)
   profesores              Boolean @default(true)
   horarios                Boolean @default(true)
   cuposMaterias           Boolean @default(true)
