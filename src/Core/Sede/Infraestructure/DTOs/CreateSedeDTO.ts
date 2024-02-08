@@ -9,7 +9,7 @@ const schema = z.object<ZodInferSchema<ICreateSede>>({
 	pais: z.string(),
 	provincia: z.string(),
 	canton: z.string(),
-	codigo: z.string(),
+	alias: z.string(),
 });
 
 class CreateSedeDTOError extends BaseDTOError<ICreateSede> {

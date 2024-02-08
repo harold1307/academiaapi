@@ -171,7 +171,7 @@ const createBodySchema = z.object<ZodInferSchema<ICreateSede>>({
 	pais: z.string(),
 	provincia: z.string(),
 	canton: z.string(),
-	codigo: z.string(),
+	alias: z.string(),
 });
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateSede>>({
@@ -179,7 +179,7 @@ const updateBodySchema = z.object<ZodInferSchema<IUpdateSede>>({
 	pais: z.string().optional(),
 	provincia: z.string().optional(),
 	canton: z.string().optional(),
-	codigo: z.string().optional(),
+	alias: z.string().optional(),
 });
 
 const createCoordinacionBodySchema = z.object<
