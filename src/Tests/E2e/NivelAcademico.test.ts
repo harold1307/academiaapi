@@ -634,7 +634,62 @@ describe("Crear asignaturas en el nivel academico", () => {
 		expect(res.status).toBe(201);
 	});
 
-	// se repiten tests debido a que no usan la misma logica de creacion
+	it("No debe funcionar si la asignatura en nivel de malla ya existe en el nivel academico", async () => {
+		const nivelAcademico = await Prisma.nivelAcademico.findFirst({
+			select: {
+				id: true,
+				modeloEvaluativoId: true,
+			},
+		});
+
+		const res = await controller.nivelesAcademicosCreateMaterias(
+			new HttpRequest({
+				url: `http://localhost:42069/api/niveles-academicos/${nivelAcademico?.id}/materias`,
+				method: "POST",
+				params: {
+					nivelAcademicoId: nivelAcademico?.id || "",
+				},
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: {
+					string: JSON.stringify({
+						modeloEvaluativoId: nivelAcademico?.modeloEvaluativoId || "",
+						asignaturasMalla: asignaturasEnNivelMallaIds,
+						modulosMalla: [],
+					} satisfies Omit<ICreateMateriaEnNivelAcademico, "nivelAcademicoId">),
+				},
+			}),
+			new InvocationContext(),
+		);
+
+		expect(res.status).not.toBe(201);
+
+		const res2 = await controller.nivelesAcademicosCreateMaterias(
+			new HttpRequest({
+				url: `http://localhost:42069/api/niveles-academicos/${nivelAcademico?.id}/materias`,
+				method: "POST",
+				params: {
+					nivelAcademicoId: nivelAcademico?.id || "",
+				},
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: {
+					string: JSON.stringify({
+						modeloEvaluativoId: nivelAcademico?.modeloEvaluativoId || "",
+						asignaturasMalla: [],
+						modulosMalla: asignaturasModulosIds,
+					} satisfies Omit<ICreateMateriaEnNivelAcademico, "nivelAcademicoId">),
+				},
+			}),
+			new InvocationContext(),
+		);
+
+		expect(res2.status).not.toBe(201);
+	});
+
+	// se repiten tests debido a que aun no estan implementados con la misma logica de creacion
 	it("Las materias creadas deben corresponder a la cantidad total de creaciones", async () => {
 		const materias = await Prisma.materiaEnNivelAcademico.count();
 
