@@ -611,6 +611,7 @@ model ModeloEvaluativo {
   asignaturasEnVarianteCurso AsignaturaEnVarianteCurso[]
   asignaturasEnCursoEscuela  AsignaturaEnCursoEscuela[]
   nivelesAcademicos          NivelAcademico[]
+  materiasNivelesAcademicos  MateriaEnNivelAcademico[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -895,6 +896,8 @@ model MateriaEnNivelAcademico {
   nivelAcademico           NivelAcademico           @relation(fields: [nivelAcademicoId], references: [id], onDelete: Cascade)
   asignaturaModuloId       String?
   asignaturaModulo         AsignaturaModuloEnMalla? @relation(fields: [asignaturaModuloId], references: [id])
+  modeloEvaluativoId       String
+  modeloEvaluativo         ModeloEvaluativo         @relation(fields: [modeloEvaluativoId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
