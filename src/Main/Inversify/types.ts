@@ -105,4 +105,8 @@ export const TYPES = {
 	),
 	NivelAcademicoRepository: Symbol.for("NivelAcademicoRepository"),
 	NivelAcademicoService: Symbol.for("NivelAcademicoService"),
+	MateriaEnNivelAcademicoRepository: Symbol.for(
+		"MateriaEnNivelAcademicoRepository",
+	),
+	MateriaEnNivelAcademicoService: Symbol.for("MateriaEnNivelAcademicoService"),
 } as const;

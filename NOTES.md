@@ -28,11 +28,12 @@
 
 # Asignaturas/Materias en niveles academicos
 
+- No tiene restriccion para editar
 - Estructura del nombre -> Nombre de asignatura + alias + (numero de creacion)
 <!-- - No se puede eliminar si esta asignado a un nivel academico -->
 - Composicion del alias inicial ->
   - Ejm: [MT-FC-AM-INDENTIFICACIONPRUEBA-7456]
-    - MT -> alias de la coordinacion
+    - MT -> alias de la sede
     - FC -> alias de programa
     - AM -> depende si la materia del nivel academico es una Asignatura en Malla(AM) o un Modulo en Malla(MM)
     - INDENTIFICACIONPRUEBA -> identificacion de la asignatura en el nivel de la malla o asignatura modulo en malla

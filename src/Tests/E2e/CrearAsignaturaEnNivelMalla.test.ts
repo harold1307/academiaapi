@@ -61,7 +61,7 @@ beforeAll(async () => {
 								create: {
 									nombre: "PRINCIPAL",
 									canton: "canton",
-									codigo: "PR",
+									alias: "PR",
 									pais: "Pais",
 									provincia: "Provincia",
 								},

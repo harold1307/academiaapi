@@ -81,3 +81,8 @@
 # Nivel Academico
 
 - [] Implementar enUso, no le afecta sus propias asignaturas/materias y horarios creados
+- [] Implementar restriccion para eliminar
+
+# Materia en Nivel Academico
+
+- [] Implementar restriccion para eliminar

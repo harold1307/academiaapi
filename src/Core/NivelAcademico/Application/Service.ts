@@ -53,7 +53,11 @@ export class NivelAcademicoService implements INivelAcademicoService {
 									alias: true,
 									coordinacion: {
 										select: {
-											alias: true,
+											sede: {
+												select: {
+													alias: true,
+												},
+											},
 										},
 									},
 								},
@@ -84,8 +88,6 @@ export class NivelAcademicoService implements INivelAcademicoService {
 					({ validaParaCredito, validaParaPromedio, id }) => ({
 						validaParaCreditos: validaParaCredito,
 						validaParaPromedio,
-						materiaExterna: false,
-						practicasPermitidas: false,
 						asignaturaEnNivelMallaId: id,
 						nivelAcademicoId: newNivelAcademico.id,
 						modeloEvaluativoId: newNivelAcademico.modeloEvaluativoId,
@@ -119,7 +121,7 @@ export class NivelAcademicoService implements INivelAcademicoService {
 						},
 						data: {
 							alias: [
-								nivelMalla.malla.programa.coordinacion.alias,
+								nivelMalla.malla.programa.coordinacion.sede.alias,
 								nivelMalla.malla.programa.alias,
 								"AM",
 								materia.asignaturaEnNivelMalla?.identificacion,

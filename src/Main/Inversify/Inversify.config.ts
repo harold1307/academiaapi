@@ -213,6 +213,12 @@ import type { INivelAcademicoRepository } from "../../Core/NivelAcademico/Domain
 import type { INivelAcademicoService } from "../../Core/NivelAcademico/Domain/INivelAcademicoService";
 import { NivelAcademicoRepository } from "../../Core/NivelAcademico/Infrastructure/Repositories/NivelAcademicoRepository";
 
+// materias en niveles academicos
+import { MateriaEnNivelAcademicoService } from "../../Core/MateriaEnNivelAcademico/Application/Service";
+import type { IMateriaEnNivelAcademicoRepository } from "../../Core/MateriaEnNivelAcademico/Domain/IMateriaEnNivelAcademicoRepository";
+import type { IMateriaEnNivelAcademicoService } from "../../Core/MateriaEnNivelAcademico/Domain/IMateriaEnNivelAcademicoService";
+import { MateriaEnNivelAcademicoRepository } from "../../Core/MateriaEnNivelAcademico/Infrastructure/Repositories/MateriaEnNivelAcademicoRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -562,6 +568,18 @@ StartupBuilder.bind<INivelAcademicoRepository>(TYPES.NivelAcademicoRepository)
 	.inSingletonScope();
 StartupBuilder.bind<INivelAcademicoService>(TYPES.NivelAcademicoService)
 	.to(NivelAcademicoService)
+	.inSingletonScope();
+
+// materias en niveles academicos
+StartupBuilder.bind<IMateriaEnNivelAcademicoRepository>(
+	TYPES.MateriaEnNivelAcademicoRepository,
+)
+	.to(MateriaEnNivelAcademicoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IMateriaEnNivelAcademicoService>(
+	TYPES.MateriaEnNivelAcademicoService,
+)
+	.to(MateriaEnNivelAcademicoService)
 	.inSingletonScope();
 
 export { StartupBuilder };

@@ -4,29 +4,24 @@ import type {
 	InvocationContext,
 } from "@azure/functions";
 
-export type INivelAcademicoController = {
-	// nivelesAcademicosCreate(
+export type IMateriaEnNivelAcademicoController = {
+	// materiasEnNivelesAcademicosCreate(
 	// 	req: HttpRequest,
 	// 	ctx: InvocationContext,
 	// ): Promise<HttpResponseInit>;
-	nivelesAcademicosDeleteById(
+	materiasEnNivelesAcademicosDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	nivelesAcademicosGetAll(
+	materiasEnNivelesAcademicosGetAll(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	nivelesAcademicosGetById(
+	materiasEnNivelesAcademicosGetById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	nivelesAcademicosUpdateById(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
-
-	nivelesAcademicosCreateMaterias(
+	materiasEnNivelesAcademicosUpdateById(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;

@@ -27,3 +27,10 @@ app.patch("nivelesAcademicosUpdateById", {
 	handler: (req, ctx) => controller.nivelesAcademicosUpdateById(req, ctx),
 	route: "niveles-academicos/{nivelAcademicoId}",
 });
+
+// materias
+app.post("nivelesAcademicosCreateMaterias", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.nivelesAcademicosCreateMaterias(req, ctx),
+	route: "niveles-academicos/{nivelAcademicoId}/materias",
+});

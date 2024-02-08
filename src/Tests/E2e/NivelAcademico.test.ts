@@ -1,5 +1,7 @@
 import { HttpRequest, InvocationContext } from "@azure/functions";
 
+import type { ICreateMateriaEnNivelAcademico } from "../../Core/MateriaEnNivelAcademico/Domain/ICreateMateriaEnNivelAcademico";
+import { NivelAcademicoController } from "../../Core/NivelAcademico/Application/Controller";
 import type { ICreateNivelAcademico } from "../../Core/NivelAcademico/Domain/ICreateNivelAcademico";
 import { NivelMallaController } from "../../Core/NivelMalla/Application/Controller";
 import { Prisma } from "../../Main/Prisma/PrismaClient";
@@ -9,6 +11,8 @@ let mallaId = "";
 let sesionId = "";
 let modeloEvaluativoId = "";
 let nivelMallaId = "";
+let sedeAlias = "";
+let programaAlias = "";
 
 beforeAll(async () => {
 	const sede = await Prisma.sede.create({
@@ -16,7 +20,7 @@ beforeAll(async () => {
 			pais: "Pais",
 			canton: "Canton",
 			provincia: "Provincia",
-			codigo: "Codigo",
+			alias: "MT",
 			nombre: "PRINCIPAL",
 		},
 	});
@@ -166,20 +170,22 @@ beforeAll(async () => {
 		},
 	});
 
-	const [malla, paralelo, modeloEvaluativo, sesion] = await Prisma.$transaction(
-		[
+	const [malla, paralelo, modeloEvaluativo, sesion, programa] =
+		await Prisma.$transaction([
 			mallaCurricularPromise,
 			paraleloPromise,
 			modeloEvaluativoPromise,
 			sesionPromise,
-		],
-	);
+			Prisma.programa.findFirst(),
+		]);
 
 	paraleloId = paralelo.nombre;
 	sesionId = sesion.id;
 	modeloEvaluativoId = modeloEvaluativo.id;
 	nivelMallaId = malla.niveles.at(0)?.id || "";
 	mallaId = malla.id;
+	sedeAlias = sede.alias;
+	programaAlias = programa!.alias;
 });
 
 afterAll(async () => {
@@ -271,6 +277,69 @@ describe("Crear nivel academico", () => {
 		);
 
 		expect(res.status).toBe(201);
+	});
+
+	it("Las materias del nivel academico y las asignaturas en el nivel de malla deben ser cantidades iguales", async () => {
+		const [asignaturasEnNivelMalla, materiasEnNivelAcademico] =
+			await Prisma.$transaction([
+				Prisma.asignaturaEnNivelMalla.count(),
+				Prisma.materiaEnNivelAcademico.count(),
+			]);
+
+		expect(asignaturasEnNivelMalla).toBe(materiasEnNivelAcademico);
+	});
+
+	it("Las materias del nivel academico deben tener valores iniciales dependiendo de su nivel academico", async () => {
+		const materias = await Prisma.materiaEnNivelAcademico.findMany({
+			include: {
+				nivelAcademico: true,
+			},
+		});
+
+		materias.forEach(m => {
+			expect(m.modeloEvaluativoId).toStrictEqual(
+				m.nivelAcademico.modeloEvaluativoId,
+			);
+			expect(m.fechaInicio).toStrictEqual(m.nivelAcademico.fechaInicio);
+			expect(m.fechaFin).toStrictEqual(m.nivelAcademico.fechaFin);
+		});
+	});
+
+	it("Las materias deben tener el alias bien compuesto", async () => {
+		const materias = await Prisma.materiaEnNivelAcademico.findMany({
+			include: {
+				asignaturaEnNivelMalla: true,
+				asignaturaModulo: true,
+			},
+		});
+
+		materias.forEach(m => {
+			expect(m.alias).toBe(
+				`${sedeAlias}-${programaAlias}-${
+					m.asignaturaEnNivelMalla ? "AM" : "MM"
+				}-${
+					m.asignaturaEnNivelMalla?.identificacion ||
+					m.asignaturaModulo?.identificacion
+				}-${m.numero}`,
+			);
+		});
+	});
+
+	it("Las materias del nivel academico deben tener campos iguales como valores iniciales a partir de las asignaturas en malla", async () => {
+		const [asignaturasEnNivelMalla, materiasEnNivelAcademico] =
+			await Prisma.$transaction([
+				Prisma.asignaturaEnNivelMalla.findMany(),
+				Prisma.materiaEnNivelAcademico.findMany(),
+			]);
+
+		materiasEnNivelAcademico.forEach(m => {
+			asignaturasEnNivelMalla.forEach(a => {
+				if (m.asignaturaEnNivelMallaId === a.id) {
+					expect(m.validaParaCreditos).toBe(a.validaParaCredito);
+					expect(m.validaParaPromedio).toBe(a.validaParaPromedio);
+				}
+			});
+		});
 	});
 
 	it("No debe funcionar si los campos de estudiantes no tienen sentido", async () => {
@@ -415,5 +484,198 @@ describe("Crear nivel academico", () => {
 		);
 
 		expect(res.status).not.toBe(201);
+	});
+});
+
+describe("Crear asignaturas en el nivel academico", () => {
+	let asignaturasEnNivelMallaIds: string[] = [];
+	let asignaturasModulosIds: string[] = [];
+
+	beforeAll(async () => {
+		const asignaturasNames = [
+			"ADMINISTRACION BASICA II",
+			"ADMINISTRACION EMPRESARIAL",
+			"ADAPTACIÓN AL APORTE DEL CONOCIMIENTO",
+		];
+		const [, eje, area, , asignaturas, campoFormacion] =
+			await Prisma.$transaction([
+				Prisma.materiaEnNivelAcademico.deleteMany(),
+				Prisma.ejeFormativo.findFirst(),
+				Prisma.areaConocimiento.findFirst(),
+				Prisma.asignatura.createMany({
+					data: asignaturasNames.map(name => ({
+						nombre: name,
+					})),
+				}),
+				Prisma.asignatura.findMany({
+					where: {
+						OR: asignaturasNames.map(name => ({
+							nombre: name,
+						})),
+					},
+				}),
+				Prisma.campoFormacion.create({
+					data: {
+						nombre: "BASICO",
+					},
+				}),
+			]);
+
+		await Prisma.asignaturaEnNivelMalla.createMany({
+			data: asignaturas.map(a => ({
+				ejeFormativoId: eje!.id,
+				areaConocimientoId: area!.id,
+				campoFormacionId: null,
+				nivelMallaId,
+				asignaturaId: a.id,
+
+				tipoAsignatura: "TEORICA_PRACTICA",
+				identificacion: "ADM BASI",
+				permiteMatriculacion: true,
+				calculoNivel: true,
+				validaParaCredito: false,
+				validaParaPromedio: false,
+				costoEnMatricula: true,
+				requeridaParaEgresar: true,
+				cantidadMatriculas: 3,
+				cantidadMatriculasAutorizadas: 3,
+				minimoCreditosRequeridos: null,
+				maximaCantidadHorasSemanalas: 0,
+				horasColaborativas: 0,
+				horasAsistidasDocente: 0,
+				horasAutonomas: 0,
+				horasPracticas: 0,
+				sumaHoras: true,
+				creditos: 0,
+				horasProyectoIntegrador: 0,
+				noValidaAsistencia: false,
+				materiaComun: false,
+				guiaPracticaMetodologiaObligatoria: false,
+				aprobarGuiaPracticaMetodologica: false,
+				descripcion: null,
+				objetivoGeneral: null,
+				resultadosAprendizaje: null,
+				aporteAsignaturaAlPerfil: null,
+				competenciaGenerica: null,
+				objetivosEspecificos: null,
+				observaciones: null,
+			})),
+		});
+
+		await Prisma.asignaturaModuloEnMalla.createMany({
+			data: asignaturas.map(a => ({
+				areaConocimientoId: area!.id,
+				campoFormacionId: campoFormacion.id,
+				mallaId,
+				materiaGeneral: true,
+				requeridaParaGraduar: true,
+				asignaturaId: a.id,
+
+				tipoAsignatura: "TEORICA_PRACTICA",
+				identificacion: "ADM BASI",
+				permiteMatriculacion: true,
+				validaParaCredito: false,
+				validaParaPromedio: false,
+				costoEnMatricula: true,
+				cantidadMatriculas: 3,
+				cantidadMatriculasAutorizadas: 3,
+				minimoCreditosRequeridos: null,
+				maximaCantidadHorasSemanalas: 0,
+				horasColaborativas: 0,
+				horasAsistidasDocente: 0,
+				horasAutonomas: 0,
+				horasPracticas: 0,
+				sumaHoras: true,
+				creditos: 0,
+				noValidaAsistencia: false,
+				guiaPracticaMetodologiaObligatoria: false,
+				aprobarGuiaPracticaMetodologica: false,
+				descripcion: null,
+				objetivoGeneral: null,
+				aporteAsignaturaAlPerfil: null,
+				competencia: null,
+				objetivosEspecificos: null,
+			})),
+		});
+
+		const asignaturasEnNivel = await Prisma.asignaturaEnNivelMalla.findMany();
+		const asignaturasModulos = await Prisma.asignaturaModuloEnMalla.findMany();
+
+		asignaturasEnNivelMallaIds = asignaturasEnNivel.map(a => a.id);
+		asignaturasModulosIds = asignaturasModulos.map(a => a.id);
+	});
+
+	const controller = new NivelAcademicoController();
+
+	it("Debe funcionar con una peticion normal", async () => {
+		const nivelAcademico = await Prisma.nivelAcademico.findFirst();
+
+		const res = await controller.nivelesAcademicosCreateMaterias(
+			new HttpRequest({
+				url: `http://localhost:42069/api/niveles-academicos/${nivelAcademico?.id}/materias`,
+				method: "POST",
+				params: {
+					nivelAcademicoId: nivelAcademico?.id || "",
+				},
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: {
+					string: JSON.stringify({
+						asignaturasMalla: asignaturasEnNivelMallaIds,
+						modeloEvaluativoId,
+						modulosMalla: asignaturasModulosIds,
+					} satisfies Omit<ICreateMateriaEnNivelAcademico, "nivelAcademicoId">),
+				},
+			}),
+			new InvocationContext(),
+		);
+
+		expect(res.status).toBe(201);
+	});
+
+	// se repiten tests debido a que no usan la misma logica de creacion
+	it("Las materias creadas deben corresponder a la cantidad total de creaciones", async () => {
+		const materias = await Prisma.materiaEnNivelAcademico.count();
+
+		expect(materias).toBe(
+			asignaturasEnNivelMallaIds.length + asignaturasModulosIds.length,
+		);
+	});
+
+	it("Las materias del nivel academico deben tener valores iniciales dependiendo de su nivel academico", async () => {
+		const materias = await Prisma.materiaEnNivelAcademico.findMany({
+			include: {
+				nivelAcademico: true,
+			},
+		});
+
+		materias.forEach(m => {
+			expect(m.modeloEvaluativoId).toStrictEqual(
+				m.nivelAcademico.modeloEvaluativoId,
+			);
+			expect(m.fechaInicio).toStrictEqual(m.nivelAcademico.fechaInicio);
+			expect(m.fechaFin).toStrictEqual(m.nivelAcademico.fechaFin);
+		});
+	});
+
+	it("Las materias deben tener el alias bien compuesto", async () => {
+		const materias = await Prisma.materiaEnNivelAcademico.findMany({
+			include: {
+				asignaturaEnNivelMalla: true,
+				asignaturaModulo: true,
+			},
+		});
+
+		materias.forEach(m => {
+			expect(m.alias).toBe(
+				`${sedeAlias}-${programaAlias}-${
+					m.asignaturaEnNivelMalla ? "AM" : "MM"
+				}-${
+					m.asignaturaEnNivelMalla?.identificacion ||
+					m.asignaturaModulo?.identificacion
+				}-${m.numero}`,
+			);
+		});
 	});
 });

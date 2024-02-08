@@ -9,6 +9,9 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { MateriaEnNivelAcademicoService } from "../../MateriaEnNivelAcademico/Application/Service";
+import type { ICreateMateriaEnNivelAcademico } from "../../MateriaEnNivelAcademico/Domain/ICreateMateriaEnNivelAcademico";
+import type { IMateriaEnNivelAcademicoService } from "../../MateriaEnNivelAcademico/Domain/IMateriaEnNivelAcademicoService";
 import type { INivelAcademicoController } from "../Domain/INivelAcademicoController";
 import type { INivelAcademicoService } from "../Domain/INivelAcademicoService";
 import type { IUpdateNivelAcademico } from "../Domain/IUpdateNivelAcademico";
@@ -16,9 +19,13 @@ import { NivelAcademicoService } from "./Service";
 
 export class NivelAcademicoController implements INivelAcademicoController {
 	private _nivelAcademicoService: INivelAcademicoService;
+	private _materiaEnNivelAcademicoService: IMateriaEnNivelAcademicoService;
 
 	constructor() {
 		this._nivelAcademicoService = StartupBuilder.resolve(NivelAcademicoService);
+		this._materiaEnNivelAcademicoService = StartupBuilder.resolve(
+			MateriaEnNivelAcademicoService,
+		);
 	}
 
 	async nivelesAcademicosGetAll(
@@ -105,7 +112,44 @@ export class NivelAcademicoController implements INivelAcademicoController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async nivelesAcademicosCreateMaterias(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const nivelAcademicoId = req.params.nivelAcademicoId;
+
+			if (!nivelAcademicoId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createMateriasBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const materiasCreadas =
+				await this._materiaEnNivelAcademicoService.createMateriasEnNivelAcademico(
+					{ ...bodyVal.data, nivelAcademicoId },
+				);
+
+			ctx.log({ materiasCreadas });
+
+			return CommonResponse.successful({ data: materiasCreadas, status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
+
+const createMateriasBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateMateriaEnNivelAcademico, "nivelAcademicoId">>
+>({
+	modeloEvaluativoId: z.string(),
+	asignaturasMalla: z.array(z.string()),
+	modulosMalla: z.array(z.string()),
+});
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateNivelAcademico>>({
 	nombre: z.string().nullable().optional(),

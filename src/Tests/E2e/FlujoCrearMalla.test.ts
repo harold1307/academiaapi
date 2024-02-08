@@ -87,7 +87,7 @@ describe("Flujo de creacion de mallas", () => {
 						provincia: "TUNGURAHUA",
 						canton: "AMBATO",
 						pais: "ECUADOR",
-						codigo: "MT",
+						alias: "MT",
 					} satisfies ICreateSede),
 				},
 			}),
