@@ -1,8 +1,9 @@
-import type { PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaClient } from "@prisma/client";
+import type { DefaultArgs } from "@prisma/client/runtime/library";
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../../Main/Inversify/types";
-import type { ICreateNivelAcademico } from "../../Domain/ICreateNivelAcademico";
+// import type { ICreateNivelAcademico } from "../../Domain/ICreateNivelAcademico";
 import type { INivelAcademico } from "../../Domain/INivelAcademico";
 import type {
 	INivelAcademicoRepository,
@@ -27,23 +28,39 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 		return this._client.nivelAcademico.delete({ where: { id } });
 	}
 
-	create({
-		sesionId,
-		paraleloId,
-		nivelMallaId,
-		modeloEvaluativoId,
-		...data
-	}: ICreateNivelAcademico): Promise<INivelAcademico> {
-		return this._client.nivelAcademico.create({
-			data: {
-				...data,
-				sesion: { connect: { id: sesionId } },
-				paralelo: { connect: { nombre: paraleloId } },
-				nivelMalla: { connect: { id: nivelMallaId } },
-				modeloEvaluativo: { connect: { id: modeloEvaluativoId } },
-			},
-		});
-	}
+	// async create({
+	// 	sesionId,
+	// 	paraleloId,
+	// 	nivelMallaId,
+	// 	modeloEvaluativoId,
+	// 	...data
+	// }: ICreateNivelAcademico): Promise<INivelAcademico> {
+	// 	const asignaturasEnMalla =
+	// 		await this._client.asignaturaEnNivelMalla.findMany({
+	// 			where: { nivelMallaId },
+	// 		});
+
+	// 	return this._client.nivelAcademico.create({
+	// 		data: {
+	// 			...data,
+	// 			sesion: { connect: { id: sesionId } },
+	// 			paralelo: { connect: { nombre: paraleloId } },
+	// 			nivelMalla: { connect: { id: nivelMallaId } },
+	// 			modeloEvaluativo: { connect: { id: modeloEvaluativoId } },
+	// 			materias: {
+	// 				createMany: {
+	// 					data: asignaturasEnMalla.map(asignaturaEnMalla => ({
+	// 						validaParaCreditos: asignaturaEnMalla.validaParaCredito,
+	// 						validaParaPromedio: asignaturaEnMalla.validaParaPromedio,
+	// 						asignaturaEnNivelMallaId: asignaturaEnMalla.id,
+	// 						materiaExterna: false,
+	// 						practicasPermitidas: false,
+	// 					})),
+	// 				},
+	// 			},
+	// 		},
+	// 	});
+	// }
 
 	update({
 		id,
@@ -59,5 +76,21 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 					: undefined,
 			},
 		});
+	}
+
+	transaction(
+		tx: (
+			prisma: Omit<
+				PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+				| "$transaction"
+				| "$connect"
+				| "$disconnect"
+				| "$on"
+				| "$use"
+				| "$extends"
+			>,
+		) => Promise<INivelAcademico>,
+	): Promise<INivelAcademico> {
+		return this._client.$transaction(tx);
 	}
 }

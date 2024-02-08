@@ -278,7 +278,18 @@ export class NivelMallaController implements INivelMallaController {
 
 			if (!bodyVal.success) return CommonResponse.invalidBody();
 
-			const { paraleloId, modeloEvaluativoId, ...data } = bodyVal.data;
+			const {
+				paraleloId,
+				modeloEvaluativoId,
+				fechaInicio,
+				fechaFin,
+				inicioAgregaciones,
+				limiteAgregaciones,
+				limiteOrdinaria,
+				limiteExtraordinaria,
+				limiteEspecial,
+				...data
+			} = bodyVal.data;
 
 			const paralelo = await this._paraleloService.getParaleloById(paraleloId);
 
@@ -303,6 +314,13 @@ export class NivelMallaController implements INivelMallaController {
 					sesionId,
 					paraleloId,
 					modeloEvaluativoId,
+					fechaInicio: new Date(fechaInicio),
+					fechaFin: new Date(fechaFin),
+					inicioAgregaciones: new Date(inicioAgregaciones),
+					limiteAgregaciones: new Date(limiteAgregaciones),
+					limiteOrdinaria: new Date(limiteOrdinaria),
+					limiteExtraordinaria: new Date(limiteExtraordinaria),
+					limiteEspecial: new Date(limiteEspecial),
 				});
 
 			ctx.log({ newNivelAcademico });
@@ -360,13 +378,34 @@ const createAsignaturaBodySchema = z.object<
 });
 
 const createNivelAcademicoBodySchema = z.object<
-	ZodInferSchema<Omit<ICreateNivelAcademico, "nivelMallaId" | "sesionId">>
+	ZodInferSchema<
+		Omit<
+			ICreateNivelAcademico,
+			| "nivelMallaId"
+			| "sesionId"
+			| "fechaInicio"
+			| "fechaFin"
+			| "inicioAgregaciones"
+			| "limiteAgregaciones"
+			| "limiteOrdinaria"
+			| "limiteExtraordinaria"
+			| "limiteEspecial"
+		> & {
+			fechaInicio: string;
+			fechaFin: string;
+			inicioAgregaciones: string;
+			limiteAgregaciones: string;
+			limiteOrdinaria: string;
+			limiteExtraordinaria: string;
+			limiteEspecial: string;
+		}
+	>
 >({
 	nombre: z.string().nullable(),
-	fechaInicio: z.date(),
-	fechaFin: z.date(),
-	inicioAgregaciones: z.date(),
-	limiteAgregaciones: z.date(),
+	fechaInicio: z.string().datetime(),
+	fechaFin: z.string().datetime(),
+	inicioAgregaciones: z.string().datetime(),
+	limiteAgregaciones: z.string().datetime(),
 	validaRequisitosMalla: z.boolean(),
 	validaCumplimientoMaterias: z.boolean(),
 	horasMinimasPracticasComunitarias: z.number().nullable(),
@@ -376,9 +415,9 @@ const createNivelAcademicoBodySchema = z.object<
 	estudiantesPuedenSeleccionarMateriasOtrasModalidades: z.boolean(),
 	estudiantesRegistranProyectosIntegradores: z.boolean(),
 	redireccionAPagos: z.boolean(),
-	limiteOrdinaria: z.date(),
-	limiteExtraordinaria: z.date(),
-	limiteEspecial: z.date(),
+	limiteOrdinaria: z.string().datetime(),
+	limiteExtraordinaria: z.string().datetime(),
+	limiteEspecial: z.string().datetime(),
 	diasVencimientoMatricula: z.number(),
 	capacidad: z.number().int().min(0),
 	mensaje: z.string().nullable(),

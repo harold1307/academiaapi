@@ -77,3 +77,7 @@
 ## Programa
 
 - [x] Implementar enUso
+
+# Nivel Academico
+
+- [] Implementar enUso, no le afecta sus propias asignaturas/materias y horarios creados

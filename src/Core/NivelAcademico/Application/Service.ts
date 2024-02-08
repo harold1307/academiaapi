@@ -38,7 +38,97 @@ export class NivelAcademicoService implements INivelAcademicoService {
 	createNivelAcademico(data: ICreateNivelAcademico): Promise<INivelAcademico> {
 		const dto = new CreateNivelAcademicoDTO(data);
 
-		return this._nivelAcademicoRepository.create(dto.getData());
+		const valid = dto.getData();
+
+		return this._nivelAcademicoRepository.transaction(async tx => {
+			const nivelMalla = await tx.nivelMalla.findUnique({
+				where: {
+					id: valid.nivelMallaId,
+				},
+				select: {
+					malla: {
+						select: {
+							programa: {
+								select: {
+									alias: true,
+									coordinacion: {
+										select: {
+											alias: true,
+										},
+									},
+								},
+							},
+						},
+					},
+					asignaturas: {
+						select: {
+							id: true,
+							identificacion: true,
+							validaParaCredito: true,
+							validaParaPromedio: true,
+						},
+					},
+				},
+			});
+
+			if (!nivelMalla)
+				throw new NivelAcademicoServiceError("El nivel academico no existe");
+
+			const newNivelAcademico = await tx.nivelAcademico.create({
+				data: valid,
+			});
+
+			// creando las materias del nivel academico, por defecto crea las asignatura en el nivel de la malla seleccionado
+			await tx.materiaEnNivelAcademico.createMany({
+				data: nivelMalla.asignaturas.map(
+					({ validaParaCredito, validaParaPromedio, id }) => ({
+						validaParaCreditos: validaParaCredito,
+						validaParaPromedio,
+						materiaExterna: false,
+						practicasPermitidas: false,
+						asignaturaEnNivelMallaId: id,
+						nivelAcademicoId: newNivelAcademico.id,
+					}),
+				),
+			});
+
+			const materias = await tx.materiaEnNivelAcademico.findMany({
+				where: {
+					nivelAcademicoId: newNivelAcademico.id,
+				},
+				select: {
+					id: true,
+					asignaturaEnNivelMalla: {
+						select: {
+							identificacion: true,
+						},
+					},
+					numero: true,
+				},
+			});
+
+			// actualizando el alias por defecto
+			await Promise.all(
+				materias.map(materia =>
+					tx.materiaEnNivelAcademico.update({
+						where: {
+							id: materia.id,
+						},
+						data: {
+							alias: [
+								nivelMalla.malla.programa.coordinacion.alias,
+								nivelMalla.malla.programa.alias,
+								"AM",
+								materia.asignaturaEnNivelMalla?.identificacion,
+								materia.numero,
+							].join("-"),
+						},
+					}),
+				),
+			);
+
+			return newNivelAcademico;
+		});
 	}
 
 	async updateNivelAcademicoById({
