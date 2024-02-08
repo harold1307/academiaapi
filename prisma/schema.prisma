@@ -882,13 +882,15 @@ model Programa {
 model MateriaEnNivelAcademico {
   id String @id @default(uuid())
 
-  numero              Int     @unique @default(autoincrement())
+  numero              Int      @unique @default(autoincrement())
   alias               String?
   materiaExterna      Boolean
   practicasPermitidas Boolean
   validaParaCreditos  Boolean
   validaParaPromedio  Boolean
-  sumaHorasProfesor   Boolean @default(true)
+  sumaHorasProfesor   Boolean  @default(true)
+  fechaInicio         DateTime
+  fechaFin            DateTime
 
   asignaturaEnNivelMallaId String?
   asignaturaEnNivelMalla   AsignaturaEnNivelMalla?  @relation(fields: [asignaturaEnNivelMallaId], references: [id])
