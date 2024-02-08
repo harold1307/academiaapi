@@ -5,6 +5,7 @@ export type ICreateAsignaturaEnNivelMalla = Omit<
 	| "id"
 	| "createdAt"
 	| "updatedAt"
+	| "enUso"
 	| "ejeFormativo"
 	| "areaConocimiento"
 	| "campoFormacion"

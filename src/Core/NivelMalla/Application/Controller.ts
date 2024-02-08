@@ -22,6 +22,15 @@ import { EjeFormativoService } from "../../EjeFormativo/Application/Service";
 import type { IEjeFormativoService } from "../../EjeFormativo/Domain/IEjeFormativoService";
 import { MallaCurricularService } from "../../MallaCurricular/Application/Service";
 import type { IMallaCurricularService } from "../../MallaCurricular/Domain/IMallaCurricularService";
+import { ModeloEvaluativoService } from "../../ModeloEvaluativo/Application/Service";
+import type { IModeloEvaluativoService } from "../../ModeloEvaluativo/Domain/IModeloEvaluativoService";
+import { NivelAcademicoService } from "../../NivelAcademico/Application/Service";
+import type { ICreateNivelAcademico } from "../../NivelAcademico/Domain/ICreateNivelAcademico";
+import type { INivelAcademicoService } from "../../NivelAcademico/Domain/INivelAcademicoService";
+import { ParaleloService } from "../../Paralelo/Application/Service";
+import type { IParaleloService } from "../../Paralelo/Domain/IParaleloService";
+import { SesionService } from "../../Sesion/Application/Service";
+import type { ISesionService } from "../../Sesion/Domain/ISesionService";
 import type { INivelMallaController } from "../Domain/INivelMallaController";
 import type { INivelMallaService } from "../Domain/INivelMallaService";
 import type { IUpdateNivelMalla } from "../Domain/IUpdateNivelMalla";
@@ -35,6 +44,10 @@ export class NivelMallaController implements INivelMallaController {
 	private _campoFormacionService: ICampoFormacionService;
 	private _areaConocimientoService: IAreaConocimientoService;
 	private _mallaCurricularService: IMallaCurricularService;
+	private _nivelAcademicoService: INivelAcademicoService;
+	private _sesionService: ISesionService;
+	private _paraleloService: IParaleloService;
+	private _modeloEvaluativoService: IModeloEvaluativoService;
 
 	constructor() {
 		this._nivelMallaService = StartupBuilder.resolve(NivelMallaService);
@@ -50,6 +63,12 @@ export class NivelMallaController implements INivelMallaController {
 		);
 		this._mallaCurricularService = StartupBuilder.resolve(
 			MallaCurricularService,
+		);
+		this._nivelAcademicoService = StartupBuilder.resolve(NivelAcademicoService);
+		this._sesionService = StartupBuilder.resolve(SesionService);
+		this._paraleloService = StartupBuilder.resolve(ParaleloService);
+		this._modeloEvaluativoService = StartupBuilder.resolve(
+			ModeloEvaluativoService,
 		);
 	}
 
@@ -227,6 +246,72 @@ export class NivelMallaController implements INivelMallaController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async nivelesMallaCreateNivelAcademico(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const nivelMallaId = req.params.nivelMallaId;
+			const sesionId = req.params.sesionId;
+
+			if (!nivelMallaId || !sesionId) return CommonResponse.invalidId();
+
+			const nivelMalla =
+				await this._nivelMallaService.getNivelMallaById(nivelMallaId);
+
+			if (!nivelMalla)
+				return {
+					jsonBody: { message: "El nivel de la malla no existe" },
+					status: 400,
+				};
+
+			const sesion = await this._sesionService.getSesionById(sesionId);
+
+			if (!sesion)
+				return { jsonBody: { message: "La sesion no existe" }, status: 400 };
+
+			const body = await req.json();
+			const bodyVal = createNivelAcademicoBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const { paraleloId, modeloEvaluativoId, ...data } = bodyVal.data;
+
+			const paralelo = await this._paraleloService.getParaleloById(paraleloId);
+
+			if (!paralelo)
+				return { jsonBody: { message: "El paralelo no existe" }, status: 400 };
+
+			const modeloEvaluativo =
+				await this._modeloEvaluativoService.getModeloEvaluativoById(
+					modeloEvaluativoId,
+				);
+
+			if (!modeloEvaluativo)
+				return {
+					jsonBody: { message: "El modelo evaluativo no existe" },
+					status: 400,
+				};
+
+			const newNivelAcademico =
+				await this._nivelAcademicoService.createNivelAcademico({
+					...data,
+					nivelMallaId,
+					sesionId,
+					paraleloId,
+					modeloEvaluativoId,
+				});
+
+			ctx.log({ newNivelAcademico });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateNivelMalla>>({
@@ -272,4 +357,33 @@ const createAsignaturaBodySchema = z.object<
 	ejeFormativoId: z.string(),
 	areaConocimientoId: z.string(),
 	campoFormacionId: z.string().nullable(),
+});
+
+const createNivelAcademicoBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateNivelAcademico, "nivelMallaId" | "sesionId">>
+>({
+	nombre: z.string().nullable(),
+	fechaInicio: z.date(),
+	fechaFin: z.date(),
+	inicioAgregaciones: z.date(),
+	limiteAgregaciones: z.date(),
+	validaRequisitosMalla: z.boolean(),
+	validaCumplimientoMaterias: z.boolean(),
+	horasMinimasPracticasComunitarias: z.number().nullable(),
+	horasMinimasPracticasPreprofesionales: z.number().nullable(),
+	estudiantesPuedenSeleccionarMaterias: z.boolean(),
+	estudiantesPuedenSeleccionarMateriasOtrosHorarios: z.boolean(),
+	estudiantesPuedenSeleccionarMateriasOtrasModalidades: z.boolean(),
+	estudiantesRegistranProyectosIntegradores: z.boolean(),
+	redireccionAPagos: z.boolean(),
+	limiteOrdinaria: z.date(),
+	limiteExtraordinaria: z.date(),
+	limiteEspecial: z.date(),
+	diasVencimientoMatricula: z.number(),
+	capacidad: z.number().int().min(0),
+	mensaje: z.string().nullable(),
+	terminosCondiciones: z.string().nullable(),
+
+	paraleloId: z.string(),
+	modeloEvaluativoId: z.string(),
 });

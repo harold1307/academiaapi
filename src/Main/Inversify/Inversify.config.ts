@@ -207,6 +207,12 @@ import type { IPracticaPreProfesionalEnMallaRepository } from "../../Core/Practi
 import type { IPracticaPreProfesionalEnMallaService } from "../../Core/PracticaPreProfesionalEnMalla/Domain/IPracticaPreProfesionalEnMallaService";
 import { PracticaPreProfesionalEnMallaRepository } from "../../Core/PracticaPreProfesionalEnMalla/Infrastructure/Repositories/PracticaPreProfesionalEnMallaRepository";
 
+// niveles academicos
+import { NivelAcademicoService } from "../../Core/NivelAcademico/Application/Service";
+import type { INivelAcademicoRepository } from "../../Core/NivelAcademico/Domain/INivelAcademicoRepository";
+import type { INivelAcademicoService } from "../../Core/NivelAcademico/Domain/INivelAcademicoService";
+import { NivelAcademicoRepository } from "../../Core/NivelAcademico/Infrastructure/Repositories/NivelAcademicoRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -548,6 +554,14 @@ StartupBuilder.bind<IPracticaPreProfesionalEnMallaService>(
 	TYPES.PracticaPreProfesionalEnMallaService,
 )
 	.to(PracticaPreProfesionalEnMallaService)
+	.inSingletonScope();
+
+// niveles academicos
+StartupBuilder.bind<INivelAcademicoRepository>(TYPES.NivelAcademicoRepository)
+	.to(NivelAcademicoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<INivelAcademicoService>(TYPES.NivelAcademicoService)
+	.to(NivelAcademicoService)
 	.inSingletonScope();
 
 export { StartupBuilder };

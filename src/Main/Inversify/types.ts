@@ -103,4 +103,6 @@ export const TYPES = {
 	PracticaComunitariaEnMallaService: Symbol.for(
 		"PracticaComunitariaEnMallaService",
 	),
+	NivelAcademicoRepository: Symbol.for("NivelAcademicoRepository"),
+	NivelAcademicoService: Symbol.for("NivelAcademicoService"),
 } as const;

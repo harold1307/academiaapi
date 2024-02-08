@@ -19,12 +19,15 @@ export class ParaleloRepository implements IParaleloRepository {
 				cursoEscuelas: {
 					take: 1,
 				},
+				nivelesAcademicos: {
+					take: 1,
+				},
 			},
 		});
 
-		return paralelos.map(({ cursoEscuelas, ...rest }) => ({
+		return paralelos.map(({ cursoEscuelas, nivelesAcademicos, ...rest }) => ({
 			...rest,
-			enUso: cursoEscuelas.length > 0,
+			enUso: cursoEscuelas.length > 0 || nivelesAcademicos.length > 0,
 		}));
 	}
 
@@ -35,16 +38,19 @@ export class ParaleloRepository implements IParaleloRepository {
 				cursoEscuelas: {
 					take: 1,
 				},
+				nivelesAcademicos: {
+					take: 1,
+				},
 			},
 		});
 
 		if (!paralelo) return null;
 
-		const { cursoEscuelas, ...rest } = paralelo;
+		const { cursoEscuelas, nivelesAcademicos, ...rest } = paralelo;
 
 		return {
 			...rest,
-			enUso: cursoEscuelas.length > 0,
+			enUso: cursoEscuelas.length > 0 || nivelesAcademicos.length > 0,
 		};
 	}
 
@@ -76,14 +82,17 @@ export class ParaleloRepository implements IParaleloRepository {
 				cursoEscuelas: {
 					take: 1,
 				},
+				nivelesAcademicos: {
+					take: 1,
+				},
 			},
 		});
 
-		const { cursoEscuelas, ...rest } = paralelo;
+		const { cursoEscuelas, nivelesAcademicos, ...rest } = paralelo;
 
 		return {
 			...rest,
-			enUso: cursoEscuelas.length > 0,
+			enUso: cursoEscuelas.length > 0 || nivelesAcademicos.length > 0,
 		};
 	}
 }

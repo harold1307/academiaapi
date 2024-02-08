@@ -217,6 +217,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 							},
 						}),
 					),
+					enUso: false,
 				})),
 				tituloObtenido: tituloObtenido
 					? { ...tituloObtenido, enUso: true }
@@ -232,156 +233,156 @@ export class MallaCurricularService implements IMallaCurricularService {
 		return this._mallaCurricularRepository.getAll(filterDto.getData());
 	}
 
-	async getAllMallasCurricularesWithAsignaturas(): Promise<IMallaCurricular[]> {
-		const mallas = await this._client.mallaCurricular.findMany({
-			include: {
-				niveles: {
-					include: {
-						asignaturas: {
-							include: {
-								areaConocimiento: true,
-								ejeFormativo: true,
-								campoFormacion: true,
-								asignatura: true,
-							},
-						},
-					},
-				},
-				modulos: {
-					include: {
-						areaConocimiento: true,
-						campoFormacion: true,
-						asignatura: true,
-					},
-				},
-				practicaComunitaria: true,
-				practicaPreProfesional: true,
-				tituloObtenido: true,
-			},
-		});
+	// async getAllMallasCurricularesWithAsignaturas(): Promise<IMallaCurricular[]> {
+	// 	const mallas = await this._client.mallaCurricular.findMany({
+	// 		include: {
+	// 			niveles: {
+	// 				include: {
+	// 					asignaturas: {
+	// 						include: {
+	// 							areaConocimiento: true,
+	// 							ejeFormativo: true,
+	// 							campoFormacion: true,
+	// 							asignatura: true,
+	// 						},
+	// 					},
+	// 				},
+	// 			},
+	// 			modulos: {
+	// 				include: {
+	// 					areaConocimiento: true,
+	// 					campoFormacion: true,
+	// 					asignatura: true,
+	// 				},
+	// 			},
+	// 			practicaComunitaria: true,
+	// 			practicaPreProfesional: true,
+	// 			tituloObtenido: true,
+	// 		},
+	// 	});
 
-		return mallas.map(({ niveles, modulos, tituloObtenido, ...m }) => ({
-			...m,
-			niveles: niveles.map(({ asignaturas, ...n }) => ({
-				...n,
-				asignaturas: asignaturas.map(
-					({
-						areaConocimiento,
-						ejeFormativo,
-						campoFormacion,
-						asignatura,
-						...a
-					}) => ({
-						...a,
-						areaConocimiento: { ...areaConocimiento, enUso: true },
-						ejeFormativo: { ...ejeFormativo, enUso: true },
-						campoFormacion: campoFormacion
-							? { ...campoFormacion, enUso: true }
-							: null,
-						asignatura: {
-							...asignatura,
-							enUso: true,
-						},
-					}),
-				),
-			})),
-			modulos: modulos.map(
-				({ areaConocimiento, campoFormacion, asignatura, ...m }) => ({
-					...m,
-					areaConocimiento: { ...areaConocimiento, enUso: true },
-					campoFormacion: { ...campoFormacion, enUso: true },
-					asignatura: {
-						...asignatura,
-						enUso: true,
-					},
-				}),
-			),
-			tituloObtenido: tituloObtenido
-				? { ...tituloObtenido, enUso: true }
-				: null,
-			enUso: false,
-		}));
-	}
+	// 	return mallas.map(({ niveles, modulos, tituloObtenido, ...m }) => ({
+	// 		...m,
+	// 		niveles: niveles.map(({ asignaturas, ...n }) => ({
+	// 			...n,
+	// 			asignaturas: asignaturas.map(
+	// 				({
+	// 					areaConocimiento,
+	// 					ejeFormativo,
+	// 					campoFormacion,
+	// 					asignatura,
+	// 					...a
+	// 				}) => ({
+	// 					...a,
+	// 					areaConocimiento: { ...areaConocimiento, enUso: true },
+	// 					ejeFormativo: { ...ejeFormativo, enUso: true },
+	// 					campoFormacion: campoFormacion
+	// 						? { ...campoFormacion, enUso: true }
+	// 						: null,
+	// 					asignatura: {
+	// 						...asignatura,
+	// 						enUso: true,
+	// 					},
+	// 				}),
+	// 			),
+	// 		})),
+	// 		modulos: modulos.map(
+	// 			({ areaConocimiento, campoFormacion, asignatura, ...m }) => ({
+	// 				...m,
+	// 				areaConocimiento: { ...areaConocimiento, enUso: true },
+	// 				campoFormacion: { ...campoFormacion, enUso: true },
+	// 				asignatura: {
+	// 					...asignatura,
+	// 					enUso: true,
+	// 				},
+	// 			}),
+	// 		),
+	// 		tituloObtenido: tituloObtenido
+	// 			? { ...tituloObtenido, enUso: true }
+	// 			: null,
+	// 		enUso: false,
+	// 	}));
+	// }
 
 	async getMallaCurricularById(id: string) {
 		return this._mallaCurricularRepository.getById(id);
 	}
 
-	async getMallaCurricularByIdWithAsignaturas(id: string) {
-		const malla = await this._client.mallaCurricular.findUnique({
-			where: { id },
-			include: {
-				niveles: {
-					include: {
-						asignaturas: {
-							include: {
-								areaConocimiento: true,
-								ejeFormativo: true,
-								campoFormacion: true,
-								asignatura: true,
-							},
-						},
-					},
-				},
-				modulos: {
-					include: {
-						areaConocimiento: true,
-						campoFormacion: true,
-						asignatura: true,
-					},
-				},
-				practicaComunitaria: true,
-				practicaPreProfesional: true,
-				tituloObtenido: true,
-			},
-		});
+	// async getMallaCurricularByIdWithAsignaturas(id: string) {
+	// 	const malla = await this._client.mallaCurricular.findUnique({
+	// 		where: { id },
+	// 		include: {
+	// 			niveles: {
+	// 				include: {
+	// 					asignaturas: {
+	// 						include: {
+	// 							areaConocimiento: true,
+	// 							ejeFormativo: true,
+	// 							campoFormacion: true,
+	// 							asignatura: true,
+	// 						},
+	// 					},
+	// 				},
+	// 			},
+	// 			modulos: {
+	// 				include: {
+	// 					areaConocimiento: true,
+	// 					campoFormacion: true,
+	// 					asignatura: true,
+	// 				},
+	// 			},
+	// 			practicaComunitaria: true,
+	// 			practicaPreProfesional: true,
+	// 			tituloObtenido: true,
+	// 		},
+	// 	});
 
-		if (!malla) return null;
+	// 	if (!malla) return null;
 
-		const { niveles, modulos, tituloObtenido, ...m } = malla;
+	// 	const { niveles, modulos, tituloObtenido, ...m } = malla;
 
-		return {
-			...m,
-			niveles: niveles.map(({ asignaturas, ...n }) => ({
-				...n,
-				asignaturas: asignaturas.map(
-					({
-						areaConocimiento,
-						ejeFormativo,
-						campoFormacion,
-						asignatura,
-						...a
-					}) => ({
-						...a,
-						areaConocimiento: { ...areaConocimiento, enUso: true },
-						ejeFormativo: { ...ejeFormativo, enUso: true },
-						campoFormacion: campoFormacion
-							? { ...campoFormacion, enUso: true }
-							: null,
-						asignatura: {
-							...asignatura,
-							enUso: true,
-						},
-					}),
-				),
-			})),
-			modulos: modulos.map(
-				({ areaConocimiento, campoFormacion, asignatura, ...m }) => ({
-					...m,
-					areaConocimiento: { ...areaConocimiento, enUso: true },
-					campoFormacion: { ...campoFormacion, enUso: true },
-					asignatura: {
-						...asignatura,
-						enUso: true,
-					},
-				}),
-			),
-			tituloObtenido: tituloObtenido
-				? { ...tituloObtenido, enUso: true }
-				: null,
-			enUso: false,
-		};
-	}
+	// 	return {
+	// 		...m,
+	// 		niveles: niveles.map(({ asignaturas, ...n }) => ({
+	// 			...n,
+	// 			asignaturas: asignaturas.map(
+	// 				({
+	// 					areaConocimiento,
+	// 					ejeFormativo,
+	// 					campoFormacion,
+	// 					asignatura,
+	// 					...a
+	// 				}) => ({
+	// 					...a,
+	// 					areaConocimiento: { ...areaConocimiento, enUso: true },
+	// 					ejeFormativo: { ...ejeFormativo, enUso: true },
+	// 					campoFormacion: campoFormacion
+	// 						? { ...campoFormacion, enUso: true }
+	// 						: null,
+	// 					asignatura: {
+	// 						...asignatura,
+	// 						enUso: true,
+	// 					},
+	// 				}),
+	// 			),
+	// 		})),
+	// 		modulos: modulos.map(
+	// 			({ areaConocimiento, campoFormacion, asignatura, ...m }) => ({
+	// 				...m,
+	// 				areaConocimiento: { ...areaConocimiento, enUso: true },
+	// 				campoFormacion: { ...campoFormacion, enUso: true },
+	// 				asignatura: {
+	// 					...asignatura,
+	// 					enUso: true,
+	// 				},
+	// 			}),
+	// 		),
+	// 		tituloObtenido: tituloObtenido
+	// 			? { ...tituloObtenido, enUso: true }
+	// 			: null,
+	// 		enUso: false,
+	// 	};
+	// }
 
 	async updateMallaCurricularById({ id, data }: UpdateMallaCurricularParams) {
 		const dto = new UpdateMallaCurricularDTO(data);
@@ -446,6 +447,9 @@ export class MallaCurricularService implements IMallaCurricularService {
 								ejeFormativo: true,
 							},
 						},
+						nivelesAcademicos: {
+							take: 1,
+						},
 					},
 				},
 				modulos: {
@@ -477,7 +481,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 					enUso: true,
 				},
 			})),
-			niveles: niveles.map(({ asignaturas, ...n }) => ({
+			niveles: niveles.map(({ asignaturas, nivelesAcademicos, ...n }) => ({
 				...n,
 				asignaturas: asignaturas.map(
 					({
@@ -508,11 +512,12 @@ export class MallaCurricularService implements IMallaCurricularService {
 						},
 					}),
 				),
+				enUso: nivelesAcademicos.length > 0,
 			})),
 			tituloObtenido: tituloObtenido
 				? { ...tituloObtenido, enUso: true }
 				: null,
-			enUso: false,
+			enUso: niveles.filter(nivel => nivel.nivelesAcademicos.length).length > 0,
 		};
 	}
 }

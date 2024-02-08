@@ -47,7 +47,9 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 	// 		enUso: false,
 	// 	};
 	// }
-	async getAll(filters: IMallaCurricularQueryFilter) {
+	async getAll(
+		filters: IMallaCurricularQueryFilter,
+	): Promise<IMallaCurricular[]> {
 		const mallas = await this._client.mallaCurricular.findMany({
 			where: {
 				...(filters || {}),
@@ -65,6 +67,9 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 								areaConocimiento: true,
 								ejeFormativo: true,
 							},
+						},
+						nivelesAcademicos: {
+							take: 1,
 						},
 					},
 				},
@@ -85,7 +90,7 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 					enUso: true,
 				},
 			})),
-			niveles: niveles.map(({ asignaturas, ...n }) => ({
+			niveles: niveles.map(({ asignaturas, nivelesAcademicos, ...n }) => ({
 				...n,
 				asignaturas: asignaturas.map(
 					({
@@ -116,15 +121,16 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 						},
 					}),
 				),
+				enUso: nivelesAcademicos.length > 0,
 			})),
 			tituloObtenido: tituloObtenido
 				? { ...tituloObtenido, enUso: true }
 				: null,
-			enUso: false,
+			enUso: niveles.filter(nivel => nivel.nivelesAcademicos.length).length > 0,
 		}));
 	}
 
-	async getById(id: string) {
+	async getById(id: string): Promise<IMallaCurricular | null> {
 		const malla = await this._client.mallaCurricular.findUnique({
 			where: { id },
 			include: {
@@ -140,6 +146,9 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 								areaConocimiento: true,
 								ejeFormativo: true,
 							},
+						},
+						nivelesAcademicos: {
+							take: 1,
 						},
 					},
 				},
@@ -164,7 +173,7 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 					enUso: true,
 				},
 			})),
-			niveles: niveles.map(({ asignaturas, ...n }) => ({
+			niveles: niveles.map(({ asignaturas, nivelesAcademicos, ...n }) => ({
 				...n,
 				asignaturas: asignaturas.map(
 					({
@@ -195,18 +204,19 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 						},
 					}),
 				),
+				enUso: nivelesAcademicos.length > 0,
 			})),
 			tituloObtenido: tituloObtenido
 				? { ...tituloObtenido, enUso: true }
 				: null,
-			enUso: false,
+			enUso: niveles.filter(nivel => nivel.nivelesAcademicos.length).length > 0,
 		};
 	}
 
 	async update({
 		id,
 		data: { tituloObtenidoId, ...data },
-	}: UpdateMallaCurricularParams) {
+	}: UpdateMallaCurricularParams): Promise<IMallaCurricular> {
 		const malla = await this._client.mallaCurricular.update({
 			where: {
 				id,
@@ -231,6 +241,9 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 								ejeFormativo: true,
 							},
 						},
+						nivelesAcademicos: {
+							take: 1,
+						},
 					},
 				},
 				modulos: {
@@ -252,7 +265,7 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 					enUso: true,
 				},
 			})),
-			niveles: niveles.map(({ asignaturas, ...n }) => ({
+			niveles: niveles.map(({ asignaturas, nivelesAcademicos, ...n }) => ({
 				...n,
 				asignaturas: asignaturas.map(
 					({
@@ -283,11 +296,12 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 						},
 					}),
 				),
+				enUso: nivelesAcademicos.length > 0,
 			})),
 			tituloObtenido: tituloObtenido
 				? { ...tituloObtenido, enUso: true }
 				: null,
-			enUso: false,
+			enUso: niveles.filter(nivel => nivel.nivelesAcademicos.length).length > 0,
 		};
 	}
 
@@ -360,6 +374,7 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 						},
 					}),
 				),
+				enUso: false,
 			})),
 			tituloObtenido: tituloObtenido
 				? { ...tituloObtenido, enUso: true }

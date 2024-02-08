@@ -20,13 +20,21 @@ export class SesionRepository implements ISesionRepository {
 					take: 1,
 				},
 				turnos: { take: 1 },
+				nivelesAcademicos: {
+					take: 1,
+				},
 			},
 		});
 
-		return sesiones.map(({ cursoEscuelas, turnos, ...rest }) => ({
-			...rest,
-			enUso: cursoEscuelas.length > 0 || turnos.length > 0,
-		}));
+		return sesiones.map(
+			({ cursoEscuelas, turnos, nivelesAcademicos, ...rest }) => ({
+				...rest,
+				enUso:
+					cursoEscuelas.length > 0 ||
+					turnos.length > 0 ||
+					nivelesAcademicos.length > 0,
+			}),
+		);
 	}
 	async getById(id: string): Promise<ISesion | null> {
 		const sesion = await this._client.sesion.findUnique({
@@ -36,16 +44,22 @@ export class SesionRepository implements ISesionRepository {
 					take: 1,
 				},
 				turnos: { take: 1 },
+				nivelesAcademicos: {
+					take: 1,
+				},
 			},
 		});
 
 		if (!sesion) return null;
 
-		const { cursoEscuelas, turnos, ...rest } = sesion;
+		const { cursoEscuelas, turnos, nivelesAcademicos, ...rest } = sesion;
 
 		return {
 			...rest,
-			enUso: cursoEscuelas.length > 0 || turnos.length > 0,
+			enUso:
+				cursoEscuelas.length > 0 ||
+				turnos.length > 0 ||
+				nivelesAcademicos.length > 0,
 		};
 	}
 	async deleteById(id: string): Promise<ISesion> {
@@ -82,14 +96,20 @@ export class SesionRepository implements ISesionRepository {
 					take: 1,
 				},
 				turnos: { take: 1 },
+				nivelesAcademicos: {
+					take: 1,
+				},
 			},
 		});
 
-		const { cursoEscuelas, turnos, ...rest } = sesion;
+		const { cursoEscuelas, turnos, nivelesAcademicos, ...rest } = sesion;
 
 		return {
 			...rest,
-			enUso: cursoEscuelas.length > 0 || turnos.length > 0,
+			enUso:
+				cursoEscuelas.length > 0 ||
+				turnos.length > 0 ||
+				nivelesAcademicos.length > 0,
 		};
 	}
 }

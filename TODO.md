@@ -46,9 +46,9 @@
 
 ## Modelo Evaluativo
 
-- [] Implementar campo enUso al dominio, este campo no es afectado por la logica de evaluacion ni los campos de modelo evaluativo
+- [x] Implementar campo enUso al dominio, este campo no es afectado por la logica de evaluacion ni los campos de modelo evaluativo
 - [] Implementar logica de modelo
-- [] Implementar campo enUso
+- [x] Implementar campo enUso
 
 ## Modelo Nivelacion
 
@@ -63,7 +63,7 @@
 ## Malla Curricular
 
 - [x] Implementar logica de exclusion para eliminar y actualizar
-- [] Implementar enUso
+- [x] Implementar enUso
 
 ## Titulo Obtenido
 

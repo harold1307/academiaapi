@@ -12,27 +12,62 @@ import type {
 export class NivelMallaRepository implements INivelMallaRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	getAll(): Promise<INivelMalla[]> {
-		return this._client.nivelMalla.findMany();
+	async getAll(): Promise<INivelMalla[]> {
+		const niveles = await this._client.nivelMalla.findMany({
+			include: {
+				nivelesAcademicos: {
+					take: 1,
+				},
+			},
+		});
+
+		return niveles.map(({ nivelesAcademicos, ...rest }) => ({
+			...rest,
+			enUso: nivelesAcademicos.length > 0,
+		}));
 	}
-	getById(id: string): Promise<INivelMalla | null> {
-		return this._client.nivelMalla.findUnique({ where: { id } });
-	}
-	deleteById(id: string): Promise<INivelMalla> {
-		return this._client.nivelMalla.delete({ where: { id } });
+	async getById(id: string): Promise<INivelMalla | null> {
+		const nivel = await this._client.nivelMalla.findUnique({
+			where: { id },
+			include: {
+				nivelesAcademicos: {
+					take: 1,
+				},
+			},
+		});
+
+		if (!nivel) return null;
+
+		const { nivelesAcademicos, ...rest } = nivel;
+
+		return {
+			...rest,
+			enUso: nivelesAcademicos.length > 0,
+		};
 	}
 
-	update({
+	async update({
 		id,
 		data: { tituloObtenidoId },
 	}: UpdateNivelMallaParams): Promise<INivelMalla> {
-		return this._client.nivelMalla.update({
+		const nivel = await this._client.nivelMalla.update({
 			where: { id },
+			include: {
+				nivelesAcademicos: {
+					take: 1,
+				},
+			},
 			data: {
 				tituloObtenido: tituloObtenidoId
 					? { connect: { id: tituloObtenidoId } }
 					: { disconnect: true },
 			},
 		});
+		const { nivelesAcademicos, ...rest } = nivel;
+
+		return {
+			...rest,
+			enUso: nivelesAcademicos.length > 0,
+		};
 	}
 }

@@ -1,3 +1,5 @@
 import type { NivelMalla } from "@prisma/client";
 
-export type INivelMalla = NivelMalla;
+export type INivelMalla = NivelMalla & {
+	enUso: boolean;
+};

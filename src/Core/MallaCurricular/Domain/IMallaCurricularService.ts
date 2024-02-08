@@ -31,13 +31,13 @@ export type IMallaCurricularService = {
 	): Promise<IMallaCurricular>;
 	deleteMallaCurricularById(id: string): Promise<IMallaCurricular>;
 
-	getAllMallasCurricularesWithAsignaturas(): Promise<IMallaCurricular[]>;
-	getMallaCurricularByIdWithAsignaturas(
-		id: string,
-		filters?: {
-			asignaturas_esAnexo?: boolean;
-		},
-	): Promise<IMallaCurricular | null>;
+	// getAllMallasCurricularesWithAsignaturas(): Promise<IMallaCurricular[]>;
+	// getMallaCurricularByIdWithAsignaturas(
+	// 	id: string,
+	// 	filters?: {
+	// 		asignaturas_esAnexo?: boolean;
+	// 	},
+	// ): Promise<IMallaCurricular | null>;
 
 	createLugarEjecucion(mallaId: string, data: any): Promise<ILugarEjecucion>;
 	getMallaCurricularByIdWithLugaresEjecucion(
