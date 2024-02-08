@@ -12,7 +12,7 @@ export type IMallaCurricular = MallaCurricular & {
 	practicaPreProfesional: IPracticaPreProfesionalEnMalla | null;
 	practicaComunitaria: IPracticaComunitariaEnMalla | null;
 	tituloObtenido: ITituloObtenido | null;
-	niveles: (INivelMalla & {
+	niveles: (Omit<INivelMalla, "malla"> & {
 		asignaturas: IAsignaturaEnNivelMalla[];
 	})[];
 	modulos: Omit<

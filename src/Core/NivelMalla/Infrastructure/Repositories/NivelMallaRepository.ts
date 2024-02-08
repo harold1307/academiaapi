@@ -18,13 +18,27 @@ export class NivelMallaRepository implements INivelMallaRepository {
 				nivelesAcademicos: {
 					take: 1,
 				},
+				malla: {
+					include: {
+						niveles: {
+							where: {
+								nivelesAcademicos: {
+									some: {},
+								},
+							},
+						},
+					},
+				},
 			},
 		});
 
-		return niveles.map(({ nivelesAcademicos, ...rest }) => ({
-			...rest,
-			enUso: nivelesAcademicos.length > 0,
-		}));
+		return niveles.map(
+			({ nivelesAcademicos, malla: { niveles, ...malla }, ...rest }) => ({
+				...rest,
+				malla: { ...malla, enUso: niveles.length > 0 },
+				enUso: nivelesAcademicos.length > 0,
+			}),
+		);
 	}
 	async getById(id: string): Promise<INivelMalla | null> {
 		const nivel = await this._client.nivelMalla.findUnique({
@@ -33,15 +47,31 @@ export class NivelMallaRepository implements INivelMallaRepository {
 				nivelesAcademicos: {
 					take: 1,
 				},
+				malla: {
+					include: {
+						niveles: {
+							where: {
+								nivelesAcademicos: {
+									some: {},
+								},
+							},
+						},
+					},
+				},
 			},
 		});
 
 		if (!nivel) return null;
 
-		const { nivelesAcademicos, ...rest } = nivel;
+		const {
+			nivelesAcademicos,
+			malla: { niveles, ...malla },
+			...rest
+		} = nivel;
 
 		return {
 			...rest,
+			malla: { ...malla, enUso: niveles.length > 0 },
 			enUso: nivelesAcademicos.length > 0,
 		};
 	}
@@ -56,6 +86,17 @@ export class NivelMallaRepository implements INivelMallaRepository {
 				nivelesAcademicos: {
 					take: 1,
 				},
+				malla: {
+					include: {
+						niveles: {
+							where: {
+								nivelesAcademicos: {
+									some: {},
+								},
+							},
+						},
+					},
+				},
 			},
 			data: {
 				tituloObtenido: tituloObtenidoId
@@ -63,10 +104,15 @@ export class NivelMallaRepository implements INivelMallaRepository {
 					: { disconnect: true },
 			},
 		});
-		const { nivelesAcademicos, ...rest } = nivel;
+		const {
+			nivelesAcademicos,
+			malla: { niveles, ...malla },
+			...rest
+		} = nivel;
 
 		return {
 			...rest,
+			malla: { ...malla, enUso: niveles.length > 0 },
 			enUso: nivelesAcademicos.length > 0,
 		};
 	}

@@ -1,10 +1,11 @@
 import { HttpRequest, InvocationContext } from "@azure/functions";
 
-import { Prisma } from "../../Main/Prisma/PrismaClient";
-import { NivelMallaController } from "../../Core/NivelMalla/Application/Controller";
 import type { ICreateNivelAcademico } from "../../Core/NivelAcademico/Domain/ICreateNivelAcademico";
+import { NivelMallaController } from "../../Core/NivelMalla/Application/Controller";
+import { Prisma } from "../../Main/Prisma/PrismaClient";
 
 let paraleloId = "";
+let mallaId = "";
 let sesionId = "";
 let modeloEvaluativoId = "";
 let nivelMallaId = "";
@@ -178,6 +179,7 @@ beforeAll(async () => {
 	sesionId = sesion.id;
 	modeloEvaluativoId = modeloEvaluativo.id;
 	nivelMallaId = malla.niveles.at(0)?.id || "";
+	mallaId = malla.id;
 });
 
 afterAll(async () => {
@@ -268,8 +270,6 @@ describe("Crear nivel academico", () => {
 			new InvocationContext(),
 		);
 
-		console.log(res.jsonBody);
-
 		expect(res.status).toBe(201);
 	});
 
@@ -357,6 +357,41 @@ describe("Crear nivel academico", () => {
 	});
 
 	it("No debe funcionar si hay duplicados con el mismo nivel de malla, paralelo y sesion", async () => {
+		const res = await _nivelMallaController.nivelesMallaCreateNivelAcademico(
+			new HttpRequest({
+				url: `http://localhost:42069/api/niveles-malla/${nivelMallaId}/sesiones/${sesionId}`,
+				method: "POST",
+				params: {
+					nivelMallaId,
+					sesionId,
+				},
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: {
+					string: JSON.stringify({
+						...commonBody,
+						paraleloId,
+						modeloEvaluativoId,
+					} satisfies Omit<ICreateNivelAcademico, "nivelMallaId" | "sesionId">),
+				},
+			}),
+			new InvocationContext(),
+		);
+
+		expect(res.status).not.toBe(201);
+	});
+
+	it("No debe crear si la malla del nivel no esta activada", async () => {
+		await Prisma.mallaCurricular.update({
+			where: {
+				id: mallaId,
+			},
+			data: {
+				estado: false,
+			},
+		});
+
 		const res = await _nivelMallaController.nivelesMallaCreateNivelAcademico(
 			new HttpRequest({
 				url: `http://localhost:42069/api/niveles-malla/${nivelMallaId}/sesiones/${sesionId}`,

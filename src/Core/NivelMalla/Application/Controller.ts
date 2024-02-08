@@ -268,6 +268,16 @@ export class NivelMallaController implements INivelMallaController {
 					status: 400,
 				};
 
+			if (!nivelMalla.malla.estado) {
+				return {
+					jsonBody: {
+						message:
+							"La malla curricular del nivel no está activa, no se puede crear un nivel academico",
+					},
+					status: 400,
+				};
+			}
+
 			const sesion = await this._sesionService.getSesionById(sesionId);
 
 			if (!sesion)
