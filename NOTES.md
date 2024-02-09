@@ -19,6 +19,7 @@
 
 # Niveles academicos
 
+- No se puede crear nivel academico a partir de una malla que esta desactivada.
 - Al eliminar se eliminan tambien las materias
 - profesores -> habilita el registro de profesores en las materias de los niveles academicos
 - horarios -> habilita el registro de horarios en las materias de los niveles academicos
@@ -28,6 +29,7 @@
 
 # Asignaturas/Materias en niveles academicos
 
+- Al eliminar, si esta en un horario tambien se eliminara de los horarios presentes.
 - No tiene restriccion para editar
 - Estructura del nombre -> Nombre de asignatura + alias + (numero de creacion)
 <!-- - No se puede eliminar si esta asignado a un nivel academico -->

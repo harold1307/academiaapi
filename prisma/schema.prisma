@@ -548,8 +548,11 @@ model Turno {
   horas    Float
   comienza DateTime @db.Time(0)
   termina  DateTime @db.Time(0)
+
   sesionId String
-  sesion   Sesion   @relation(fields: [sesionId], references: [id])
+  sesion   Sesion @relation(fields: [sesionId], references: [id])
+
+  materiasEnHorario MateriaEnHorario[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -880,7 +883,8 @@ model Programa {
 }
 
 model MateriaEnNivelAcademico {
-  id String @id @default(uuid())
+  id     String  @id @default(uuid())
+  estado Boolean @default(true)
 
   numero              Int      @unique @default(autoincrement())
   alias               String?
@@ -900,6 +904,8 @@ model MateriaEnNivelAcademico {
   asignaturaModulo         AsignaturaModuloEnMalla? @relation(fields: [asignaturaModuloId], references: [id])
   modeloEvaluativoId       String
   modeloEvaluativo         ModeloEvaluativo         @relation(fields: [modeloEvaluativoId], references: [id])
+
+  horario MateriaEnHorario[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -954,6 +960,7 @@ model NivelAcademico {
   nivelMalla         NivelMalla       @relation(fields: [nivelMallaId], references: [id])
 
   materias MateriaEnNivelAcademico[]
+  horario  MateriaEnHorario[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -962,12 +969,33 @@ model NivelAcademico {
   @@map("niveles_academicos")
 }
 
+model MateriaEnHorario {
+  id  String @id @default(uuid())
+  dia Dia
+
+  materiaId        String
+  materia          MateriaEnNivelAcademico @relation(fields: [materiaId], references: [id], onDelete: Cascade)
+  nivelAcademicoId String
+  nivelAcademico   NivelAcademico          @relation(fields: [nivelAcademicoId], references: [id])
+  turnoId          String
+  turno            Turno                   @relation(fields: [turnoId], references: [id])
+  ubicacionId      String
+  ubicacion        Ubicacion               @relation(fields: [ubicacionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("horarios")
+}
+
 model Ubicacion {
   id             String        @id @default(uuid())
   nombre         String
   tipo           TipoUbicacion
   capacidad      Int
   entornoVirtual Boolean
+
+  materiasEnHorario MateriaEnHorario[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1069,4 +1097,16 @@ enum TipoUbicacion {
   SALON
 
   @@map("tipo_ubicacion")
+}
+
+enum Dia {
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+  SABADO
+  DOMINGO
+
+  @@map("dia")
 }
