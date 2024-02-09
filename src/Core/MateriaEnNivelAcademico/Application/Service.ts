@@ -8,6 +8,7 @@ import type {
 	UpdateMateriaEnNivelAcademicoParams,
 } from "../Domain/IMateriaEnNivelAcademicoRepository";
 import type { IMateriaEnNivelAcademicoService } from "../Domain/IMateriaEnNivelAcademicoService";
+import type { IUpdateMateriaEnNivelAcademico } from "../Domain/IUpdateMateriaEnNivelAcademico";
 import { CreateMateriaEnNivelAcademicoDTO } from "../Infrastructure/DTOs/CreateMateriaEnNivelAcademicoDTO";
 import { UpdateMateriaEnNivelAcademicoDTO } from "../Infrastructure/DTOs/UpdateMateriaEnNivelAcademicoDTO";
 
@@ -213,15 +214,31 @@ export class MateriaEnNivelAcademicoService
 		data,
 	}: UpdateMateriaEnNivelAcademicoParams): Promise<IMateriaEnNivelAcademico> {
 		const dto = new UpdateMateriaEnNivelAcademicoDTO(data);
+		const valid = dto.getData();
 
 		const materia = await this._materiaEnNivelAcademicoRepository.getById(id);
 
 		if (!materia)
 			throw new MateriaEnNivelAcademicoServiceError("La materia no existe");
 
+		const fieldsToUpdate = Object.entries(valid)
+			.filter(([, v]) => v !== undefined)
+			.map(([k]) => k as keyof IUpdateMateriaEnNivelAcademico);
+
+		if (!materia.estado && fieldsToUpdate.length > 1) {
+			throw new MateriaEnNivelAcademicoServiceError(
+				"La materia esta cerrada, no se puede actualizar",
+			);
+		}
+
+		if (!materia.estado && fieldsToUpdate.some(k => k !== "estado"))
+			throw new MateriaEnNivelAcademicoServiceError(
+				"La materia esta cerrada, no se puede actualizar",
+			);
+
 		return this._materiaEnNivelAcademicoRepository.update({
 			id,
-			data: dto.getData(),
+			data: valid,
 		});
 	}
 }

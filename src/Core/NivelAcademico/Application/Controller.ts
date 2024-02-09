@@ -129,6 +129,26 @@ export class NivelAcademicoController implements INivelAcademicoController {
 
 			if (!bodyVal.success) return CommonResponse.invalidBody();
 
+			const nivelAcademico =
+				await this._nivelAcademicoService.getNivelAcademicoById(
+					nivelAcademicoId,
+				);
+
+			if (!nivelAcademico)
+				return {
+					jsonBody: { message: "El nivel academico no existe" },
+					status: 400,
+				};
+
+			if (!nivelAcademico.estado)
+				return {
+					jsonBody: {
+						message:
+							"El nivel academico no esta activo, no se pueden crear nuevas materias",
+					},
+					status: 400,
+				};
+
 			const materiasCreadas =
 				await this._materiaEnNivelAcademicoService.createMateriasEnNivelAcademico(
 					{ ...bodyVal.data, nivelAcademicoId },

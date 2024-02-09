@@ -127,6 +127,7 @@ const updateBodySchema = z.object<
 		}
 	>
 >({
+	estado: z.boolean().optional(),
 	alias: z.string().nullable().optional(),
 	fechaInicio: z.string().datetime().optional(),
 	fechaFin: z.string().datetime().optional(),

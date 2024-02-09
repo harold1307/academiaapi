@@ -11,5 +11,6 @@ export type IUpdateMateriaEnNivelAcademico = Partial<
 		| "validaParaCreditos"
 		| "validaParaPromedio"
 		| "sumaHorasProfesor"
+		| "estado"
 	>
 >;
