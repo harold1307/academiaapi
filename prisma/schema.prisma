@@ -990,6 +990,7 @@ model MateriaEnHorario {
 
 model Ubicacion {
   id             String        @id @default(uuid())
+  estado         Boolean       @default(true)
   nombre         String
   tipo           TipoUbicacion
   capacidad      Int
