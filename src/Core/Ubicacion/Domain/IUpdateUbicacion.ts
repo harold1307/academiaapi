@@ -1,7 +1,7 @@
 import type { ICreateUbicacion } from "./ICreateUbicacion";
 
 export type IUpdateUbicacion = Partial<
-	ICreateUbicacion & {
+	Omit<ICreateUbicacion, "sedeId"> & {
 		estado: boolean;
 	}
 >;

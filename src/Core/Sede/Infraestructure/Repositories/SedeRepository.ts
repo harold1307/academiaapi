@@ -16,32 +16,11 @@ export class SedeRepository implements ISedeRepository {
 	async create(data: ICreateSede) {
 		const sede = await this._client.sede.create({
 			data,
-			include: {
-				coordinaciones: {
-					take: 1,
-				},
-				lugaresEjecucion: {
-					take: 1,
-				},
-				sesiones: {
-					take: 1,
-				},
-				titulos: {
-					take: 1,
-				},
-			},
 		});
 
-		const { coordinaciones, lugaresEjecucion, sesiones, titulos, ...rest } =
-			sede;
-
 		return {
-			...rest,
-			enUso:
-				coordinaciones.length > 0 ||
-				lugaresEjecucion.length > 0 ||
-				sesiones.length > 0 ||
-				titulos.length > 0,
+			...sede,
+			enUso: false,
 		};
 	}
 	async getAll(): Promise<ISede[]> {
@@ -59,17 +38,28 @@ export class SedeRepository implements ISedeRepository {
 				titulos: {
 					take: 1,
 				},
+				ubicaciones: {
+					take: 1,
+				},
 			},
 		});
 
 		return sedes.map(
-			({ coordinaciones, lugaresEjecucion, sesiones, titulos, ...rest }) => ({
+			({
+				coordinaciones,
+				lugaresEjecucion,
+				sesiones,
+				titulos,
+				ubicaciones,
+				...rest
+			}) => ({
 				...rest,
 				enUso:
 					coordinaciones.length > 0 ||
 					lugaresEjecucion.length > 0 ||
 					sesiones.length > 0 ||
-					titulos.length > 0,
+					titulos.length > 0 ||
+					ubicaciones.length > 0,
 			}),
 		);
 	}
@@ -90,13 +80,22 @@ export class SedeRepository implements ISedeRepository {
 				titulos: {
 					take: 1,
 				},
+				ubicaciones: {
+					take: 1,
+				},
 			},
 		});
 
 		if (!sede) return null;
 
-		const { coordinaciones, lugaresEjecucion, sesiones, titulos, ...rest } =
-			sede;
+		const {
+			coordinaciones,
+			lugaresEjecucion,
+			sesiones,
+			titulos,
+			ubicaciones,
+			...rest
+		} = sede;
 
 		return {
 			...rest,
@@ -104,7 +103,8 @@ export class SedeRepository implements ISedeRepository {
 				coordinaciones.length > 0 ||
 				lugaresEjecucion.length > 0 ||
 				sesiones.length > 0 ||
-				titulos.length > 0,
+				titulos.length > 0 ||
+				ubicaciones.length > 0,
 		};
 	}
 
@@ -127,11 +127,20 @@ export class SedeRepository implements ISedeRepository {
 				titulos: {
 					take: 1,
 				},
+				ubicaciones: {
+					take: 1,
+				},
 			},
 		});
 
-		const { coordinaciones, lugaresEjecucion, sesiones, titulos, ...rest } =
-			sede;
+		const {
+			coordinaciones,
+			lugaresEjecucion,
+			sesiones,
+			titulos,
+			ubicaciones,
+			...rest
+		} = sede;
 
 		return {
 			...rest,
@@ -139,7 +148,8 @@ export class SedeRepository implements ISedeRepository {
 				coordinaciones.length > 0 ||
 				lugaresEjecucion.length > 0 ||
 				sesiones.length > 0 ||
-				titulos.length > 0,
+				titulos.length > 0 ||
+				ubicaciones.length > 0,
 		};
 	}
 

@@ -229,18 +229,21 @@ model AsignaturaModuloEnMalla {
 }
 
 model Sede {
-  id               String           @id @default(uuid())
-  nombre           String
-  pais             String
-  provincia        String
-  canton           String
-  alias            String
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @default(now()) @updatedAt
+  id        String @id @default(uuid())
+  nombre    String
+  pais      String
+  provincia String
+  canton    String
+  alias     String
+
   lugaresEjecucion LugarEjecucion[]
   titulos          Titulo[]
   sesiones         Sesion[]
   coordinaciones   Coordinacion[]
+  ubicaciones      Ubicacion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("sedes")
 }
@@ -995,6 +998,9 @@ model Ubicacion {
   tipo           TipoUbicacion
   capacidad      Int
   entornoVirtual Boolean
+
+  sedeId String
+  sede   Sede   @relation(fields: [sedeId], references: [id])
 
   materiasEnHorario MateriaEnHorario[]
 

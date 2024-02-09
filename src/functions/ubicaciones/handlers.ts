@@ -16,12 +16,6 @@ app.get("ubicacionesGetById", {
 	route: "ubicaciones/{ubicacionId}",
 });
 
-app.post("ubicacionesCreate", {
-	authLevel: "anonymous",
-	handler: (req, ctx) => controller.ubicacionesCreate(req, ctx),
-	route: "ubicaciones",
-});
-
 app.deleteRequest("ubicacionesDeleteById", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.ubicacionesDeleteById(req, ctx),

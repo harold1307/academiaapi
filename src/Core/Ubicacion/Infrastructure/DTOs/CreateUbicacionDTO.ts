@@ -9,6 +9,7 @@ const schema = z.object<ZodInferSchema<ICreateUbicacion>>({
 	capacidad: z.number().min(0).int(),
 	entornoVirtual: z.boolean(),
 	nombre: z.string().min(1),
+	sedeId: z.string().uuid(),
 });
 
 class CreateUbicacionDTOError extends BaseDTOError<ICreateUbicacion> {

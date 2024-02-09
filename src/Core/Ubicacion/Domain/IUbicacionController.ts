@@ -1,5 +1,3 @@
-
-
 import type {
 	HttpRequest,
 	HttpResponseInit,
@@ -7,10 +5,6 @@ import type {
 } from "@azure/functions";
 
 export type IUbicacionController = {
-  ubicacionesCreate(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
 	ubicacionesDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,
@@ -27,4 +21,4 @@ export type IUbicacionController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-}
+};

@@ -40,3 +40,10 @@ app.post("sedesCreateCoordinacion", {
 	handler: (req, ctx) => controller.sedesCreateCoordinacion(req, ctx),
 	route: "sedes/{sedeId}/coordinaciones",
 });
+
+// ubicaciones
+app.post("sedesCreateUbicacion", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.sedesCreateUbicacion(req, ctx),
+	route: "sedes/{sedeId}/ubicaciones",
+});

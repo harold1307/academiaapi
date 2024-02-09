@@ -9,7 +9,6 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
-import type { ICreateUbicacion } from "../Domain/ICreateUbicacion";
 import type { IUbicacionController } from "../Domain/IUbicacionController";
 import type { IUbicacionService } from "../Domain/IUbicacionService";
 import type { IUpdateUbicacion } from "../Domain/IUpdateUbicacion";
@@ -52,30 +51,6 @@ export class UbicacionController implements IUbicacionController {
 
 			return CommonResponse.successful({ data: ubicacion });
 		} catch (error) {
-			return ErrorHandler.handle({ ctx, error });
-		}
-	}
-
-	async ubicacionesCreate(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit> {
-		try {
-			ctx.log(`Http function processed request for url '${req.url}'`);
-
-			const body = await req.json();
-			const bodyVal = createBodySchema.safeParse(body);
-
-			if (!bodyVal.success) return CommonResponse.invalidBody();
-
-			const newUbicacion = await this._ubicacionService.createUbicacion(
-				bodyVal.data,
-			);
-
-			ctx.log({ newUbicacion });
-
-			return CommonResponse.successful({ status: 201 });
-		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
@@ -125,13 +100,6 @@ export class UbicacionController implements IUbicacionController {
 		}
 	}
 }
-
-const createBodySchema = z.object<ZodInferSchema<ICreateUbicacion>>({
-	tipo: z.enum(["AULA", "LABORATORIO", "TALLER", "SALON"] as const),
-	capacidad: z.number(),
-	entornoVirtual: z.boolean(),
-	nombre: z.string(),
-});
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateUbicacion>>({
 	tipo: z.enum(["AULA", "LABORATORIO", "TALLER", "SALON"] as const).optional(),
