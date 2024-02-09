@@ -109,4 +109,8 @@ export const TYPES = {
 		"MateriaEnNivelAcademicoRepository",
 	),
 	MateriaEnNivelAcademicoService: Symbol.for("MateriaEnNivelAcademicoService"),
+	MateriaEnHorarioRepository: Symbol.for("MateriaEnHorarioRepository"),
+	MateriaEnHorarioService: Symbol.for("MateriaEnHorarioService"),
+	UbicacionRepository: Symbol.for("UbicacionRepository"),
+	UbicacionService: Symbol.for("UbicacionService"),
 } as const;

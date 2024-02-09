@@ -219,6 +219,12 @@ import type { IMateriaEnNivelAcademicoRepository } from "../../Core/MateriaEnNiv
 import type { IMateriaEnNivelAcademicoService } from "../../Core/MateriaEnNivelAcademico/Domain/IMateriaEnNivelAcademicoService";
 import { MateriaEnNivelAcademicoRepository } from "../../Core/MateriaEnNivelAcademico/Infrastructure/Repositories/MateriaEnNivelAcademicoRepository";
 
+// ubicaciones
+import { UbicacionService } from "../../Core/Ubicacion/Application/Service";
+import type { IUbicacionRepository } from "../../Core/Ubicacion/Domain/IUbicacionRepository";
+import type { IUbicacionService } from "../../Core/Ubicacion/Domain/IUbicacionService";
+import { UbicacionRepository } from "../../Core/Ubicacion/Infrastructure/Repositories/UbicacionRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -580,6 +586,14 @@ StartupBuilder.bind<IMateriaEnNivelAcademicoService>(
 	TYPES.MateriaEnNivelAcademicoService,
 )
 	.to(MateriaEnNivelAcademicoService)
+	.inSingletonScope();
+
+// ubicaciones
+StartupBuilder.bind<IUbicacionRepository>(TYPES.UbicacionRepository)
+	.to(UbicacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IUbicacionService>(TYPES.UbicacionService)
+	.to(UbicacionService)
 	.inSingletonScope();
 
 export { StartupBuilder };
