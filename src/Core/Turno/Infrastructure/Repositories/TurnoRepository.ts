@@ -14,10 +14,15 @@ export class TurnoRepository implements ITurnoRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
 	async getAll(): Promise<ITurno[]> {
-		const turnos = await this._client.turno.findMany();
+		const turnos = await this._client.turno.findMany({
+			include: {
+				sesion: true,
+			},
+		});
 
-		return turnos.map(({ ...rest }) => ({
+		return turnos.map(({ sesion, ...rest }) => ({
 			...rest,
+			sesion: { ...sesion, enUso: true },
 			enUso: false,
 		}));
 	}
@@ -31,19 +36,21 @@ export class TurnoRepository implements ITurnoRepository {
 
 		if (!turno) return null;
 
-		const { ...rest } = turno;
+		const { sesion, ...rest } = turno;
 
-		return { ...rest, enUso: false };
+		return { ...rest, sesion: { ...sesion, enUso: true }, enUso: false };
 	}
 	async deleteById(id: string): Promise<ITurno> {
 		const turno = await this._client.turno.delete({
 			where: { id },
+			include: {
+				sesion: true,
+			},
 		});
 
-		return {
-			...turno,
-			enUso: false,
-		};
+		const { sesion, ...rest } = turno;
+
+		return { ...rest, sesion: { ...sesion, enUso: true }, enUso: false };
 	}
 
 	async create({ sesionId, ...data }: ICreateTurno): Promise<ITurno> {
@@ -56,17 +63,27 @@ export class TurnoRepository implements ITurnoRepository {
 					},
 				},
 			},
+			include: {
+				sesion: true,
+			},
 		});
 
-		return { ...turno, enUso: false };
+		const { sesion, ...rest } = turno;
+
+		return { ...rest, sesion: { ...sesion, enUso: true }, enUso: false };
 	}
 
 	async update({ id, data }: UpdateTurnoParams): Promise<ITurno> {
 		const turno = await this._client.turno.update({
 			where: { id },
 			data,
+			include: {
+				sesion: true,
+			},
 		});
 
-		return { ...turno, enUso: false };
+		const { sesion, ...rest } = turno;
+
+		return { ...rest, sesion: { ...sesion, enUso: true }, enUso: false };
 	}
 }
