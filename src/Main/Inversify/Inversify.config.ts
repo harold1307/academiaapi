@@ -219,6 +219,12 @@ import type { IMateriaEnNivelAcademicoRepository } from "../../Core/MateriaEnNiv
 import type { IMateriaEnNivelAcademicoService } from "../../Core/MateriaEnNivelAcademico/Domain/IMateriaEnNivelAcademicoService";
 import { MateriaEnNivelAcademicoRepository } from "../../Core/MateriaEnNivelAcademico/Infrastructure/Repositories/MateriaEnNivelAcademicoRepository";
 
+// materias en horario
+import { MateriaEnHorarioService } from "../../Core/MateriaEnHorario/Application/Service";
+import type { IMateriaEnHorarioRepository } from "../../Core/MateriaEnHorario/Domain/IMateriaEnHorarioRepository";
+import type { IMateriaEnHorarioService } from "../../Core/MateriaEnHorario/Domain/IMateriaEnHorarioService";
+import { MateriaEnHorarioRepository } from "../../Core/MateriaEnHorario/Infrastructure/Repositories/MateriaEnHorarioRepository";
+
 // ubicaciones
 import { UbicacionService } from "../../Core/Ubicacion/Application/Service";
 import type { IUbicacionRepository } from "../../Core/Ubicacion/Domain/IUbicacionRepository";
@@ -586,6 +592,16 @@ StartupBuilder.bind<IMateriaEnNivelAcademicoService>(
 	TYPES.MateriaEnNivelAcademicoService,
 )
 	.to(MateriaEnNivelAcademicoService)
+	.inSingletonScope();
+
+// materias en horario
+StartupBuilder.bind<IMateriaEnHorarioRepository>(
+	TYPES.MateriaEnHorarioRepository,
+)
+	.to(MateriaEnHorarioRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IMateriaEnHorarioService>(TYPES.MateriaEnHorarioService)
+	.to(MateriaEnHorarioService)
 	.inSingletonScope();
 
 // ubicaciones

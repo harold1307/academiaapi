@@ -30,4 +30,8 @@ export type INivelAcademicoController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
+	nivelesAcademicosCreateMateriaEnHorario(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 };

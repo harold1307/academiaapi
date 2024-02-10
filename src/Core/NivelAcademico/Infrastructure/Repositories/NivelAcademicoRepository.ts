@@ -14,18 +14,60 @@ import type {
 export class NivelAcademicoRepository implements INivelAcademicoRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	getAll(): Promise<INivelAcademico[]> {
-		return this._client.nivelAcademico.findMany();
-	}
-
-	getById(id: string): Promise<INivelAcademico | null> {
-		return this._client.nivelAcademico.findUnique({
-			where: { id },
+	async getAll(): Promise<INivelAcademico[]> {
+		const niveles = await this._client.nivelAcademico.findMany({
+			include: {
+				sesion: true,
+			},
 		});
+
+		return niveles.map(({ sesion, ...rest }) => ({
+			...rest,
+			sesion: {
+				...sesion,
+				enUso: true,
+			},
+		}));
 	}
 
-	deleteById(id: string): Promise<INivelAcademico> {
-		return this._client.nivelAcademico.delete({ where: { id } });
+	async getById(id: string): Promise<INivelAcademico | null> {
+		const nivel = await this._client.nivelAcademico.findUnique({
+			where: { id },
+			include: {
+				sesion: true,
+			},
+		});
+
+		if (!nivel) return null;
+
+		const { sesion, ...rest } = nivel;
+
+		return {
+			...rest,
+			sesion: {
+				...sesion,
+				enUso: true,
+			},
+		};
+	}
+
+	async deleteById(id: string): Promise<INivelAcademico> {
+		const nivel = await this._client.nivelAcademico.delete({
+			where: { id },
+			include: {
+				sesion: true,
+			},
+		});
+
+		const { sesion, ...rest } = nivel;
+
+		return {
+			...rest,
+			sesion: {
+				...sesion,
+				enUso: true,
+			},
+		};
 	}
 
 	// async create({
@@ -40,7 +82,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 	// 			where: { nivelMallaId },
 	// 		});
 
-	// 	return this._client.nivelAcademico.create({
+	// 	const nivel =await this._client.nivelAcademico.create({
 	// 		data: {
 	// 			...data,
 	// 			sesion: { connect: { id: sesionId } },
@@ -62,11 +104,11 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 	// 	});
 	// }
 
-	update({
+	async update({
 		id,
 		data: { paraleloId, modeloEvaluativoId, ...data },
 	}: UpdateNivelAcademicoParams): Promise<INivelAcademico> {
-		return this._client.nivelAcademico.update({
+		const nivel = await this._client.nivelAcademico.update({
 			where: { id },
 			data: {
 				...data,
@@ -75,7 +117,20 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 					? { connect: { id: modeloEvaluativoId } }
 					: undefined,
 			},
+			include: {
+				sesion: true,
+			},
 		});
+
+		const { sesion, ...rest } = nivel;
+
+		return {
+			...rest,
+			sesion: {
+				...sesion,
+				enUso: true,
+			},
+		};
 	}
 
 	transaction(

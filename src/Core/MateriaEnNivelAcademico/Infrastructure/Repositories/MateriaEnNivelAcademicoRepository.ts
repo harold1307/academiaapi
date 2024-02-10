@@ -16,29 +16,164 @@ export class MateriaEnNivelAcademicoRepository
 {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	getAll(): Promise<IMateriaEnNivelAcademico[]> {
-		return this._client.materiaEnNivelAcademico.findMany();
+	async getAll(): Promise<IMateriaEnNivelAcademico[]> {
+		const materias = await this._client.materiaEnNivelAcademico.findMany({
+			include: {
+				asignaturaEnNivelMalla: {
+					include: {
+						asignatura: true,
+					},
+				},
+				asignaturaModulo: {
+					include: { asignatura: true },
+				},
+				modeloEvaluativo: true,
+			},
+		});
+
+		return materias.map(
+			({
+				asignaturaEnNivelMalla,
+				asignaturaModulo,
+				modeloEvaluativo,
+				...rest
+			}) => ({
+				...rest,
+				asignaturaEnNivelMalla: asignaturaEnNivelMalla
+					? {
+							...asignaturaEnNivelMalla,
+							asignatura: {
+								...asignaturaEnNivelMalla.asignatura,
+								enUso: true,
+							},
+						}
+					: null,
+				asignaturaModulo: asignaturaModulo
+					? {
+							...asignaturaModulo,
+							asignatura: {
+								...asignaturaModulo.asignatura,
+								enUso: true,
+							},
+						}
+					: null,
+				modeloEvaluativo: {
+					...modeloEvaluativo,
+					enUso: true,
+				},
+			}),
+		);
 	}
-	getById(id: string): Promise<IMateriaEnNivelAcademico | null> {
-		return this._client.materiaEnNivelAcademico.findFirst({
+	async getById(id: string): Promise<IMateriaEnNivelAcademico | null> {
+		const materia = await this._client.materiaEnNivelAcademico.findUnique({
 			where: {
 				id,
 			},
+			include: {
+				asignaturaEnNivelMalla: {
+					include: {
+						asignatura: true,
+					},
+				},
+				asignaturaModulo: {
+					include: { asignatura: true },
+				},
+				modeloEvaluativo: true,
+			},
 		});
+
+		if (!materia) return null;
+
+		const {
+			asignaturaEnNivelMalla,
+			asignaturaModulo,
+			modeloEvaluativo,
+			...rest
+		} = materia;
+
+		return {
+			...rest,
+			asignaturaEnNivelMalla: asignaturaEnNivelMalla
+				? {
+						...asignaturaEnNivelMalla,
+						asignatura: {
+							...asignaturaEnNivelMalla.asignatura,
+							enUso: true,
+						},
+					}
+				: null,
+			asignaturaModulo: asignaturaModulo
+				? {
+						...asignaturaModulo,
+						asignatura: {
+							...asignaturaModulo.asignatura,
+							enUso: true,
+						},
+					}
+				: null,
+			modeloEvaluativo: {
+				...modeloEvaluativo,
+				enUso: true,
+			},
+		};
 	}
-	deleteById(id: string): Promise<IMateriaEnNivelAcademico> {
-		return this._client.materiaEnNivelAcademico.delete({
+	async deleteById(id: string): Promise<IMateriaEnNivelAcademico> {
+		const materia = await this._client.materiaEnNivelAcademico.delete({
 			where: {
 				id,
 			},
+			include: {
+				asignaturaEnNivelMalla: {
+					include: {
+						asignatura: true,
+					},
+				},
+				asignaturaModulo: {
+					include: { asignatura: true },
+				},
+				modeloEvaluativo: true,
+			},
 		});
+
+		const {
+			asignaturaEnNivelMalla,
+			asignaturaModulo,
+			modeloEvaluativo,
+			...rest
+		} = materia;
+
+		return {
+			...rest,
+			asignaturaEnNivelMalla: asignaturaEnNivelMalla
+				? {
+						...asignaturaEnNivelMalla,
+						asignatura: {
+							...asignaturaEnNivelMalla.asignatura,
+							enUso: true,
+						},
+					}
+				: null,
+			asignaturaModulo: asignaturaModulo
+				? {
+						...asignaturaModulo,
+						asignatura: {
+							...asignaturaModulo.asignatura,
+							enUso: true,
+						},
+					}
+				: null,
+			modeloEvaluativo: {
+				...modeloEvaluativo,
+				enUso: true,
+			},
+		};
 	}
 
 	// create({
 	// 	modeloEvaluativoId,
 	// 	...data
 	// }: ICreateMateriaEnNivelAcademico): Promise<IMateriaEnNivelAcademico> {
-	// 	return this._client.materiaEnNivelAcademico.create({
+	// 	const materia = await this._client.materiaEnNivelAcademico.create({
 	// 		data: {
 	// 			...data,
 	// 			modeloEvaluativo: {
@@ -67,13 +202,57 @@ export class MateriaEnNivelAcademicoRepository
 		return this._client.$transaction(tx);
 	}
 
-	update({
+	async update({
 		id,
 		data,
 	}: UpdateMateriaEnNivelAcademicoParams): Promise<IMateriaEnNivelAcademico> {
-		return this._client.materiaEnNivelAcademico.update({
+		const materia = await this._client.materiaEnNivelAcademico.update({
 			where: { id },
 			data,
+			include: {
+				asignaturaEnNivelMalla: {
+					include: {
+						asignatura: true,
+					},
+				},
+				asignaturaModulo: {
+					include: { asignatura: true },
+				},
+				modeloEvaluativo: true,
+			},
 		});
+
+		const {
+			asignaturaEnNivelMalla,
+			asignaturaModulo,
+			modeloEvaluativo,
+			...rest
+		} = materia;
+
+		return {
+			...rest,
+			asignaturaEnNivelMalla: asignaturaEnNivelMalla
+				? {
+						...asignaturaEnNivelMalla,
+						asignatura: {
+							...asignaturaEnNivelMalla.asignatura,
+							enUso: true,
+						},
+					}
+				: null,
+			asignaturaModulo: asignaturaModulo
+				? {
+						...asignaturaModulo,
+						asignatura: {
+							...asignaturaModulo.asignatura,
+							enUso: true,
+						},
+					}
+				: null,
+			modeloEvaluativo: {
+				...modeloEvaluativo,
+				enUso: true,
+			},
+		};
 	}
 }

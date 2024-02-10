@@ -973,8 +973,10 @@ model NivelAcademico {
 }
 
 model MateriaEnHorario {
-  id  String @id @default(uuid())
-  dia Dia
+  id          String   @id @default(uuid())
+  dia         Dia
+  fechaInicio DateTime
+  fechaFin    DateTime
 
   materiaId        String
   materia          MateriaEnNivelAcademico @relation(fields: [materiaId], references: [id], onDelete: Cascade)

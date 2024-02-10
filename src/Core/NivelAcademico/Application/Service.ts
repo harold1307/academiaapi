@@ -80,6 +80,9 @@ export class NivelAcademicoService implements INivelAcademicoService {
 
 			const newNivelAcademico = await tx.nivelAcademico.create({
 				data: valid,
+				include: {
+					sesion: true,
+				},
 			});
 
 			// creando las materias del nivel academico, por defecto crea las asignatura en el nivel de la malla seleccionado
@@ -132,7 +135,13 @@ export class NivelAcademicoService implements INivelAcademicoService {
 				),
 			);
 
-			return newNivelAcademico;
+			return {
+				...newNivelAcademico,
+				sesion: {
+					...newNivelAcademico.sesion,
+					enUso: true,
+				},
+			};
 		});
 	}
 
