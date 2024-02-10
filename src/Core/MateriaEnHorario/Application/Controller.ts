@@ -12,10 +12,6 @@ import type { ZodInferSchema } from "../../../types";
 import { MateriaEnNivelAcademicoService } from "../../MateriaEnNivelAcademico/Application/Service";
 import type { IMateriaEnNivelAcademicoService } from "../../MateriaEnNivelAcademico/Domain/IMateriaEnNivelAcademicoService";
 import { mapLowercasedDays } from "../../NivelAcademico/Application/Controller";
-import { NivelAcademicoService } from "../../NivelAcademico/Application/Service";
-import type { INivelAcademicoService } from "../../NivelAcademico/Domain/INivelAcademicoService";
-import { TurnoService } from "../../Turno/Application/Service";
-import type { ITurnoService } from "../../Turno/Domain/ITurnoService";
 import { UbicacionService } from "../../Ubicacion/Application/Service";
 import type { IUbicacionService } from "../../Ubicacion/Domain/IUbicacionService";
 import type { IMateriaEnHorarioController } from "../Domain/IMateriaEnHorarioController";
@@ -26,8 +22,6 @@ import { MateriaEnHorarioService } from "./Service";
 export class MateriaEnHorarioController implements IMateriaEnHorarioController {
 	private _materiaEnHorarioService: IMateriaEnHorarioService;
 	private _materiaEnNivelAcademico: IMateriaEnNivelAcademicoService;
-	private _nivelAcademicoService: INivelAcademicoService;
-	private _turnoService: ITurnoService;
 	private _ubicacionService: IUbicacionService;
 
 	constructor() {
@@ -37,8 +31,6 @@ export class MateriaEnHorarioController implements IMateriaEnHorarioController {
 		this._materiaEnNivelAcademico = StartupBuilder.resolve(
 			MateriaEnNivelAcademicoService,
 		);
-		this._nivelAcademicoService = StartupBuilder.resolve(NivelAcademicoService);
-		this._turnoService = StartupBuilder.resolve(TurnoService);
 		this._ubicacionService = StartupBuilder.resolve(UbicacionService);
 	}
 
@@ -135,18 +127,7 @@ export class MateriaEnHorarioController implements IMateriaEnHorarioController {
 					status: 400,
 				};
 
-			const nivelAcademico =
-				await this._nivelAcademicoService.getNivelAcademicoById(
-					materiaEnNivelAcademico.nivelAcademicoId,
-				);
-
-			if (!nivelAcademico)
-				return {
-					jsonBody: { message: "El nivel academico no existe" },
-					status: 400,
-				};
-
-			if (!nivelAcademico.horarios)
+			if (!materiaEnHorario.nivelAcademico.horarios)
 				return {
 					jsonBody: {
 						message: "El nivel academico tiene desactivado los horarios",
@@ -154,18 +135,11 @@ export class MateriaEnHorarioController implements IMateriaEnHorarioController {
 					status: 400,
 				};
 
-			const turno = await this._turnoService.getTurnoById(
-				turnoId || materiaEnHorario.turnoId,
-			);
-
-			if (!turno)
-				return {
-					jsonBody: { message: "El turno no existe" },
-					status: 400,
-				};
-
 			if (turnoId && turnoId !== materiaEnHorario.turnoId) {
-				if (turno.sesionId !== nivelAcademico.sesionId)
+				if (
+					materiaEnHorario.turno.sesionId !==
+					materiaEnHorario.nivelAcademico.sesionId
+				)
 					return {
 						jsonBody: {
 							message: "El turno no pertenece a la sesion del nivel academico",
@@ -173,7 +147,11 @@ export class MateriaEnHorarioController implements IMateriaEnHorarioController {
 						status: 400,
 					};
 
-				if (!turno.sesion[mapLowercasedDays[dia || materiaEnHorario.dia]])
+				if (
+					!materiaEnHorario.turno.sesion[
+						mapLowercasedDays[dia || materiaEnHorario.dia]
+					]
+				)
 					return {
 						jsonBody: {
 							message: `La sesion del nivel academico no permite registrar materias en el dia ${dia}`,
@@ -183,7 +161,7 @@ export class MateriaEnHorarioController implements IMateriaEnHorarioController {
 			}
 
 			if (dia && dia !== materiaEnHorario.dia) {
-				if (!turno.sesion[mapLowercasedDays[dia]])
+				if (!materiaEnHorario.turno.sesion[mapLowercasedDays[dia]])
 					return {
 						jsonBody: {
 							message: `La sesion del nivel academico no permite registrar materias en el dia ${dia}`,
