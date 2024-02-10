@@ -49,3 +49,10 @@ app.get("mallasCurricularesGetByIdWithAsignaturas", {
 		controller.mallasCurricularesGetByIdWithAsignaturas(req, ctx),
 	route: "mallas-curriculares/{mallaCurricularId}/asignaturas",
 });
+
+// modulos
+app.post("mallasCurricularesCreateModulo", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.mallasCurricularesCreateModulo(req, ctx),
+	route: "mallas-curriculares/{mallaCurricularId}/asignaturas/{asignaturaId}",
+});
