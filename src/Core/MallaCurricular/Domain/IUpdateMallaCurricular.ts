@@ -15,5 +15,6 @@ export type IUpdateMallaCurricular = Partial<
 		| "tituloObtenido"
 		| "niveles"
 		| "modulos"
+		| "modalidad"
 	>
 >;

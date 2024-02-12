@@ -4,6 +4,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreateUbicacion } from "../../Domain/ICreateUbicacion";
 import type { IUbicacion } from "../../Domain/IUbicacion";
+import type { IUbicacionQueryFilter } from "../../Domain/IUbicacionQueryFilter";
 import type {
 	IUbicacionRepository,
 	UpdateUbicacionParams,
@@ -13,8 +14,9 @@ import type {
 export class UbicacionRepository implements IUbicacionRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	async getAll(): Promise<IUbicacion[]> {
+	async getAll(filters?: IUbicacionQueryFilter): Promise<IUbicacion[]> {
 		const ubicaciones = await this._client.ubicacion.findMany({
+			where: filters,
 			include: {
 				materiasEnHorario: {
 					take: 1,

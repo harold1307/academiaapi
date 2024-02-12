@@ -38,7 +38,9 @@ export class SesionController implements ISesionController {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 
-			const sesiones = await this._sesionService.getAllSesiones();
+			const sesiones = await this._sesionService.getAllSesiones(
+				Object.fromEntries(req.query.entries()),
+			);
 
 			return CommonResponse.successful({ data: sesiones });
 		} catch (error) {

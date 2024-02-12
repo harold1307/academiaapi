@@ -20,6 +20,7 @@ export class NivelMallaRepository implements INivelMallaRepository {
 				},
 				malla: {
 					include: {
+						modalidad: true,
 						niveles: {
 							where: {
 								nivelesAcademicos: {
@@ -33,9 +34,17 @@ export class NivelMallaRepository implements INivelMallaRepository {
 		});
 
 		return niveles.map(
-			({ nivelesAcademicos, malla: { niveles, ...malla }, ...rest }) => ({
+			({
+				nivelesAcademicos,
+				malla: { niveles, modalidad, ...malla },
+				...rest
+			}) => ({
 				...rest,
-				malla: { ...malla, enUso: niveles.length > 0 },
+				malla: {
+					...malla,
+					modalidad: { ...modalidad, enUso: true },
+					enUso: niveles.length > 0,
+				},
 				enUso: nivelesAcademicos.length > 0,
 			}),
 		);
@@ -49,6 +58,7 @@ export class NivelMallaRepository implements INivelMallaRepository {
 				},
 				malla: {
 					include: {
+						modalidad: true,
 						niveles: {
 							where: {
 								nivelesAcademicos: {
@@ -65,13 +75,17 @@ export class NivelMallaRepository implements INivelMallaRepository {
 
 		const {
 			nivelesAcademicos,
-			malla: { niveles, ...malla },
+			malla: { niveles, modalidad, ...malla },
 			...rest
 		} = nivel;
 
 		return {
 			...rest,
-			malla: { ...malla, enUso: niveles.length > 0 },
+			malla: {
+				...malla,
+				modalidad: { ...modalidad, enUso: true },
+				enUso: niveles.length > 0,
+			},
 			enUso: nivelesAcademicos.length > 0,
 		};
 	}
@@ -88,6 +102,7 @@ export class NivelMallaRepository implements INivelMallaRepository {
 				},
 				malla: {
 					include: {
+						modalidad: true,
 						niveles: {
 							where: {
 								nivelesAcademicos: {
@@ -106,13 +121,17 @@ export class NivelMallaRepository implements INivelMallaRepository {
 		});
 		const {
 			nivelesAcademicos,
-			malla: { niveles, ...malla },
+			malla: { niveles, modalidad, ...malla },
 			...rest
 		} = nivel;
 
 		return {
 			...rest,
-			malla: { ...malla, enUso: niveles.length > 0 },
+			malla: {
+				...malla,
+				modalidad: { ...modalidad, enUso: true },
+				enUso: niveles.length > 0,
+			},
 			enUso: nivelesAcademicos.length > 0,
 		};
 	}

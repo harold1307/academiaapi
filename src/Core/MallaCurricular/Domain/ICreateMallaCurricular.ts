@@ -12,6 +12,7 @@ export type ICreateMallaCurricular = Omit<
 	| "tituloObtenido"
 	| "niveles"
 	| "modulos"
+	| "modalidad"
 > & {
 	niveles: number;
 };

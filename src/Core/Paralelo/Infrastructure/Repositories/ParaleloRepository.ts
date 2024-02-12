@@ -33,7 +33,7 @@ export class ParaleloRepository implements IParaleloRepository {
 
 	async getById(id: string): Promise<IParalelo | null> {
 		const paralelo = await this._client.paralelo.findUnique({
-			where: { nombre: id },
+			where: { id },
 			include: {
 				cursoEscuelas: {
 					take: 1,
@@ -65,7 +65,7 @@ export class ParaleloRepository implements IParaleloRepository {
 
 	async deleteById(id: string): Promise<IParalelo> {
 		const paralelo = await this._client.paralelo.delete({
-			where: { nombre: id },
+			where: { id },
 		});
 
 		return {
@@ -76,7 +76,7 @@ export class ParaleloRepository implements IParaleloRepository {
 
 	async update({ id, data }: UpdateParaleloParams): Promise<IParalelo> {
 		const paralelo = await this._client.paralelo.update({
-			where: { nombre: id },
+			where: { id },
 			data,
 			include: {
 				cursoEscuelas: {

@@ -242,7 +242,14 @@ export class MateriaEnHorarioController implements IMateriaEnHorarioController {
 	}
 }
 
-const updateBodySchema = z.object<ZodInferSchema<IUpdateMateriaEnHorario>>({
+const updateBodySchema = z.object<
+	ZodInferSchema<
+		Omit<IUpdateMateriaEnHorario, "fechaInicio" | "fechaFin"> & {
+			fechaInicio?: string;
+			fechaFin?: string;
+		}
+	>
+>({
 	dia: z
 		.enum([
 			"LUNES",
@@ -256,4 +263,6 @@ const updateBodySchema = z.object<ZodInferSchema<IUpdateMateriaEnHorario>>({
 		.optional(),
 	turnoId: z.string().optional(),
 	ubicacionId: z.string().optional(),
+	fechaInicio: z.string().uuid().optional(),
+	fechaFin: z.string().uuid().optional(),
 });

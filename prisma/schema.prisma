@@ -331,7 +331,7 @@ model CursoEscuela {
   codigo String?
 
   paraleloId String
-  paralelo   Paralelo @relation(fields: [paraleloId], references: [nombre])
+  paralelo   Paralelo @relation(fields: [paraleloId], references: [id])
   sesionId   String
   sesion     Sesion   @relation(fields: [sesionId], references: [id])
 
@@ -403,7 +403,8 @@ model AsignaturaEnCursoEscuela {
 }
 
 model Paralelo {
-  nombre String @id
+  id     String @id @default(uuid())
+  nombre String
   orden  Int
 
   cursoEscuelas     CursoEscuela[]
@@ -954,7 +955,7 @@ model NivelAcademico {
   terminosCondiciones String?
 
   paraleloId         String
-  paralelo           Paralelo         @relation(fields: [paraleloId], references: [nombre])
+  paralelo           Paralelo         @relation(fields: [paraleloId], references: [id])
   modeloEvaluativoId String
   modeloEvaluativo   ModeloEvaluativo @relation(fields: [modeloEvaluativoId], references: [id])
   sesionId           String

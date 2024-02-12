@@ -81,7 +81,12 @@ export class NivelAcademicoService implements INivelAcademicoService {
 			const newNivelAcademico = await tx.nivelAcademico.create({
 				data: valid,
 				include: {
-					sesion: true,
+					sesion: {
+						include: {
+							turnos: true,
+							sede: true,
+						},
+					},
 				},
 			});
 
@@ -94,7 +99,7 @@ export class NivelAcademicoService implements INivelAcademicoService {
 						asignaturaEnNivelMallaId: id,
 						nivelAcademicoId: newNivelAcademico.id,
 						modeloEvaluativoId: newNivelAcademico.modeloEvaluativoId,
-						fechaInicio: valid.fechaFin,
+						fechaInicio: valid.fechaInicio,
 						fechaFin: valid.fechaFin,
 					}),
 				),
@@ -139,6 +144,14 @@ export class NivelAcademicoService implements INivelAcademicoService {
 				...newNivelAcademico,
 				sesion: {
 					...newNivelAcademico.sesion,
+					sede: {
+						...newNivelAcademico.sesion.sede,
+						enUso: true,
+					},
+					turnos: newNivelAcademico.sesion.turnos.map(t => ({
+						...t,
+						enUso: true,
+					})),
 					enUso: true,
 				},
 			};

@@ -2,13 +2,14 @@ import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
 import type { ICreateSesion } from "../Domain/ICreateSesion";
-import type { ISesion } from "../Domain/ISesion.ts";
+import type { ISesion } from "../Domain/ISesion";
 import type {
 	ISesionRepository,
 	UpdateSesionParams,
-} from "../Domain/ISesionRepository.ts";
-import type { ISesionService } from "../Domain/ISesionService.ts";
+} from "../Domain/ISesionRepository";
+import type { ISesionService } from "../Domain/ISesionService";
 import { CreateSesionDTO } from "../Infrastructure/DTOs/CreateSesionDTO";
+import { SesionQueryFilterDTO } from "../Infrastructure/DTOs/SesionQueryFilterDTO";
 import { UpdateSesionDTO } from "../Infrastructure/DTOs/UpdateSesionDTO";
 
 @injectable()
@@ -18,8 +19,10 @@ export class SesionService implements ISesionService {
 		private _sesionRepository: ISesionRepository,
 	) {}
 
-	getAllSesiones(): Promise<ISesion[]> {
-		return this._sesionRepository.getAll();
+	getAllSesiones(filters?: Record<string, string>): Promise<ISesion[]> {
+		const dto = new SesionQueryFilterDTO(filters);
+
+		return this._sesionRepository.getAll(dto.getData());
 	}
 
 	getSesionById(id: string): Promise<ISesion | null> {

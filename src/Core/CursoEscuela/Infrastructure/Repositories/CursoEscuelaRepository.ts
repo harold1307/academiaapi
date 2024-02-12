@@ -56,7 +56,7 @@ export class CursoEscuelaRepository implements ICursoEscuelaRepository {
 				...rest,
 				paralelo: {
 					connect: {
-						nombre: paraleloId,
+						id: paraleloId,
 					},
 				},
 				sesion: {
@@ -105,7 +105,7 @@ export class CursoEscuelaRepository implements ICursoEscuelaRepository {
 			data: {
 				...data,
 				sesion: sesionId ? { connect: { id: sesionId } } : undefined,
-				paralelo: paraleloId ? { connect: { nombre: paraleloId } } : undefined,
+				paralelo: paraleloId ? { connect: { id: paraleloId } } : undefined,
 			},
 		});
 

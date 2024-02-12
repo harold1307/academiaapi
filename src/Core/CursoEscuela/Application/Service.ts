@@ -84,7 +84,7 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 					...restData,
 					paralelo: {
 						connect: {
-							nombre: paraleloId,
+							id: paraleloId,
 						},
 					},
 					plantilla: {

@@ -8,27 +8,32 @@ import type {
 	ISesionRepository,
 	UpdateSesionParams,
 } from "../../Domain/ISesionRepository";
+import type { ISesionQueryFilter } from "../../Domain/ISesionQueryFilter";
 
 @injectable()
 export class SesionRepository implements ISesionRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	async getAll(): Promise<ISesion[]> {
+	async getAll(filters?: ISesionQueryFilter): Promise<ISesion[]> {
 		const sesiones = await this._client.sesion.findMany({
+			where: filters,
 			include: {
 				cursoEscuelas: {
 					take: 1,
 				},
-				turnos: { take: 1 },
+				turnos: true,
 				nivelesAcademicos: {
 					take: 1,
 				},
+				sede: true,
 			},
 		});
 
 		return sesiones.map(
-			({ cursoEscuelas, turnos, nivelesAcademicos, ...rest }) => ({
+			({ cursoEscuelas, turnos, nivelesAcademicos, sede, ...rest }) => ({
 				...rest,
+				turnos: turnos.map(t => ({ ...t, enUso: true })),
+				sede: { ...sede, enUso: true },
 				enUso:
 					cursoEscuelas.length > 0 ||
 					turnos.length > 0 ||
@@ -43,19 +48,22 @@ export class SesionRepository implements ISesionRepository {
 				cursoEscuelas: {
 					take: 1,
 				},
-				turnos: { take: 1 },
+				turnos: true,
 				nivelesAcademicos: {
 					take: 1,
 				},
+				sede: true,
 			},
 		});
 
 		if (!sesion) return null;
 
-		const { cursoEscuelas, turnos, nivelesAcademicos, ...rest } = sesion;
+		const { cursoEscuelas, turnos, nivelesAcademicos, sede, ...rest } = sesion;
 
 		return {
 			...rest,
+			turnos: turnos.map(t => ({ ...t, enUso: true })),
+			sede: { ...sede, enUso: true },
 			enUso:
 				cursoEscuelas.length > 0 ||
 				turnos.length > 0 ||
@@ -63,21 +71,38 @@ export class SesionRepository implements ISesionRepository {
 		};
 	}
 	async deleteById(id: string): Promise<ISesion> {
-		const sesion = await this._client.sesion.delete({ where: { id } });
+		const sesion = await this._client.sesion.delete({
+			where: { id },
+			include: { sede: true },
+		});
 
 		return {
 			...sesion,
+			turnos: [],
+			sede: {
+				...sesion.sede,
+				enUso: true,
+			},
 			enUso: false,
 		};
 	}
 
 	async create({ sedeId, ...data }: ICreateSesion): Promise<ISesion> {
 		const sesion = await this._client.sesion.create({
-			data: { ...data, sede: { connect: { id: sedeId } } },
+			data: {
+				...data,
+				sede: { connect: { id: sedeId } },
+			},
+			include: { sede: true },
 		});
 
 		return {
 			...sesion,
+			turnos: [],
+			sede: {
+				...sesion.sede,
+				enUso: true,
+			},
 			enUso: false,
 		};
 	}
@@ -95,17 +120,20 @@ export class SesionRepository implements ISesionRepository {
 				cursoEscuelas: {
 					take: 1,
 				},
-				turnos: { take: 1 },
+				turnos: true,
 				nivelesAcademicos: {
 					take: 1,
 				},
+				sede: true,
 			},
 		});
 
-		const { cursoEscuelas, turnos, nivelesAcademicos, ...rest } = sesion;
+		const { cursoEscuelas, turnos, nivelesAcademicos, sede, ...rest } = sesion;
 
 		return {
 			...rest,
+			turnos: turnos.map(t => ({ ...t, enUso: true })),
+			sede: { ...sede, enUso: true },
 			enUso:
 				cursoEscuelas.length > 0 ||
 				turnos.length > 0 ||

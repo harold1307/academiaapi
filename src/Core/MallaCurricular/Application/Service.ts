@@ -150,6 +150,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 					practicaComunitaria: true,
 					practicaPreProfesional: true,
 					tituloObtenido: true,
+					modalidad: true,
 					niveles: {
 						include: {
 							asignaturas: {
@@ -175,10 +176,14 @@ export class MallaCurricularService implements IMallaCurricularService {
 					"No se pudo obtener la nueva malla creada",
 				);
 
-			const { tituloObtenido, modulos, niveles, ...rest } = malla;
+			const { tituloObtenido, modulos, niveles, modalidad, ...rest } = malla;
 
 			return {
 				...rest,
+				modalidad: {
+					...modalidad,
+					enUso: true,
+				},
 				modulos: modulos.map(({ asignatura, ...m }) => ({
 					...m,
 					asignatura: {
@@ -437,6 +442,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 				practicaComunitaria: true,
 				practicaPreProfesional: true,
 				tituloObtenido: true,
+				modalidad: true,
 				niveles: {
 					include: {
 						asignaturas: {
@@ -462,11 +468,18 @@ export class MallaCurricularService implements IMallaCurricularService {
 
 		if (!malla) return null;
 
-		const { lugaresEjecucion, tituloObtenido, modulos, niveles, ...rest } =
-			malla;
+		const {
+			lugaresEjecucion,
+			tituloObtenido,
+			modulos,
+			niveles,
+			modalidad,
+			...rest
+		} = malla;
 
 		return {
 			...rest,
+			modalidad: { ...modalidad, enUso: true },
 			lugaresEjecucion: lugaresEjecucion.map(({ sede, ...rest }) => ({
 				...rest,
 				sede: {

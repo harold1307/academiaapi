@@ -19,12 +19,19 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				ubicacion: true,
 				turno: {
 					include: {
-						sesion: true,
+						sesion: {
+							include: { sede: true },
+						},
 					},
 				},
 				nivelAcademico: {
 					include: {
-						sesion: true,
+						sesion: {
+							include: {
+								turnos: true,
+								sede: true,
+							},
+						},
 					},
 				},
 			},
@@ -32,8 +39,14 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 
 		return materias.map(
 			({
-				turno: { sesion, ...turno },
-				nivelAcademico: { sesion: sesionT, ...nivelAcademico },
+				turno: {
+					sesion: { sede, ...sesion },
+					...turno
+				},
+				nivelAcademico: {
+					sesion: { turnos, sede: sedeT, ...sesionT },
+					...nivelAcademico
+				},
 				ubicacion,
 				...rest
 			}) => ({
@@ -46,6 +59,7 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 					...turno,
 					sesion: {
 						...sesion,
+						sede: { ...sede, enUso: true },
 						enUso: true,
 					},
 					enUso: true,
@@ -54,6 +68,8 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 					...nivelAcademico,
 					sesion: {
 						...sesionT,
+						sede: { ...sedeT, enUso: true },
+						turnos: turnos.map(t => ({ ...t, enUso: true })),
 						enUso: true,
 					},
 				},
@@ -67,12 +83,21 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				ubicacion: true,
 				turno: {
 					include: {
-						sesion: true,
+						sesion: {
+							include: {
+								sede: true,
+							},
+						},
 					},
 				},
 				nivelAcademico: {
 					include: {
-						sesion: true,
+						sesion: {
+							include: {
+								turnos: true,
+								sede: true,
+							},
+						},
 					},
 				},
 			},
@@ -81,8 +106,14 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 		if (!materia) return null;
 
 		const {
-			turno: { sesion, ...turno },
-			nivelAcademico: { sesion: sesionT, ...nivelAcademico },
+			turno: {
+				sesion: { sede, ...sesion },
+				...turno
+			},
+			nivelAcademico: {
+				sesion: { turnos, sede: sedeT, ...sesionT },
+				...nivelAcademico
+			},
 			ubicacion,
 			...rest
 		} = materia;
@@ -97,6 +128,7 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				...turno,
 				sesion: {
 					...sesion,
+					sede: { ...sede, enUso: true },
 					enUso: true,
 				},
 				enUso: true,
@@ -105,6 +137,8 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				...nivelAcademico,
 				sesion: {
 					...sesionT,
+					sede: { ...sedeT, enUso: true },
+					turnos: turnos.map(t => ({ ...t, enUso: true })),
 					enUso: true,
 				},
 			},
@@ -117,20 +151,35 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				ubicacion: true,
 				turno: {
 					include: {
-						sesion: true,
+						sesion: {
+							include: {
+								sede: true,
+							},
+						},
 					},
 				},
 				nivelAcademico: {
 					include: {
-						sesion: true,
+						sesion: {
+							include: {
+								turnos: true,
+								sede: true,
+							},
+						},
 					},
 				},
 			},
 		});
 
 		const {
-			turno: { sesion, ...turno },
-			nivelAcademico: { sesion: sesionT, ...nivelAcademico },
+			turno: {
+				sesion: { sede, ...sesion },
+				...turno
+			},
+			nivelAcademico: {
+				sesion: { turnos, sede: sedeT, ...sesionT },
+				...nivelAcademico
+			},
 			ubicacion,
 			...rest
 		} = materia;
@@ -145,6 +194,7 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				...turno,
 				sesion: {
 					...sesion,
+					sede: { ...sede, enUso: true },
 					enUso: true,
 				},
 				enUso: true,
@@ -153,6 +203,8 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				...nivelAcademico,
 				sesion: {
 					...sesionT,
+					sede: { ...sedeT, enUso: true },
+					turnos: turnos.map(t => ({ ...t, enUso: true })),
 					enUso: true,
 				},
 			},
@@ -178,20 +230,35 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				ubicacion: true,
 				turno: {
 					include: {
-						sesion: true,
+						sesion: {
+							include: {
+								sede: true,
+							},
+						},
 					},
 				},
 				nivelAcademico: {
 					include: {
-						sesion: true,
+						sesion: {
+							include: {
+								turnos: true,
+								sede: true,
+							},
+						},
 					},
 				},
 			},
 		});
 
 		const {
-			turno: { sesion, ...turno },
-			nivelAcademico: { sesion: sesionT, ...nivelAcademico },
+			turno: {
+				sesion: { sede, ...sesion },
+				...turno
+			},
+			nivelAcademico: {
+				sesion: { turnos, sede: sedeT, ...sesionT },
+				...nivelAcademico
+			},
 			ubicacion,
 			...rest
 		} = materia;
@@ -206,6 +273,7 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				...turno,
 				sesion: {
 					...sesion,
+					sede: { ...sede, enUso: true },
 					enUso: true,
 				},
 				enUso: true,
@@ -214,6 +282,8 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				...nivelAcademico,
 				sesion: {
 					...sesionT,
+					sede: { ...sedeT, enUso: true },
+					turnos: turnos.map(t => ({ ...t, enUso: true })),
 					enUso: true,
 				},
 			},
@@ -234,20 +304,35 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				ubicacion: true,
 				turno: {
 					include: {
-						sesion: true,
+						sesion: {
+							include: {
+								sede: true,
+							},
+						},
 					},
 				},
 				nivelAcademico: {
 					include: {
-						sesion: true,
+						sesion: {
+							include: {
+								turnos: true,
+								sede: true,
+							},
+						},
 					},
 				},
 			},
 		});
 
 		const {
-			turno: { sesion, ...turno },
-			nivelAcademico: { sesion: sesionT, ...nivelAcademico },
+			turno: {
+				sesion: { sede, ...sesion },
+				...turno
+			},
+			nivelAcademico: {
+				sesion: { turnos, sede: sedeT, ...sesionT },
+				...nivelAcademico
+			},
 			ubicacion,
 			...rest
 		} = materia;
@@ -262,6 +347,7 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				...turno,
 				sesion: {
 					...sesion,
+					sede: { ...sede, enUso: true },
 					enUso: true,
 				},
 				enUso: true,
@@ -270,6 +356,8 @@ export class MateriaEnHorarioRepository implements IMateriaEnHorarioRepository {
 				...nivelAcademico,
 				sesion: {
 					...sesionT,
+					sede: { ...sedeT, enUso: true },
+					turnos: turnos.map(t => ({ ...t, enUso: true })),
 					enUso: true,
 				},
 			},

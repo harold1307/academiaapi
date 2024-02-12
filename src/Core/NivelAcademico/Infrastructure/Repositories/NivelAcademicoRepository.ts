@@ -17,14 +17,21 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 	async getAll(): Promise<INivelAcademico[]> {
 		const niveles = await this._client.nivelAcademico.findMany({
 			include: {
-				sesion: true,
+				sesion: {
+					include: {
+						turnos: true,
+						sede: true,
+					},
+				},
 			},
 		});
 
-		return niveles.map(({ sesion, ...rest }) => ({
+		return niveles.map(({ sesion: { sede, ...sesion }, ...rest }) => ({
 			...rest,
 			sesion: {
 				...sesion,
+				sede: { ...sede, enUso: true },
+				turnos: sesion.turnos.map(t => ({ ...t, enUso: true })),
 				enUso: true,
 			},
 		}));
@@ -34,18 +41,28 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 		const nivel = await this._client.nivelAcademico.findUnique({
 			where: { id },
 			include: {
-				sesion: true,
+				sesion: {
+					include: {
+						turnos: true,
+						sede: true,
+					},
+				},
 			},
 		});
 
 		if (!nivel) return null;
 
-		const { sesion, ...rest } = nivel;
+		const {
+			sesion: { sede, ...sesion },
+			...rest
+		} = nivel;
 
 		return {
 			...rest,
 			sesion: {
 				...sesion,
+				sede: { ...sede, enUso: true },
+				turnos: sesion.turnos.map(t => ({ ...t, enUso: true })),
 				enUso: true,
 			},
 		};
@@ -55,16 +72,26 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 		const nivel = await this._client.nivelAcademico.delete({
 			where: { id },
 			include: {
-				sesion: true,
+				sesion: {
+					include: {
+						turnos: true,
+						sede: true,
+					},
+				},
 			},
 		});
 
-		const { sesion, ...rest } = nivel;
+		const {
+			sesion: { sede, ...sesion },
+			...rest
+		} = nivel;
 
 		return {
 			...rest,
 			sesion: {
 				...sesion,
+				sede: { ...sede, enUso: true },
+				turnos: sesion.turnos.map(t => ({ ...t, enUso: true })),
 				enUso: true,
 			},
 		};
@@ -86,7 +113,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 	// 		data: {
 	// 			...data,
 	// 			sesion: { connect: { id: sesionId } },
-	// 			paralelo: { connect: { nombre: paraleloId } },
+	// 			paralelo: { connect: { id: paraleloId } },
 	// 			nivelMalla: { connect: { id: nivelMallaId } },
 	// 			modeloEvaluativo: { connect: { id: modeloEvaluativoId } },
 	// 			materias: {
@@ -112,22 +139,32 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 			where: { id },
 			data: {
 				...data,
-				paralelo: paraleloId ? { connect: { nombre: paraleloId } } : undefined,
+				paralelo: paraleloId ? { connect: { id: paraleloId } } : undefined,
 				modeloEvaluativo: modeloEvaluativoId
 					? { connect: { id: modeloEvaluativoId } }
 					: undefined,
 			},
 			include: {
-				sesion: true,
+				sesion: {
+					include: {
+						turnos: true,
+						sede: true,
+					},
+				},
 			},
 		});
 
-		const { sesion, ...rest } = nivel;
+		const {
+			sesion: { sede, ...sesion },
+			...rest
+		} = nivel;
 
 		return {
 			...rest,
 			sesion: {
 				...sesion,
+				sede: { ...sede, enUso: true },
+				turnos: sesion.turnos.map(t => ({ ...t, enUso: true })),
 				enUso: true,
 			},
 		};

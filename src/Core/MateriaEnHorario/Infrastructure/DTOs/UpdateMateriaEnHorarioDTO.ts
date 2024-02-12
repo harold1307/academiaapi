@@ -18,6 +18,8 @@ const schema = z.object<ZodInferSchema<IUpdateMateriaEnHorario>>({
 		.optional(),
 	turnoId: z.string().uuid().optional(),
 	ubicacionId: z.string().uuid().optional(),
+	fechaInicio: z.date().optional(),
+	fechaFin: z.date().optional(),
 });
 
 class UpdateMateriaEnHorarioDTOError extends BaseDTOError<IUpdateMateriaEnHorario> {

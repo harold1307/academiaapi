@@ -28,7 +28,9 @@ export class UbicacionController implements IUbicacionController {
 		try {
 			ctx.log(`Http function processed request for url '${req.url}'`);
 
-			const ubicaciones = await this._ubicacionService.getAllUbicaciones();
+			const ubicaciones = await this._ubicacionService.getAllUbicaciones(
+				Object.fromEntries(req.query.entries()),
+			);
 
 			return CommonResponse.successful({ data: ubicaciones });
 		} catch (error) {

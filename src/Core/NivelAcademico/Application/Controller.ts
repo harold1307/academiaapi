@@ -236,7 +236,7 @@ export class NivelAcademicoController implements INivelAcademicoController {
 					status: 400,
 				};
 
-			const { turnoId, dia, ubicacionId } = bodyVal.data;
+			const { turnoId, dia, ubicacionId, fechaInicio, fechaFin } = bodyVal.data;
 
 			const turno = await this._turnoService.getTurnoById(turnoId);
 
@@ -280,6 +280,8 @@ export class NivelAcademicoController implements INivelAcademicoController {
 					nivelAcademicoId,
 					materiaId,
 					ubicacionId,
+					fechaInicio: new Date(fechaInicio),
+					fechaFin: new Date(fechaFin),
 				});
 
 			ctx.log({ newMateriaEnHorario });
@@ -293,7 +295,13 @@ export class NivelAcademicoController implements INivelAcademicoController {
 
 const createMateriaEnHorarioBodySchema = z.object<
 	ZodInferSchema<
-		Omit<ICreateMateriaEnHorario, "nivelAcademicoId" | "materiaId">
+		Omit<
+			ICreateMateriaEnHorario,
+			"nivelAcademicoId" | "materiaId" | "fechaInicio" | "fechaFin"
+		> & {
+			fechaInicio: string;
+			fechaFin: string;
+		}
 	>
 >({
 	dia: z.enum([
@@ -307,6 +315,8 @@ const createMateriaEnHorarioBodySchema = z.object<
 	] as const),
 	turnoId: z.string(),
 	ubicacionId: z.string(),
+	fechaInicio: z.string().datetime(),
+	fechaFin: z.string().datetime(),
 });
 
 const createMateriasBodySchema = z.object<

@@ -10,6 +10,7 @@ import type {
 import type { IUbicacionService } from "../Domain/IUbicacionService";
 import { CreateUbicacionDTO } from "../Infrastructure/DTOs/CreateUbicacionDTO";
 import { UpdateUbicacionDTO } from "../Infrastructure/DTOs/UpdateUbicacionDTO";
+import { UbicacionQueryFilterDTO } from "../Infrastructure/DTOs/UbicacionQueryFilterDTO";
 
 @injectable()
 export class UbicacionService implements IUbicacionService {
@@ -18,8 +19,10 @@ export class UbicacionService implements IUbicacionService {
 		private _ubicacionRepository: IUbicacionRepository,
 	) {}
 
-	getAllUbicaciones(): Promise<IUbicacion[]> {
-		return this._ubicacionRepository.getAll();
+	getAllUbicaciones(filters?: Record<string, string>): Promise<IUbicacion[]> {
+		const filterDto = new UbicacionQueryFilterDTO(filters);
+
+		return this._ubicacionRepository.getAll(filterDto.getData());
 	}
 
 	getUbicacionById(id: string): Promise<IUbicacion | null> {

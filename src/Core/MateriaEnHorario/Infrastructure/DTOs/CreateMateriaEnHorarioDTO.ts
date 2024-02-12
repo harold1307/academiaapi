@@ -18,6 +18,8 @@ const schema = z.object<ZodInferSchema<ICreateMateriaEnHorario>>({
 	nivelAcademicoId: z.string().uuid(),
 	turnoId: z.string().uuid(),
 	ubicacionId: z.string().uuid(),
+	fechaInicio: z.date(),
+	fechaFin: z.date(),
 });
 
 class CreateMateriaEnHorarioDTOError extends BaseDTOError<ICreateMateriaEnHorario> {

@@ -17,13 +17,33 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 		const coordinaciones = await this._client.coordinacion.findMany({
 			include: {
 				programas: {
-					take: 1,
+					include: {
+						detalleNivelTitulacion: {
+							include: {
+								nivelTitulacion: true,
+							},
+						},
+					},
 				},
 			},
 		});
 
 		return coordinaciones.map(({ programas, ...rest }) => ({
 			...rest,
+			programas: programas.map(
+				({
+					detalleNivelTitulacion: {
+						nivelTitulacion,
+						...detalleNivelTitulacion
+					},
+					...p
+				}) => ({
+					...p,
+					detalleNivelTitulacion,
+					nivelTitulacion,
+					enUso: true,
+				}),
+			),
 			enUso: programas.length > 0,
 		}));
 	}
@@ -32,7 +52,13 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 			where: { id },
 			include: {
 				programas: {
-					take: 1,
+					include: {
+						detalleNivelTitulacion: {
+							include: {
+								nivelTitulacion: true,
+							},
+						},
+					},
 				},
 			},
 		});
@@ -43,6 +69,20 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 
 		return {
 			...rest,
+			programas: programas.map(
+				({
+					detalleNivelTitulacion: {
+						nivelTitulacion,
+						...detalleNivelTitulacion
+					},
+					...p
+				}) => ({
+					...p,
+					detalleNivelTitulacion,
+					nivelTitulacion,
+					enUso: true,
+				}),
+			),
 			enUso: programas.length > 0,
 		};
 	}
@@ -53,6 +93,7 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 
 		return {
 			...coordinacion,
+			programas: [],
 			enUso: false,
 		};
 	}
@@ -72,6 +113,7 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 
 		return {
 			...coordinacion,
+			programas: [],
 			enUso: false,
 		};
 	}
@@ -79,11 +121,38 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 		const coordinacion = await this._client.coordinacion.update({
 			where: { id },
 			data,
+			include: {
+				programas: {
+					include: {
+						detalleNivelTitulacion: {
+							include: {
+								nivelTitulacion: true,
+							},
+						},
+					},
+				},
+			},
 		});
 
+		const { programas, ...rest } = coordinacion;
+
 		return {
-			...coordinacion,
-			enUso: false,
+			...rest,
+			programas: programas.map(
+				({
+					detalleNivelTitulacion: {
+						nivelTitulacion,
+						...detalleNivelTitulacion
+					},
+					...p
+				}) => ({
+					...p,
+					detalleNivelTitulacion,
+					nivelTitulacion,
+					enUso: true,
+				}),
+			),
+			enUso: programas.length > 0,
 		};
 	}
 }

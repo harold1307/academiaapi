@@ -16,13 +16,17 @@ export class TurnoRepository implements ITurnoRepository {
 	async getAll(): Promise<ITurno[]> {
 		const turnos = await this._client.turno.findMany({
 			include: {
-				sesion: true,
+				sesion: {
+					include: {
+						sede: true,
+					},
+				},
 			},
 		});
 
-		return turnos.map(({ sesion, ...rest }) => ({
+		return turnos.map(({ sesion: { sede, ...sesion }, ...rest }) => ({
 			...rest,
-			sesion: { ...sesion, enUso: true },
+			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
 			enUso: false,
 		}));
 	}
@@ -30,27 +34,49 @@ export class TurnoRepository implements ITurnoRepository {
 		const turno = await this._client.turno.findUnique({
 			where: { id },
 			include: {
-				sesion: true,
+				sesion: {
+					include: {
+						sede: true,
+					},
+				},
 			},
 		});
 
 		if (!turno) return null;
 
-		const { sesion, ...rest } = turno;
+		const {
+			sesion: { sede, ...sesion },
+			...rest
+		} = turno;
 
-		return { ...rest, sesion: { ...sesion, enUso: true }, enUso: false };
+		return {
+			...rest,
+			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
+			enUso: false,
+		};
 	}
 	async deleteById(id: string): Promise<ITurno> {
 		const turno = await this._client.turno.delete({
 			where: { id },
 			include: {
-				sesion: true,
+				sesion: {
+					include: {
+						sede: true,
+					},
+				},
 			},
 		});
 
-		const { sesion, ...rest } = turno;
+		const {
+			sesion: { sede, ...sesion },
+			...rest
+		} = turno;
 
-		return { ...rest, sesion: { ...sesion, enUso: true }, enUso: false };
+		return {
+			...rest,
+			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
+			enUso: false,
+		};
 	}
 
 	async create({ sesionId, ...data }: ICreateTurno): Promise<ITurno> {
@@ -64,13 +90,24 @@ export class TurnoRepository implements ITurnoRepository {
 				},
 			},
 			include: {
-				sesion: true,
+				sesion: {
+					include: {
+						sede: true,
+					},
+				},
 			},
 		});
 
-		const { sesion, ...rest } = turno;
+		const {
+			sesion: { sede, ...sesion },
+			...rest
+		} = turno;
 
-		return { ...rest, sesion: { ...sesion, enUso: true }, enUso: false };
+		return {
+			...rest,
+			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
+			enUso: false,
+		};
 	}
 
 	async update({ id, data }: UpdateTurnoParams): Promise<ITurno> {
@@ -78,12 +115,23 @@ export class TurnoRepository implements ITurnoRepository {
 			where: { id },
 			data,
 			include: {
-				sesion: true,
+				sesion: {
+					include: {
+						sede: true,
+					},
+				},
 			},
 		});
 
-		const { sesion, ...rest } = turno;
+		const {
+			sesion: { sede, ...sesion },
+			...rest
+		} = turno;
 
-		return { ...rest, sesion: { ...sesion, enUso: true }, enUso: false };
+		return {
+			...rest,
+			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
+			enUso: false,
+		};
 	}
 }
