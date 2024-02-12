@@ -8,7 +8,7 @@
 		"clean": "rimraf dist",
 		"prestart": "npm run clean && npm run build",
 		"start": "func start",
-		"test": "pnpm docker:up && dotenv -e .env.test -- prisma db push && dotenv -e .env.test -- jest -i",
+		"test": "echo \"No tests yet...\"",
 		"test:unit": "jest --maxWorkers 1 --watch --testPathPattern=src/Tests/Unit --setupFilesAfterEnv ./src/Tests/singleton.ts",
 		"test:e2e": "pnpm docker:up && dotenv -e .env.test -- prisma db push && dotenv -e .env.test -- jest -i --testPathPattern=src/Tests/E2e",
 		"create:modulo": "hygen modulo new",

@@ -178,8 +178,8 @@ beforeAll(async () => {
 			sesionPromise,
 			Prisma.programa.findFirst(),
 		]);
-
-	paraleloId = paralelo.nombre;
+	console.log({ malla, paralelo, modeloEvaluativo, sesion, programa });
+	paraleloId = paralelo.id;
 	sesionId = sesion.id;
 	modeloEvaluativoId = modeloEvaluativo.id;
 	nivelMallaId = malla.niveles.at(0)?.id || "";
@@ -228,8 +228,8 @@ const commonBody = {
 	modeloEvaluativoId,
 	paraleloId,
 	nombre: "ADMIN EL JORNADA 1",
-	fechaInicio: new Date(),
-	fechaFin: new Date(),
+	fechaInicio: new Date("2024-02-12T05:17:22.176Z"),
+	fechaFin: new Date("2024-02-12T10:17:40.842Z"),
 	inicioAgregaciones: new Date(),
 	limiteAgregaciones: new Date(),
 	validaRequisitosMalla: true,
@@ -275,6 +275,8 @@ describe("Crear nivel academico", () => {
 			}),
 			new InvocationContext(),
 		);
+
+		console.log({ nivelMallaId, sesionId, paraleloId });
 
 		expect(res.status).toBe(201);
 	});
@@ -630,6 +632,8 @@ describe("Crear asignaturas en el nivel academico", () => {
 			}),
 			new InvocationContext(),
 		);
+
+		console.log(res.jsonBody);
 
 		expect(res.status).toBe(201);
 	});

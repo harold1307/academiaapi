@@ -84,4 +84,74 @@ jobs:
           scm-do-build-during-deployment: true
           slot-name: dev
           respect-funcignore: true
+  build-and-deploy-test:
+    runs-on: windows-latest
+    if: github.ref == 'refs/heads/test'
+    env:
+      AZURE_FUNCTIONAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE_TEST }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
+      SHADOW_DATABASE_URL: ${{ secrets.SHADOW_DATABASE_URL_TEST }}
+    steps:
+      - name: "Checkout GitHub Action"
+        uses: actions/checkout@v4
+
+      - name: Setup Node ${{ env.NODE_VERSION }} Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --config.node-linker=hoisted
+
+      - name: "Create env file"
+        run: |
+          touch .env
+          echo DATABASE_URL="${{ env.DATABASE_URL }}" >> .env
+          echo SHADOW_DATABASE_URL=${{ env.SHADOW_DATABASE_URL }} >> .env
+          cat .env
+
+      - name: Apply all pending migrations to the database
+        run: pnpm dlx prisma db push
+        # run: pnpm dlx prisma migrate deploy
+
+      - name: Resolve Project Dependencies Using pnpm
+        shell: pwsh
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pnpm --if-present run build
+          pnpm --if-present run test
+          popd
+
+      - name: Delete node_modules
+        run: pnpm dlx rimraf --glob node_modules
+
+      - name: Run Azure Functions Action
+        uses: Azure/functions-action@v1.5.1
+        id: fa
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          publish-profile: ${{ env.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          scm-do-build-during-deployment: true
+          slot-name: test
+          respect-funcignore: true
 # For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
