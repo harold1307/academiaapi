@@ -2,5 +2,17 @@ import type { IMallaCurricular } from "./IMallaCurricular";
 
 export type ICreateMallaCurricular = Omit<
 	IMallaCurricular,
-	"id" | "createdAt" | "updatedAt"
->;
+	| "id"
+	| "createdAt"
+	| "updatedAt"
+	| "enUso"
+	| "estado"
+	| "practicaPreProfesional"
+	| "practicaComunitaria"
+	| "tituloObtenido"
+	| "niveles"
+	| "modulos"
+	| "modalidad"
+> & {
+	niveles: number;
+};

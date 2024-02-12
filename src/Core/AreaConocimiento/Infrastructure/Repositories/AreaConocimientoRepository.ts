@@ -5,7 +5,7 @@ import { TYPES } from "../../../../Main/Inversify/types";
 import type { IAreaConocimiento } from "../../Domain/IAreaConocimiento";
 import type {
 	IAreaConocimientoRepository,
-	IUpdateAreaConocimientoParams,
+	UpdateAreaConocimientoParams,
 } from "../../Domain/IAreaConocimientoRepository";
 import type { ICreateAreaConocimiento } from "../../Domain/ICreateAreaConocimiento";
 
@@ -25,23 +25,33 @@ export class AreaConocimientoRepository implements IAreaConocimientoRepository {
 	async getAll(): Promise<IAreaConocimiento[]> {
 		const areas = await this._client.areaConocimiento.findMany({
 			include: {
-				asignaturasEnMalla: {
+				asignaturasEnNivelMalla: {
+					take: 1,
+				},
+				asignaturasModuloEnMalla: {
 					take: 1,
 				},
 			},
 		});
 
-		return areas.map(({ asignaturasEnMalla, ...a }) => ({
-			...a,
-			enUso: asignaturasEnMalla.length > 0,
-		}));
+		return areas.map(
+			({ asignaturasEnNivelMalla, asignaturasModuloEnMalla, ...rest }) => ({
+				...rest,
+				enUso:
+					asignaturasEnNivelMalla.length > 0 ||
+					asignaturasModuloEnMalla.length > 0,
+			}),
+		);
 	}
 
 	async getById(id: string): Promise<IAreaConocimiento | null> {
 		const area = await this._client.areaConocimiento.findUnique({
 			where: { id },
 			include: {
-				asignaturasEnMalla: {
+				asignaturasEnNivelMalla: {
+					take: 1,
+				},
+				asignaturasModuloEnMalla: {
 					take: 1,
 				},
 			},
@@ -49,11 +59,13 @@ export class AreaConocimientoRepository implements IAreaConocimientoRepository {
 
 		if (!area) return null;
 
-		const { asignaturasEnMalla, ...rest } = area;
+		const { asignaturasEnNivelMalla, asignaturasModuloEnMalla, ...rest } = area;
 
 		return {
 			...rest,
-			enUso: asignaturasEnMalla.length > 0,
+			enUso:
+				asignaturasEnNivelMalla.length > 0 ||
+				asignaturasModuloEnMalla.length > 0,
 		};
 	}
 
@@ -61,38 +73,48 @@ export class AreaConocimientoRepository implements IAreaConocimientoRepository {
 		const area = await this._client.areaConocimiento.delete({
 			where: { id },
 			include: {
-				asignaturasEnMalla: {
+				asignaturasEnNivelMalla: {
+					take: 1,
+				},
+				asignaturasModuloEnMalla: {
 					take: 1,
 				},
 			},
 		});
 
-		const { asignaturasEnMalla, ...rest } = area;
+		const { asignaturasEnNivelMalla, asignaturasModuloEnMalla, ...rest } = area;
 		return {
 			...rest,
-			enUso: asignaturasEnMalla.length > 0,
+			enUso:
+				asignaturasEnNivelMalla.length > 0 ||
+				asignaturasModuloEnMalla.length > 0,
 		};
 	}
 
 	async update({
 		id,
 		data,
-	}: IUpdateAreaConocimientoParams): Promise<IAreaConocimiento> {
+	}: UpdateAreaConocimientoParams): Promise<IAreaConocimiento> {
 		const eje = await this._client.areaConocimiento.update({
 			where: { id: id },
 			data,
 			include: {
-				asignaturasEnMalla: {
+				asignaturasEnNivelMalla: {
+					take: 1,
+				},
+				asignaturasModuloEnMalla: {
 					take: 1,
 				},
 			},
 		});
 
-		const { asignaturasEnMalla, ...rest } = eje;
+		const { asignaturasEnNivelMalla, asignaturasModuloEnMalla, ...rest } = eje;
 
 		return {
 			...rest,
-			enUso: asignaturasEnMalla.length > 0,
+			enUso:
+				asignaturasEnNivelMalla.length > 0 ||
+				asignaturasModuloEnMalla.length > 0,
 		};
 	}
 }

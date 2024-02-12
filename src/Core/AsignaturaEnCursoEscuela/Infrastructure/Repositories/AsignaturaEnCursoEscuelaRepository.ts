@@ -5,7 +5,7 @@ import { TYPES } from "../../../../Main/Inversify/types";
 import type { IAsignaturaEnCursoEscuela } from "../../Domain/IAsignaturaEnCursoEscuela";
 import type {
 	IAsignaturaEnCursoEscuelaRepository,
-	IUpdateAsignaturaEnCursoEscuelaParams,
+	UpdateAsignaturaEnCursoEscuelaParams,
 } from "../../Domain/IAsignaturaEnCursoEscuelaRepository";
 import type { ICreateAsignaturaEnCursoEscuela } from "../../Domain/ICreateAsignaturaEnCursoEscuela";
 
@@ -51,7 +51,7 @@ export class AsignaturaEnCursoEscuelaRepository
 	update({
 		id,
 		data: { profesorId, asignaturaId, modeloEvaluativoId, ...data },
-	}: IUpdateAsignaturaEnCursoEscuelaParams): Promise<IAsignaturaEnCursoEscuela> {
+	}: UpdateAsignaturaEnCursoEscuelaParams): Promise<IAsignaturaEnCursoEscuela> {
 		return this._client.asignaturaEnCursoEscuela.update({
 			where: { id },
 			data: {

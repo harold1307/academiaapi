@@ -1,26 +1,27 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
+import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateCurso } from "../../Domain/IUpdateCurso";
 
-const schema: z.ZodType<IUpdateCurso> = z.object({
+const schema = z.object<ZodInferSchema<IUpdateCurso>>({
 	estado: z.boolean().optional(),
 	nombre: z.string().optional(),
-	certificado: z.string().nullable().optional(),
-	alias: z.string().nullable().optional(),
 });
 
-export class UpdateCursoDTO {
-	private curso: IUpdateCurso | undefined;
+class UpdateCursoError extends BaseDTOError<IUpdateCurso> {
+	constructor(error: z.ZodError<IUpdateCurso>) {
+		super(error);
+		this.name = "UpdateCursoError";
+		this.message = "Error de validacion para actualizar la plantilla de curso";
+	}
+}
 
-	constructor(private input: any) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.curso = parse.data;
-		}
-
-		return parse;
+export class UpdateCursoDTO extends BaseValidatorDTO<
+	IUpdateCurso,
+	UpdateCursoError
+> {
+	constructor(input: unknown) {
+		super(schema, UpdateCursoError, input);
 	}
 }

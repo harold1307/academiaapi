@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateAsignaturaEnCursoEscuela } from "../../Domain/IUpdateAsignaturaEnCursoEscuela";
 
@@ -13,24 +14,31 @@ const schema = z.object<ZodInferSchema<IUpdateAsignaturaEnCursoEscuela>>({
 	sumaHoras: z.boolean().optional(),
 	creditos: z.number().optional(),
 	requeridoAprobar: z.boolean().optional(),
-	asistenciaAprobar: z.number().optional(),
+	asistenciaAprobar: z.number().nullable().optional(),
+	cantidadDecimales: z.number().nullable().optional(),
+	notaMaxima: z.number().nullable().optional(),
+	notaMinima: z.number().nullable().optional(),
+
 	asignaturaId: z.string().optional(),
-	// @ts-expect-error ZodInferSchema doesnt work with nullable and optional types
+	modeloEvaluativoId: z.string().uuid().nullable().optional(),
+
 	profesorId: z.string().nullable().optional(),
 });
 
-export class UpdateAsignaturaEnCursoEscuelaDTO {
-	private data: IUpdateAsignaturaEnCursoEscuela | undefined;
+class UpdateAsignaturaEnCursoEscuelaDTOError extends BaseDTOError<IUpdateAsignaturaEnCursoEscuela> {
+	constructor(error: z.ZodError<IUpdateAsignaturaEnCursoEscuela>) {
+		super(error);
+		this.name = "UpdateAsignaturaEnCursoEscuelaDTOError";
+		this.message =
+			"Error de validacion para actualizar la asignatura en curso escuela";
+	}
+}
 
-	constructor(private input: unknown) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class UpdateAsignaturaEnCursoEscuelaDTO extends BaseValidatorDTO<
+	IUpdateAsignaturaEnCursoEscuela,
+	UpdateAsignaturaEnCursoEscuelaDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, UpdateAsignaturaEnCursoEscuelaDTOError, input);
 	}
 }

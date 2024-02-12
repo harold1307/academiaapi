@@ -185,6 +185,5 @@ const createBodySchema = z.object<ZodInferSchema<ICreateAreaConocimiento>>({
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateAreaConocimiento>>({
 	nombre: z.string().optional(),
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
 	codigo: z.string().nullable().optional(),
 });

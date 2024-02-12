@@ -13,7 +13,6 @@ const schema = z.object<ZodInferSchema<IUpdateModeloEvaluativo>>({
 	decimalesNotaFinal: z.number().optional(),
 	defineMaximos: z.boolean().optional(),
 	camposActualizanEstado: z.boolean().optional(),
-	// @ts-expect-error ZodInferSchema not well implemented for nullable and optional field
 	observaciones: z.string().nullable().optional(),
 });
 

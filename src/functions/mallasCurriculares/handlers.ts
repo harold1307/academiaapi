@@ -16,12 +16,6 @@ app.get("mallasCurricularesGetById", {
 	route: "mallas-curriculares/{mallaCurricularId}",
 });
 
-app.post("mallasCurricularesCreate", {
-	authLevel: "anonymous",
-	handler: (req, ctx) => controller.mallasCurricularesCreate(req, ctx),
-	route: "mallas-curriculares",
-});
-
 app.patch("mallasCurricularesUpdateById", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.mallasCurricularesUpdateById(req, ctx),
@@ -48,16 +42,17 @@ app.get("mallasCurricularesGetByIdWithLugaresEjecucion", {
 	route: "mallas-curriculares/{mallaCurricularId}/lugares-ejecucion",
 });
 
-// asignaturas en malla
-app.post("mallasCurricularesCreateAsignaturaEnMalla", {
-	authLevel: "anonymous",
-	handler: (req, ctx) =>
-		controller.mallasCurricularesCreateAsignaturaEnMalla(req, ctx),
-	route: "mallas-curriculares/{mallaCurricularId}/asignaturas/{asignaturaId}",
-});
+// asignaturas en niveles de la malla
 app.get("mallasCurricularesGetByIdWithAsignaturas", {
 	authLevel: "anonymous",
 	handler: (req, ctx) =>
 		controller.mallasCurricularesGetByIdWithAsignaturas(req, ctx),
 	route: "mallas-curriculares/{mallaCurricularId}/asignaturas",
+});
+
+// modulos
+app.post("mallasCurricularesCreateModulo", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.mallasCurricularesCreateModulo(req, ctx),
+	route: "mallas-curriculares/{mallaCurricularId}/asignaturas/{asignaturaId}",
 });

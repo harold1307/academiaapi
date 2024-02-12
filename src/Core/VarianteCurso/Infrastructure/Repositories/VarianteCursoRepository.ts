@@ -2,7 +2,6 @@ import type { PrismaClient } from "@prisma/client";
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../../Main/Inversify/types";
-import type { IVarianteCursoWithCurso } from "../../Domain/IVarianteCursoWithCurso";
 import type { IVarianteCurso } from "../../Domain/IVarianteCurso";
 import type {
 	ICreateVarianteCursoParams,
@@ -10,6 +9,7 @@ import type {
 	IVarianteCursoRepository,
 } from "../../Domain/IVarianteCursoRepository";
 import type { IVarianteCursoWithAsignaturas } from "../../Domain/IVarianteCursoWithAsignaturas";
+import type { IVarianteCursoWithCurso } from "../../Domain/IVarianteCursoWithCurso";
 
 @injectable()
 export class VarianteCursoRepository implements IVarianteCursoRepository {
@@ -20,7 +20,7 @@ export class VarianteCursoRepository implements IVarianteCursoRepository {
 		data,
 	}: ICreateVarianteCursoParams): Promise<IVarianteCursoWithCurso> {
 		const variante = await this._client.varianteCurso.create({
-			data: { ...data, cursoId },
+			data: { ...data, curso: { connect: { id: cursoId } } },
 			include: {
 				curso: {
 					include: {
@@ -59,15 +59,34 @@ export class VarianteCursoRepository implements IVarianteCursoRepository {
 		});
 	}
 
-	withAsignaturasGetById(
+	async withAsignaturasGetById(
 		id: string,
 	): Promise<IVarianteCursoWithAsignaturas | null> {
-		return this._client.varianteCurso.findUnique({
+		const variante = await this._client.varianteCurso.findUnique({
 			where: { id },
 			include: {
-				asignaturas: true,
+				asignaturas: {
+					include: {
+						asignatura: true,
+					},
+				},
 			},
 		});
+
+		if (!variante) return null;
+
+		const { asignaturas, ...rest } = variante;
+
+		return {
+			...rest,
+			asignaturas: asignaturas.map(({ asignatura, ...a }) => ({
+				...a,
+				asignatura: {
+					...asignatura,
+					enUso: true,
+				},
+			})),
+		};
 	}
 
 	updateById({

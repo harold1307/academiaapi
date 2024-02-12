@@ -6,6 +6,7 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
 import { AsignaturaService } from "../../Asignatura/Application/Service";
@@ -15,14 +16,14 @@ import type { IAsignaturaEnCursoEscuelaService } from "../../AsignaturaEnCursoEs
 import type { ICreateAsignaturaEnCursoEscuela } from "../../AsignaturaEnCursoEscuela/Domain/ICreateAsignaturaEnCursoEscuela";
 import { ModeloEvaluativoService } from "../../ModeloEvaluativo/Application/Service";
 import type { IModeloEvaluativoService } from "../../ModeloEvaluativo/Domain/IModeloEvaluativoService";
+import { ParaleloService } from "../../Paralelo/Application/Service";
+import type { IParaleloService } from "../../Paralelo/Domain/IParaleloService";
+import { SesionService } from "../../Sesion/Application/Service";
+import type { ISesionService } from "../../Sesion/Domain/ISesionService";
 import type { ICreateCursoEscuela } from "../Domain/ICreateCursoEscuela";
 import type { ICursoEscuelaController } from "../Domain/ICursoEscuelaController";
 import type { ICursoEscuelaService } from "../Domain/ICursoEscuelaService";
 import { CursoEscuelaService } from "./Service";
-import type { ISesionService } from "../../Sesion/Domain/ISesionService";
-import { SesionService } from "../../Sesion/Application/Service";
-import type { IParaleloService } from "../../Paralelo/Domain/IParaleloService";
-import { ParaleloService } from "../../Paralelo/Application/Service";
 
 export class CursoEscuelaController implements ICursoEscuelaController {
 	private _cursoEscuelaService: ICursoEscuelaService;
@@ -186,14 +187,7 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 			const cursoEscuelaId = req.params.cursoEscuelaId;
 			const asignaturaId = req.params.asignaturaId;
 
-			if (!cursoEscuelaId || !asignaturaId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!cursoEscuelaId || !asignaturaId) return CommonResponse.invalidId();
 
 			const cursoEscuela =
 				await this._cursoEscuelaService.getCursoEscuelaById(cursoEscuelaId);
@@ -206,6 +200,15 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 					status: 400,
 				};
 			}
+
+			if (cursoEscuela.enUso)
+				return {
+					jsonBody: {
+						message:
+							"El curso escuela esta en uso, no se pueden crear asignaturas en curso escuela",
+					},
+					status: 400,
+				};
 
 			const asignatura =
 				await this._asignaturaService.getAsignaturaById(asignaturaId);
@@ -222,12 +225,7 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 			const body = await req.json();
 			const bodyVal = createAsignaturaBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				return {
-					jsonBody: { message: "Peticion invalida" },
-					status: 400,
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const { data } = bodyVal;
 
@@ -252,7 +250,7 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 
 			ctx.log({ newAsignaturaEnCursoEscuela });
 
-			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -273,9 +271,12 @@ const createAsignaturaBodySchema = z.object<
 	sumaHoras: z.boolean(),
 	creditos: z.number(),
 	requeridoAprobar: z.boolean(),
-	asistenciaAprobar: z.number(),
+	asistenciaAprobar: z.number().nullable(),
 	profesorId: z.string().nullable(),
 	modeloEvaluativoId: z.string().nullable(),
+	cantidadDecimales: z.number().nullable(),
+	notaMaxima: z.number().nullable(),
+	notaMinima: z.number().nullable(),
 });
 
 const createBodySchema = z.object<
@@ -308,12 +309,11 @@ const createBodySchema = z.object<
 	legalizarMatriculas: z.boolean(),
 	registroExterno: z.boolean(),
 	registroInterno: z.boolean(),
-	verificarSesion: z.boolean(),
+	verificaSesion: z.boolean(),
 	registroDesdeOtraSede: z.boolean(),
 	edadMinima: z.number().nullable(),
 	edadMaxima: z.number().nullable(),
 	costoPorMateria: z.boolean(),
 	cumpleRequisitosMalla: z.boolean(),
 	pasarRecord: z.boolean(),
-	aprobarCursoPrevio: z.boolean(),
 });

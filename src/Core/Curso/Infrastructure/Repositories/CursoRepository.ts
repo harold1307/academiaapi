@@ -4,9 +4,11 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreateCurso } from "../../Domain/ICreateCurso";
 import type { ICurso } from "../../Domain/ICurso";
-import type { ICursoRepository } from "../../Domain/ICursoRepository";
+import type {
+	ICursoRepository,
+	UpdateCursoParams,
+} from "../../Domain/ICursoRepository";
 import type { ICursoWithVariantes } from "../../Domain/ICursoWithVariantes";
-import type { IUpdateCurso } from "../../Domain/IUpdateCurso";
 
 @injectable()
 export class CursoRepository implements ICursoRepository {
@@ -70,10 +72,10 @@ export class CursoRepository implements ICursoRepository {
 		};
 	}
 
-	async update(params: { id: string; curso: IUpdateCurso }): Promise<ICurso> {
+	async update({ id, data }: UpdateCursoParams): Promise<ICurso> {
 		const curso = await this._client.curso.update({
-			where: { id: params.id },
-			data: params.curso,
+			where: { id: id },
+			data,
 			include: {
 				_count: {
 					select: {

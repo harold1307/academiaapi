@@ -6,6 +6,7 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
 import type { IAsignaturaController } from "../Domain/IAsignaturaController";
@@ -30,10 +31,7 @@ export class AsignaturaController implements IAsignaturaController {
 
 			const asignaturas = await this._asignaturaService.getAllAsignaturas();
 
-			return {
-				jsonBody: { data: asignaturas, message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: asignaturas });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -48,22 +46,12 @@ export class AsignaturaController implements IAsignaturaController {
 
 			const asignaturaId = req.params.asignaturaId;
 
-			if (!asignaturaId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado",
-					},
-					status: 400,
-				};
-			}
+			if (!asignaturaId) return CommonResponse.invalidId();
 
 			const asignatura =
 				await this._asignaturaService.getAsignaturaById(asignaturaId);
 
-			return {
-				jsonBody: { data: asignatura, message: "Solicitud exitosa." },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: asignatura });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -75,18 +63,11 @@ export class AsignaturaController implements IAsignaturaController {
 	): Promise<HttpResponseInit> {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
-			const body = await req.json();
 
+			const body = await req.json();
 			const bodyVal = createBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				return {
-					jsonBody: {
-						message: "Peticion invalida",
-					},
-					status: 400,
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const newAsignatura = await this._asignaturaService.createAsignatura(
 				bodyVal.data,
@@ -94,7 +75,7 @@ export class AsignaturaController implements IAsignaturaController {
 
 			ctx.log({ newAsignatura });
 
-			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -108,21 +89,11 @@ export class AsignaturaController implements IAsignaturaController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const asignaturaId = req.params.asignaturaId;
 
-			if (!asignaturaId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado",
-					},
-					status: 400,
-				};
-			}
+			if (!asignaturaId) return CommonResponse.invalidId();
 
 			await this._asignaturaService.deleteAsignaturaById(asignaturaId);
 
-			return {
-				jsonBody: { message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful();
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -136,26 +107,12 @@ export class AsignaturaController implements IAsignaturaController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const asignaturaId = req.params.asignaturaId;
 
-			if (!asignaturaId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado",
-					},
-					status: 400,
-				};
-			}
+			if (!asignaturaId) return CommonResponse.invalidId();
 
 			const body = await req.json();
 			const bodyVal = updateBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				return {
-					jsonBody: {
-						message: "Peticion invalida",
-					},
-					status: 400,
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const { data } = bodyVal;
 
@@ -164,10 +121,7 @@ export class AsignaturaController implements IAsignaturaController {
 				data,
 			});
 
-			return {
-				jsonBody: { data: asignatura, message: "Solicitud exitosa." },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: asignatura });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -180,5 +134,6 @@ const createBodySchema = z.object<ZodInferSchema<ICreateAsignatura>>({
 });
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateAsignatura>>({
-	codigo: z.string().optional(),
+	codigo: z.string().nullable().optional(),
+	nombre: z.string().optional(),
 });

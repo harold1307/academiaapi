@@ -3,9 +3,13 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../Main/Inversify/types";
 import type { ICreateTurno } from "../Domain/ICreateTurno";
 import type { ITurno } from "../Domain/ITurno";
-import type { ITurnoRepository } from "../Domain/ITurnoRepository";
+import type {
+	ITurnoRepository,
+	UpdateTurnoParams,
+} from "../Domain/ITurnoRepository";
 import type { ITurnoService } from "../Domain/ITurnoService";
 import { CreateTurnoDTO } from "../Infrastructure/DTOs/CreateTurnoDTO";
+import { UpdateTurnoDTO } from "../Infrastructure/DTOs/UpdateTurnoDTO";
 
 @injectable()
 export class TurnoService implements ITurnoService {
@@ -21,26 +25,37 @@ export class TurnoService implements ITurnoService {
 		return this._turnoRepository.getById(id);
 	}
 
-	deleteTurnoById(id: string): Promise<ITurno> {
+	async deleteTurnoById(id: string): Promise<ITurno> {
+		const turno = await this._turnoRepository.getById(id);
+
+		if (!turno) throw new TurnoServiceError("El turno no existe");
+
+		if (turno.enUso)
+			throw new TurnoServiceError("El turno está en uso, no se puede eliminar");
+
 		return this._turnoRepository.deleteById(id);
 	}
 
 	createTurno(data: ICreateTurno): Promise<ITurno> {
 		const dto = new CreateTurnoDTO(data);
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para crear turno",
-				JSON.stringify(validation.error, null, 2),
-			);
-			throw new TurnoServiceError("Esquema para crear turno invalido");
-		}
-
-		return this._turnoRepository.create(validation.data);
+		return this._turnoRepository.create(dto.getData());
 	}
 
-	// updateTurnoById(params: IUpdateTurnoParams): Promise<ITurno> {}
+	async updateTurnoById({ id, data }: UpdateTurnoParams): Promise<ITurno> {
+		const dto = new UpdateTurnoDTO(data);
+
+		const turno = await this._turnoRepository.getById(id);
+
+		if (!turno) throw new TurnoServiceError("El turno no existe");
+
+		if (turno.enUso)
+			throw new TurnoServiceError(
+				"El turno está en uso, no se puede actualizar",
+			);
+
+		return this._turnoRepository.update({ id, data: dto.getData() });
+	}
 }
 
 class TurnoServiceError extends Error {

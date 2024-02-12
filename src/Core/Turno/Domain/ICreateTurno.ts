@@ -2,5 +2,5 @@ import type { ITurno } from "./ITurno";
 
 export type ICreateTurno = Omit<
 	ITurno,
-	"id" | "estado" | "enUso" | "createdAt" | "updatedAt"
+	"id" | "estado" | "enUso" | "createdAt" | "updatedAt" | "sesion"
 >;

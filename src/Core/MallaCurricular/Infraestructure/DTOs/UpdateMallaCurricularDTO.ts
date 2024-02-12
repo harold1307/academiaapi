@@ -1,43 +1,52 @@
-import { TipoDuracion } from "@prisma/client";
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateMallaCurricular } from "../../Domain/IUpdateMallaCurricular";
 
 const schema = z.object<ZodInferSchema<IUpdateMallaCurricular>>({
-	modalidadId: z.string().optional(),
-	tituloObtenido: z.string().optional(),
-	tipoDuracion: z.nativeEnum(TipoDuracion).optional(),
+	estado: z.boolean().optional(),
+
+	tipoDuracion: z
+		.enum(["ANOS", "CREDITOS", "HORAS", "SEMESTRES"] as const)
+		.nullable()
+		.optional(),
+
+	codigo: z.string().nullable().optional(),
 	fechaAprobacion: z.date().optional(),
 	fechaLimiteVigencia: z.date().optional(),
-	niveles: z.number().optional(),
-	maximoMateriasMatricula: z.number().optional(),
-	cantidadLibreOpcionEgreso: z.number().optional(),
-	cantidadOptativasEgreso: z.number().optional(),
-	cantidadArrastres: z.number().optional(),
-	practicasLigadasMaterias: z.boolean().optional(),
-	horasPractica: z.number().optional(),
-	registroPracticasDesde: z.number().optional(),
-	horasVinculacion: z.number().optional(),
-	registroVinculacionDesde: z.number().optional(),
-	registroProyectosDesde: z.number().optional(),
-	usaNivelacion: z.boolean().optional(),
+	cantidadOtrasMateriasMatricula: z.number().optional(),
+	limiteSeleccionMateriaPorAdministrativo: z.boolean().optional(),
+
+	cantidadArrastres: z.number().nullable().optional(),
+
+	porcentajeMinimoPasarNivel: z.number().nullable().optional(),
+
+	maximoMateriasAdelantar: z.number().nullable().optional(),
+	automatriculaModulos: z.boolean().optional(),
 	plantillasSilabo: z.boolean().optional(),
-	perfilEgreso: z.string().optional(),
-	observaciones: z.string().optional(),
+	modeloPlanificacion: z.boolean().optional(),
+
+	perfilEgreso: z.string().nullable().optional(),
+
+	observaciones: z.string().nullable().optional(),
+
+	tituloObtenidoId: z.string().uuid().nullable().optional(),
 });
 
-export class UpdateMallaCurricularDTO {
-	private data: IUpdateMallaCurricular | undefined;
-	constructor(private input: any) {}
+class UpdateMallaCurricularDTOError extends BaseDTOError<IUpdateMallaCurricular> {
+	constructor(error: z.ZodError<IUpdateMallaCurricular>) {
+		super(error);
+		this.name = "UpdateMallaCurricularDTOError";
+		this.message = "Error de validacion para actualizar la malla curricular";
+	}
+}
 
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class UpdateMallaCurricularDTO extends BaseValidatorDTO<
+	IUpdateMallaCurricular,
+	UpdateMallaCurricularDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, UpdateMallaCurricularDTOError, input);
 	}
 }

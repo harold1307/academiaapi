@@ -1,0 +1,4 @@
+[config]
+command = deploy.cmd
+SCM_TRACE_LEVEL = 4
+SCM_USE_FUNCPACK = 1

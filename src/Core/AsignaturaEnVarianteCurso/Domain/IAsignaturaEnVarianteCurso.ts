@@ -1,3 +1,7 @@
 import type { AsignaturaEnVarianteCurso } from "@prisma/client";
 
-export type IAsignaturaEnVarianteCurso = AsignaturaEnVarianteCurso;
+import type { IAsignatura } from "../../Asignatura/Domain/IAsignatura";
+
+export type IAsignaturaEnVarianteCurso = AsignaturaEnVarianteCurso & {
+	asignatura: IAsignatura;
+};

@@ -1,11 +1,14 @@
 import { z } from "zod";
 
+import type { ZodInferSchema } from "../../../../types";
 import type { ICreateCompetenciaForAsignaturaEnMalla } from "../../Domain/ICreateCompetenciaForAsignaturaEnMalla";
 
-const schema: z.ZodType<ICreateCompetenciaForAsignaturaEnMalla> = z.object({
-	nombre: z.string(),
-	asignaturaEnMallaId: z.string(),
-});
+const schema = z.object<ZodInferSchema<ICreateCompetenciaForAsignaturaEnMalla>>(
+	{
+		nombre: z.string(),
+		asignaturaEnMallaId: z.string(),
+	},
+);
 
 export class CreateCompetenciaForAsignaturaEnMallaDTO {
 	private competencia: ICreateCompetenciaForAsignaturaEnMalla | undefined;

@@ -1,8 +1,3 @@
-import type { $Enums } from "@prisma/client";
+import type { Competencia } from "@prisma/client";
 
-export type ICompetencia = {
-	id: string;
-	tipo: $Enums.TipoCompetencia;
-	nombre: string;
-	asignaturaEnMallaId: string | null;
-};
+export type ICompetencia = Competencia;

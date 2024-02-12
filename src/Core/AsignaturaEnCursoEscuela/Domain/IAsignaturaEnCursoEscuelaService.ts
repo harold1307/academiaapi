@@ -1,5 +1,5 @@
 import type { IAsignaturaEnCursoEscuela } from "./IAsignaturaEnCursoEscuela";
-import type { IUpdateAsignaturaEnCursoEscuelaParams } from "./IAsignaturaEnCursoEscuelaRepository";
+import type { UpdateAsignaturaEnCursoEscuelaParams } from "./IAsignaturaEnCursoEscuelaRepository";
 import type { ICreateAsignaturaEnCursoEscuela } from "./ICreateAsignaturaEnCursoEscuela";
 
 export type IAsignaturaEnCursoEscuelaService = {
@@ -11,7 +11,7 @@ export type IAsignaturaEnCursoEscuelaService = {
 		id: string,
 	): Promise<IAsignaturaEnCursoEscuela | null>;
 	updateAsignaturaEnCursoEscuelaById(
-		params: IUpdateAsignaturaEnCursoEscuelaParams,
+		params: UpdateAsignaturaEnCursoEscuelaParams,
 	): Promise<IAsignaturaEnCursoEscuela>;
 	deleteAsignaturaEnCursoEscuelaById(
 		id: string,

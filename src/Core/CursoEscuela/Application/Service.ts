@@ -3,7 +3,10 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../Main/Inversify/types";
 import type { ICreateCursoEscuela } from "../Domain/ICreateCursoEscuela";
 import type { ICursoEscuela } from "../Domain/ICursoEscuela";
-import type { ICursoEscuelaRepository } from "../Domain/ICursoEscuelaRepository";
+import type {
+	ICursoEscuelaRepository,
+	UpdateCursoEscuelaParams,
+} from "../Domain/ICursoEscuelaRepository";
 import type {
 	CreateCursoEscuelaByPlantillaTransactionParams,
 	ICursoEscuelaService,
@@ -27,23 +30,31 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 
 	createCursoEscuela(data: ICreateCursoEscuela): Promise<ICursoEscuela> {
 		const dto = new CreateCursoEscuelaDTO(data);
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para crear curso escuela",
-				validation.error,
-			);
-			throw new CursoEscuelaServiceError(
-				"Esquema para crear curso escuela invalido.",
-			);
-		}
-
-		return this._cursoEscuelaRepository.create(validation.data);
+		return this._cursoEscuelaRepository.create(dto.getData());
 	}
 
 	deleteCursoEscuelaById(id: string): Promise<ICursoEscuela> {
 		return this._cursoEscuelaRepository.deleteById(id);
+	}
+
+	async updateCursoEscuelaById({
+		id,
+		data,
+	}: UpdateCursoEscuelaParams): Promise<ICursoEscuela> {
+		const dto = new CreateCursoEscuelaDTO(data);
+
+		const cursoEscuela = await this._cursoEscuelaRepository.getById(id);
+
+		if (!cursoEscuela)
+			throw new CursoEscuelaServiceError("El curso escuela no existe");
+
+		if (cursoEscuela.enUso)
+			throw new CursoEscuelaServiceError(
+				"El curso escuela esta en uso, no se puede actualizar",
+			);
+
+		return this._cursoEscuelaRepository.update({ id, data: dto.getData() });
 	}
 
 	createCursoEscuelaByPlantillaTransaction({
@@ -54,19 +65,8 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 			...cursoEscuelaData,
 			plantillaId: cursoPlantillaId,
 		});
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para crear curso escuela",
-				validation.error,
-			);
-			throw new CursoEscuelaServiceError(
-				"Esquema para crear curso escuela invalido.",
-			);
-		}
-
-		const { plantillaId, paraleloId, sesionId, ...restData } = validation.data;
+		const { plantillaId, paraleloId, sesionId, ...restData } = dto.getData();
 
 		if (!plantillaId)
 			throw new CursoEscuelaServiceError(
@@ -84,7 +84,7 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 					...restData,
 					paralelo: {
 						connect: {
-							nombre: paraleloId,
+							id: paraleloId,
 						},
 					},
 					plantilla: {
@@ -107,7 +107,7 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 				},
 			});
 
-			return newCursoEscuela;
+			return { ...newCursoEscuela, enUso: false };
 		});
 	}
 }

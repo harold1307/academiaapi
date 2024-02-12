@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreateAreaConocimiento } from "../../Domain/ICreateAreaConocimiento";
 
@@ -8,18 +9,19 @@ const schema = z.object<ZodInferSchema<ICreateAreaConocimiento>>({
 	nombre: z.string(),
 });
 
-export class CreateAreaConocimientoDTO {
-	private data: ICreateAreaConocimiento | undefined;
+class CreateAreaConocimientoDTOError extends BaseDTOError<ICreateAreaConocimiento> {
+	constructor(error: z.ZodError<ICreateAreaConocimiento>) {
+		super(error);
+		this.name = "CreateAreaConocimientoDTOError";
+		this.message = "Error de validacion para crear la area conocimiento";
+	}
+}
 
-	constructor(private input: unknown) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class CreateAreaConocimientoDTO extends BaseValidatorDTO<
+	ICreateAreaConocimiento,
+	CreateAreaConocimientoDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateAreaConocimientoDTOError, input);
 	}
 }

@@ -1,11 +1,16 @@
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
-import type { ISesion } from "../Domain/ISesion.ts";
-import type { ISesionRepository } from "../Domain/ISesionRepository.ts";
-import type { ISesionService } from "../Domain/ISesionService.ts";
 import type { ICreateSesion } from "../Domain/ICreateSesion";
+import type { ISesion } from "../Domain/ISesion";
+import type {
+	ISesionRepository,
+	UpdateSesionParams,
+} from "../Domain/ISesionRepository";
+import type { ISesionService } from "../Domain/ISesionService";
 import { CreateSesionDTO } from "../Infrastructure/DTOs/CreateSesionDTO";
+import { SesionQueryFilterDTO } from "../Infrastructure/DTOs/SesionQueryFilterDTO";
+import { UpdateSesionDTO } from "../Infrastructure/DTOs/UpdateSesionDTO";
 
 @injectable()
 export class SesionService implements ISesionService {
@@ -14,8 +19,10 @@ export class SesionService implements ISesionService {
 		private _sesionRepository: ISesionRepository,
 	) {}
 
-	getAllSesiones(): Promise<ISesion[]> {
-		return this._sesionRepository.getAll();
+	getAllSesiones(filters?: Record<string, string>): Promise<ISesion[]> {
+		const dto = new SesionQueryFilterDTO(filters);
+
+		return this._sesionRepository.getAll(dto.getData());
 	}
 
 	getSesionById(id: string): Promise<ISesion | null> {
@@ -27,27 +34,29 @@ export class SesionService implements ISesionService {
 
 		if (!sesion) throw new SesionServiceError("La sesion no existe");
 
-		if (sesion.enUso) throw new SesionServiceError("La sesion esta en uso");
+		if (sesion.enUso)
+			throw new SesionServiceError(
+				"La sesion esta en uso, no se puede eliminar",
+			);
 
 		return this._sesionRepository.deleteById(id);
 	}
 
 	createSesion(data: ICreateSesion): Promise<ISesion> {
 		const dto = new CreateSesionDTO(data);
-		const validation = dto.validate();
 
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para crear sesion",
-				JSON.stringify(validation.error, null, 2),
-			);
-			throw new SesionServiceError("Esquema para crear sesion invalido");
-		}
-
-		return this._sesionRepository.create(validation.data);
+		return this._sesionRepository.create(dto.getData());
 	}
 
-	// updateSesionById(params: IUpdateSesionParams): Promise<ISesion> {}
+	async updateSesionById({ id, data }: UpdateSesionParams): Promise<ISesion> {
+		const dto = new UpdateSesionDTO(data);
+
+		const sesion = await this._sesionRepository.getById(id);
+
+		if (!sesion) throw new SesionServiceError("La sesion no existe");
+
+		return this._sesionRepository.update({ id, data: dto.getData() });
+	}
 }
 
 class SesionServiceError extends Error {

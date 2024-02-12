@@ -25,21 +25,10 @@ export class VarianteCursoService implements IVarianteCursoService {
 		data,
 	}: ICreateVarianteCursoParams): Promise<IVarianteCursoWithCurso> {
 		const dto = new CreateVarianteCursoDTO(data);
-		const validation = dto.validate();
-
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para crear variante de curso",
-				JSON.stringify(validation.error, null, 2),
-			);
-			throw new VarianteCursoServiceError(
-				"Esquema para crear variante de curso invalido.",
-			);
-		}
 
 		return this._varianteCursoRepository.create({
 			cursoId,
-			data: validation.data,
+			data: dto.getData(),
 		});
 	}
 
@@ -47,26 +36,16 @@ export class VarianteCursoService implements IVarianteCursoService {
 		id,
 		data,
 	}: IUpdateVarianteCursoByIdParams): Promise<IVarianteCurso> {
+		const dto = new UpdateVarianteCursoDTO(data);
+		const valid = dto.getData();
+
 		const varianteCurso =
 			await this._varianteCursoRepository.withAsignaturasGetById(id);
 
 		if (!varianteCurso)
 			throw new VarianteCursoServiceError("La variante de curso no existe");
 
-		const dto = new UpdateVarianteCursoDTO(data);
-		const validation = dto.validate();
-
-		if (!validation.success) {
-			console.error(
-				"Error de validacion para actualizar variante de curso",
-				JSON.stringify(validation.error, null, 2),
-			);
-			throw new VarianteCursoServiceError(
-				"Esquema para actualizar variante de curso invalido.",
-			);
-		}
-
-		if (!varianteCurso.asignaturas.length && !!validation.data.estado) {
+		if (!varianteCurso.asignaturas.length && !!valid.estado) {
 			throw new VarianteCursoServiceError(
 				"La variante de curso necesita asignaturas para poder habilitarse",
 			);
@@ -74,7 +53,7 @@ export class VarianteCursoService implements IVarianteCursoService {
 
 		return this._varianteCursoRepository.updateById({
 			id,
-			data: validation.data,
+			data: valid,
 		});
 	}
 
@@ -86,11 +65,13 @@ export class VarianteCursoService implements IVarianteCursoService {
 			throw new VarianteCursoServiceError("La variante de curso no existe");
 
 		if (varianteWithAsignaturas.estado)
-			throw new VarianteCursoServiceError("La asignatura esta activada");
+			throw new VarianteCursoServiceError(
+				"La variante de curso esta activada, no se puede eliminar",
+			);
 
 		if (varianteWithAsignaturas.asignaturas.length > 0)
 			throw new VarianteCursoServiceError(
-				"La variante de curso tiene asignaturas enlazadas",
+				"La variante de curso tiene asignaturas enlazadas, no se puede eliminar",
 			);
 
 		return this._varianteCursoRepository.deleteById(id);

@@ -5,7 +5,7 @@ import { TYPES } from "../../../../Main/Inversify/types";
 import type { IAsignatura } from "../../Domain/IAsignatura";
 import type {
 	IAsignaturaRepository,
-	IUpdateAsignaturaParams,
+	UpdateAsignaturaParams,
 } from "../../Domain/IAsignaturaRepository";
 import type { ICreateAsignatura } from "../../Domain/ICreateAsignatura";
 
@@ -19,10 +19,13 @@ export class AsignaturaRepository implements IAsignaturaRepository {
 				asignaturasEnCursoEscuela: {
 					take: 1,
 				},
-				asignaturasEnMalla: {
+				asignaturasEnNivelMalla: {
 					take: 1,
 				},
 				asignaturasEnVarianteCurso: {
+					take: 1,
+				},
+				asignaturasModuloEnMalla: {
 					take: 1,
 				},
 			},
@@ -31,15 +34,17 @@ export class AsignaturaRepository implements IAsignaturaRepository {
 		return asignaturas.map(
 			({
 				asignaturasEnCursoEscuela,
-				asignaturasEnMalla,
+				asignaturasEnNivelMalla,
 				asignaturasEnVarianteCurso,
-				...a
+				asignaturasModuloEnMalla,
+				...rest
 			}) => ({
-				...a,
+				...rest,
 				enUso:
-					asignaturasEnMalla.length > 0 ||
+					asignaturasEnNivelMalla.length > 0 ||
 					asignaturasEnCursoEscuela.length > 0 ||
-					asignaturasEnVarianteCurso.length > 0,
+					asignaturasEnVarianteCurso.length > 0 ||
+					asignaturasModuloEnMalla.length > 0,
 			}),
 		);
 	}
@@ -51,10 +56,13 @@ export class AsignaturaRepository implements IAsignaturaRepository {
 				asignaturasEnCursoEscuela: {
 					take: 1,
 				},
-				asignaturasEnMalla: {
+				asignaturasEnNivelMalla: {
 					take: 1,
 				},
 				asignaturasEnVarianteCurso: {
+					take: 1,
+				},
+				asignaturasModuloEnMalla: {
 					take: 1,
 				},
 			},
@@ -64,17 +72,19 @@ export class AsignaturaRepository implements IAsignaturaRepository {
 
 		const {
 			asignaturasEnCursoEscuela,
-			asignaturasEnMalla,
+			asignaturasEnNivelMalla,
 			asignaturasEnVarianteCurso,
+			asignaturasModuloEnMalla,
 			...rest
 		} = asignatura;
 
 		return {
 			...rest,
 			enUso:
-				asignaturasEnMalla.length > 0 ||
+				asignaturasEnNivelMalla.length > 0 ||
 				asignaturasEnCursoEscuela.length > 0 ||
-				asignaturasEnVarianteCurso.length > 0,
+				asignaturasEnVarianteCurso.length > 0 ||
+				asignaturasModuloEnMalla.length > 0,
 		};
 	}
 
@@ -86,7 +96,7 @@ export class AsignaturaRepository implements IAsignaturaRepository {
 		return { ...asignatura, enUso: false };
 	}
 
-	async update({ data, id }: IUpdateAsignaturaParams): Promise<IAsignatura> {
+	async update({ data, id }: UpdateAsignaturaParams): Promise<IAsignatura> {
 		const asignatura = await this._client.asignatura.update({
 			where: { id: id },
 			data,
@@ -94,10 +104,13 @@ export class AsignaturaRepository implements IAsignaturaRepository {
 				asignaturasEnCursoEscuela: {
 					take: 1,
 				},
-				asignaturasEnMalla: {
+				asignaturasEnNivelMalla: {
 					take: 1,
 				},
 				asignaturasEnVarianteCurso: {
+					take: 1,
+				},
+				asignaturasModuloEnMalla: {
 					take: 1,
 				},
 			},
@@ -105,17 +118,19 @@ export class AsignaturaRepository implements IAsignaturaRepository {
 
 		const {
 			asignaturasEnCursoEscuela,
-			asignaturasEnMalla,
+			asignaturasEnNivelMalla,
 			asignaturasEnVarianteCurso,
+			asignaturasModuloEnMalla,
 			...rest
 		} = asignatura;
 
 		return {
 			...rest,
 			enUso:
-				asignaturasEnMalla.length > 0 ||
+				asignaturasEnNivelMalla.length > 0 ||
 				asignaturasEnCursoEscuela.length > 0 ||
-				asignaturasEnVarianteCurso.length > 0,
+				asignaturasEnVarianteCurso.length > 0 ||
+				asignaturasModuloEnMalla.length > 0,
 		};
 	}
 

@@ -1,7 +1,7 @@
 export const TYPES = {
 	PrismaClient: Symbol.for("PrismaClient"),
-	InstitucionRepository: Symbol.for("InstitucionRepository"),
-	InstitucionService: Symbol.for("InstitucionService"),
+	SedeRepository: Symbol.for("SedeRepository"),
+	SedeService: Symbol.for("SedeService"),
 	MallaCurricularRepository: Symbol.for("MallaCurricularRepository"),
 	MallaCurricularService: Symbol.for("MallaCurricularService"),
 	AsignaturaRepository: Symbol.for("AsignaturaRepository"),
@@ -61,4 +61,56 @@ export const TYPES = {
 		"CampoProyectoIntegradorRepository",
 	),
 	CampoProyectoIntegradorService: Symbol.for("CampoProyectoIntegradorService"),
+	NivelTitulacionRepository: Symbol.for("NivelTitulacionRepository"),
+	NivelTitulacionService: Symbol.for("NivelTitulacionService"),
+	DetalleNivelTitulacionRepository: Symbol.for(
+		"DetalleNivelTitulacionRepository",
+	),
+	DetalleNivelTitulacionService: Symbol.for("DetalleNivelTitulacionService"),
+	PerfilPracticaRepository: Symbol.for("PerfilPracticaRepository"),
+	PerfilPracticaService: Symbol.for("PerfilPracticaService"),
+	TipoDocumentoRepository: Symbol.for("TipoDocumentoRepository"),
+	TipoDocumentoService: Symbol.for("TipoDocumentoService"),
+	TituloObtenidoRepository: Symbol.for("TituloObtenidoRepository"),
+	TituloObtenidoService: Symbol.for("TituloObtenidoService"),
+	TipoDocumentoEnProgramaRepository: Symbol.for(
+		"TipoDocumentoEnProgramaRepository",
+	),
+	TipoDocumentoEnProgramaService: Symbol.for("TipoDocumentoEnProgramaService"),
+	ProgramaRepository: Symbol.for("ProgramaRepository"),
+	ProgramaService: Symbol.for("ProgramaService"),
+	CoordinacionRepository: Symbol.for("CoordinacionRepository"),
+	CoordinacionService: Symbol.for("CoordinacionService"),
+	NivelMallaRepository: Symbol.for("NivelMallaRepository"),
+	NivelMallaService: Symbol.for("NivelMallaService"),
+	AsignaturaEnNivelMallaRepository: Symbol.for(
+		"AsignaturaEnNivelMallaRepository",
+	),
+	AsignaturaEnNivelMallaService: Symbol.for("AsignaturaEnNivelMallaService"),
+	AsignaturaModuloEnMallaRepository: Symbol.for(
+		"AsignaturaModuloEnMallaRepository",
+	),
+	AsignaturaModuloEnMallaService: Symbol.for("AsignaturaModuloEnMallaService"),
+	PracticaPreProfesionalEnMallaRepository: Symbol.for(
+		"PracticaPreProfesionalEnMallaRepository",
+	),
+	PracticaPreProfesionalEnMallaService: Symbol.for(
+		"PracticaPreProfesionalEnMallaService",
+	),
+	PracticaComunitariaEnMallaRepository: Symbol.for(
+		"PracticaComunitariaEnMallaRepository",
+	),
+	PracticaComunitariaEnMallaService: Symbol.for(
+		"PracticaComunitariaEnMallaService",
+	),
+	NivelAcademicoRepository: Symbol.for("NivelAcademicoRepository"),
+	NivelAcademicoService: Symbol.for("NivelAcademicoService"),
+	MateriaEnNivelAcademicoRepository: Symbol.for(
+		"MateriaEnNivelAcademicoRepository",
+	),
+	MateriaEnNivelAcademicoService: Symbol.for("MateriaEnNivelAcademicoService"),
+	MateriaEnHorarioRepository: Symbol.for("MateriaEnHorarioRepository"),
+	MateriaEnHorarioService: Symbol.for("MateriaEnHorarioService"),
+	UbicacionRepository: Symbol.for("UbicacionRepository"),
+	UbicacionService: Symbol.for("UbicacionService"),
 } as const;

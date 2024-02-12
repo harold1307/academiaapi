@@ -1,25 +1,27 @@
 import { z } from "zod";
 
-import type { ICreateAsignatura } from "../../Domain/ICreateAsignatura";
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
+import type { ICreateAsignatura } from "../../Domain/ICreateAsignatura";
 
 const schema = z.object<ZodInferSchema<ICreateAsignatura>>({
 	nombre: z.string(),
 	codigo: z.string().nullable(),
 });
 
-export class CreateAsignaturaDTO {
-	private data: ICreateAsignatura | undefined;
+class CreateAsignaturaDTOError extends BaseDTOError<ICreateAsignatura> {
+	constructor(error: z.ZodError<ICreateAsignatura>) {
+		super(error);
+		this.name = "CreateAsignaturaDTOError";
+		this.message = "Error de validacion para crear la asignatura";
+	}
+}
 
-	constructor(private input: any) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class CreateAsignaturaDTO extends BaseValidatorDTO<
+	ICreateAsignatura,
+	CreateAsignaturaDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateAsignaturaDTOError, input);
 	}
 }

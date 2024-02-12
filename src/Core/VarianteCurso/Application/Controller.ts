@@ -293,8 +293,11 @@ const byIdCreateAsignaturaBodySchema = z.object<
 	sumaHoras: z.boolean(),
 	creditos: z.number(),
 	requeridoAprobar: z.boolean(),
-	asistenciaAprobar: z.number(),
-	modeloEvaluativoId: z.string().nullable(),
+	modeloEvaluativoId: z.string().uuid().nullable(),
+	asistenciaAprobar: z.number().nullable(),
+	cantidadDecimales: z.number().nullable(),
+	notaMaxima: z.number().nullable(),
+	notaMinima: z.number().nullable(),
 });
 
 const createByCursoBodySchema = z.object<
@@ -338,4 +341,5 @@ const createByCursoBodySchema = z.object<
 	evaluaProfesor: z.boolean(),
 	matriculaConDeuda: z.boolean(),
 	legalizarMatriculas: z.boolean(),
+	verificaSesion: z.boolean(),
 });

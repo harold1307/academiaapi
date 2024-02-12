@@ -12,29 +12,43 @@ export class AsignaturaEnVarianteCursoRepository
 {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	create({
+	async create({
 		asignaturaId,
 		varianteCursoId,
 		modeloEvaluativoId,
 		...data
 	}: ICreateAsignaturaEnVarianteCurso): Promise<IAsignaturaEnVarianteCurso> {
-		return this._client.asignaturaEnVarianteCurso.create({
-			data: {
-				...data,
-				asignatura: {
-					connect: {
-						id: asignaturaId,
+		const asignaturaEnVariante =
+			await this._client.asignaturaEnVarianteCurso.create({
+				data: {
+					...data,
+					asignatura: {
+						connect: {
+							id: asignaturaId,
+						},
 					},
-				},
-				varianteCurso: {
-					connect: {
-						id: varianteCursoId,
+					varianteCurso: {
+						connect: {
+							id: varianteCursoId,
+						},
 					},
+					...(modeloEvaluativoId
+						? { modeloEvaluativo: { connect: { id: modeloEvaluativoId } } }
+						: {}),
 				},
-				...(modeloEvaluativoId
-					? { modeloEvaluativo: { connect: { id: modeloEvaluativoId } } }
-					: {}),
+				include: {
+					asignatura: true,
+				},
+			});
+
+		const { asignatura, ...rest } = asignaturaEnVariante;
+
+		return {
+			...rest,
+			asignatura: {
+				...asignatura,
+				enUso: true,
 			},
-		});
+		};
 	}
 }

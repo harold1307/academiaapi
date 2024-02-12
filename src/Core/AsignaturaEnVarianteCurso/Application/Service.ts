@@ -7,7 +7,7 @@ import type {
 	IAsignaturaEnVarianteCursoService,
 	ICreateAsignaturaEnVarianteCursoParams,
 } from "../Domain/IAsignaturaEnVarianteCursoService";
-import { CreateAsignaturaEnVarianteCurso } from "../Infrastructure/DTOs/CreateAsignaturaEnVarianteCurso";
+import { CreateAsignaturaEnVarianteCursoDTO } from "../Infrastructure/DTOs/CreateAsignaturaEnVarianteCursoDTO";
 
 @injectable()
 export class AsignaturaEnVarianteCursoService
@@ -23,7 +23,7 @@ export class AsignaturaEnVarianteCursoService
 		varianteCursoId,
 		data,
 	}: ICreateAsignaturaEnVarianteCursoParams): Promise<IAsignaturaEnVarianteCurso> {
-		const dto = new CreateAsignaturaEnVarianteCurso({
+		const dto = new CreateAsignaturaEnVarianteCursoDTO({
 			...data,
 			varianteCursoId,
 			asignaturaId,

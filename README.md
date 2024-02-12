@@ -88,6 +88,22 @@ model User {
 pnpm dlx prisma migrate dev --name new-field
 ```
 
+## Comandos de creacion
+
+Cada comando tiene su prompt de creacion.
+
+- Crear modulo
+
+```bash
+pnpm create:modulo
+```
+
+- Crear controlador
+
+```bash
+pnpm create:controller
+```
+
 ## Implementar modulo
 
 1. Crea una carpeta con el nombre del modulo en src/Core con las divisiones base

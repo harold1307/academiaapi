@@ -6,9 +6,13 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
+import type { ZodInferSchema } from "../../../types";
+import type { ICreateParalelo } from "../Domain/ICreateParalelo";
 import type { IParaleloController } from "../Domain/IParaleloController";
 import type { IParaleloService } from "../Domain/IParaleloService";
+import type { IUpdateParalelo } from "../Domain/IUpdateParalelo";
 import { ParaleloService } from "./Service";
 
 export class ParaleloController implements IParaleloController {
@@ -25,15 +29,9 @@ export class ParaleloController implements IParaleloController {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const body = await req.json();
-
 			const bodyVal = createBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				return {
-					jsonBody: "PeticionInvalida",
-					status: 400,
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const newParalelo = await this._paraleloService.createParalelo(
 				bodyVal.data,
@@ -41,7 +39,7 @@ export class ParaleloController implements IParaleloController {
 
 			ctx.log({ newCurso: newParalelo });
 
-			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -56,10 +54,7 @@ export class ParaleloController implements IParaleloController {
 
 			const paralelos = await this._paraleloService.getAllParalelos();
 
-			return {
-				jsonBody: { data: paralelos, message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: paralelos });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -73,21 +68,13 @@ export class ParaleloController implements IParaleloController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const paraleloId = req.params.paraleloId;
 
-			if (!paraleloId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!paraleloId) return CommonResponse.invalidId();
 
 			const paralelo = await this._paraleloService.getParaleloById(paraleloId);
 
-			return {
-				jsonBody: { data: paralelo, message: "Solicitud exitosa." },
-				status: 200,
-			};
+			return CommonResponse.successful({
+				data: paralelo,
+			});
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -101,28 +88,49 @@ export class ParaleloController implements IParaleloController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const paraleloId = req.params.paraleloId;
 
-			if (!paraleloId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!paraleloId) return CommonResponse.invalidId();
 
 			await this._paraleloService.deleteParaleloById(paraleloId);
 
-			return {
-				jsonBody: { message: "Recurso eliminado con exito." },
-				status: 200,
-			};
+			return CommonResponse.successful();
 		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
+
+	async paralelosUpdateById(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+			const paraleloId = req.params.paraleloId;
+
+			if (!paraleloId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = updateBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const paralelo = await this._paraleloService.updateParaleloById({
+				id: paraleloId,
+				data: bodyVal.data,
+			});
+
+			return CommonResponse.successful({ data: paralelo });
+		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
 }
 
-const createBodySchema = z.object({
+const createBodySchema = z.object<ZodInferSchema<ICreateParalelo>>({
 	nombre: z.string(),
-	orden: z.number().int(),
+	orden: z.number(),
+});
+
+const updateBodySchema = z.object<ZodInferSchema<IUpdateParalelo>>({
+	nombre: z.string().optional(),
+	orden: z.number().optional(),
 });

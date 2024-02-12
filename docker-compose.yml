@@ -1,0 +1,41 @@
+# Set the version of docker compose to use
+version: "3.9"
+
+# The containers that compose the project
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    container_name: integration-tests-prisma
+    hostname: localhost
+    ports:
+      - 42069:3306
+    # volumes:
+    #   - my-db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: prisma
+      MYSQL_DATABASE: tests
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "--user=root",
+          "--password=prisma",
+          "--host",
+          "127.0.0.1",
+          "ping",
+        ]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+  end:
+    # Using lightweight image for waiting the healthcheck from db
+    image: alpine:latest
+    command: echo "db ready"
+    depends_on:
+      db:
+        condition: service_healthy
+# volumes:
+#   my-db:
+#     driver: "local"

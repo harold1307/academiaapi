@@ -4,7 +4,10 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreateParalelo } from "../../Domain/ICreateParalelo";
 import type { IParalelo } from "../../Domain/IParalelo";
-import type { IParaleloRepository } from "../../Domain/IParaleloRepository";
+import type {
+	IParaleloRepository,
+	UpdateParaleloParams,
+} from "../../Domain/IParaleloRepository";
 
 @injectable()
 export class ParaleloRepository implements IParaleloRepository {
@@ -16,20 +19,26 @@ export class ParaleloRepository implements IParaleloRepository {
 				cursoEscuelas: {
 					take: 1,
 				},
+				nivelesAcademicos: {
+					take: 1,
+				},
 			},
 		});
 
-		return paralelos.map(({ cursoEscuelas, ...rest }) => ({
+		return paralelos.map(({ cursoEscuelas, nivelesAcademicos, ...rest }) => ({
 			...rest,
-			enUso: cursoEscuelas.length > 0,
+			enUso: cursoEscuelas.length > 0 || nivelesAcademicos.length > 0,
 		}));
 	}
 
 	async getById(id: string): Promise<IParalelo | null> {
 		const paralelo = await this._client.paralelo.findUnique({
-			where: { nombre: id },
+			where: { id },
 			include: {
 				cursoEscuelas: {
+					take: 1,
+				},
+				nivelesAcademicos: {
 					take: 1,
 				},
 			},
@@ -37,11 +46,11 @@ export class ParaleloRepository implements IParaleloRepository {
 
 		if (!paralelo) return null;
 
-		const { cursoEscuelas, ...rest } = paralelo;
+		const { cursoEscuelas, nivelesAcademicos, ...rest } = paralelo;
 
 		return {
 			...rest,
-			enUso: cursoEscuelas.length > 0,
+			enUso: cursoEscuelas.length > 0 || nivelesAcademicos.length > 0,
 		};
 	}
 
@@ -56,12 +65,34 @@ export class ParaleloRepository implements IParaleloRepository {
 
 	async deleteById(id: string): Promise<IParalelo> {
 		const paralelo = await this._client.paralelo.delete({
-			where: { nombre: id },
+			where: { id },
 		});
 
 		return {
 			...paralelo,
 			enUso: false,
+		};
+	}
+
+	async update({ id, data }: UpdateParaleloParams): Promise<IParalelo> {
+		const paralelo = await this._client.paralelo.update({
+			where: { id },
+			data,
+			include: {
+				cursoEscuelas: {
+					take: 1,
+				},
+				nivelesAcademicos: {
+					take: 1,
+				},
+			},
+		});
+
+		const { cursoEscuelas, nivelesAcademicos, ...rest } = paralelo;
+
+		return {
+			...rest,
+			enUso: cursoEscuelas.length > 0 || nivelesAcademicos.length > 0,
 		};
 	}
 }

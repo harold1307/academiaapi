@@ -3,11 +3,11 @@ import "reflect-metadata";
 import type { PrismaClient } from "@prisma/client";
 import { Container } from "inversify";
 
-// Institucion
-import { InstitucionService } from "../../Core/Institucion/Application/Service";
-import type { IInstitucionRepository } from "../../Core/Institucion/Domain/IInstitucionRepository";
-import type { IInstitucionService } from "../../Core/Institucion/Domain/IInstitucionService";
-import { InstitucionRepository } from "../../Core/Institucion/Infraestructure/Repositories/InstitucionRepository";
+// sede
+import { SedeService } from "../../Core/Sede/Application/Service";
+import type { ISedeRepository } from "../../Core/Sede/Domain/ISedeRepository";
+import type { ISedeService } from "../../Core/Sede/Domain/ISedeService";
+import { SedeRepository } from "../../Core/Sede/Infraestructure/Repositories/SedeRepository";
 
 // Malla Curricular
 import { MallaCurricularService } from "../../Core/MallaCurricular/Application/Service";
@@ -38,12 +38,6 @@ import { CompetenciaService } from "../../Core/Competencia/Application/Service";
 import type { ICompetenciaRepository } from "../../Core/Competencia/Domain/ICompetenciaRepository";
 import type { ICompetenciaService } from "../../Core/Competencia/Domain/ICompetenciaService";
 import { CompetenciaRepository } from "../../Core/Competencia/Infrastructure/Repositories/CompetenciaRepository";
-
-// asignatura en malla
-import { AsignaturaEnMallaService } from "../../Core/AsignaturaEnMalla/Application/Service";
-import type { IAsignaturaEnMallaRepository } from "../../Core/AsignaturaEnMalla/Domain/IAsignaturaEnMallaRepository";
-import type { IAsignaturaEnMallaService } from "../../Core/AsignaturaEnMalla/Domain/IAsignaturaEnMallaService";
-import { AsignaturaEnMallaRepository } from "../../Core/AsignaturaEnMalla/Infrastructure/Repositories/AsignaturaEnMallaRepository";
 
 // eje formativo
 import { EjeFormativoService } from "../../Core/EjeFormativo/Application/Service";
@@ -135,6 +129,108 @@ import type { ICampoProyectoIntegradorRepository } from "../../Core/CampoProyect
 import type { ICampoProyectoIntegradorService } from "../../Core/CampoProyectoIntegrador/Domain/ICampoProyectoIntegradorService";
 import { CampoProyectoIntegradorRepository } from "../../Core/CampoProyectoIntegrador/Infrastructure/Repositories/CampoProyectoIntegradorRepository";
 
+// niveles de titulacion
+import { NivelTitulacionService } from "../../Core/NivelTitulacion/Application/Service";
+import type { INivelTitulacionRepository } from "../../Core/NivelTitulacion/Domain/INivelTitulacionRepository";
+import type { INivelTitulacionService } from "../../Core/NivelTitulacion/Domain/INivelTitulacionService";
+import { NivelTitulacionRepository } from "../../Core/NivelTitulacion/Infrastructure/Repositories/NivelTitulacionRepository";
+
+// detalles de nivel de titulacion
+import { DetalleNivelTitulacionService } from "../../Core/DetalleNivelTitulacion/Application/Service";
+import type { IDetalleNivelTitulacionRepository } from "../../Core/DetalleNivelTitulacion/Domain/IDetalleNivelTitulacionRepository";
+import type { IDetalleNivelTitulacionService } from "../../Core/DetalleNivelTitulacion/Domain/IDetalleNivelTitulacionService";
+import { DetalleNivelTitulacionRepository } from "../../Core/DetalleNivelTitulacion/Infrastructure/Repositories/DetalleNivelTitulacionRepository";
+
+// perfiles de practica
+import { PerfilPracticaService } from "../../Core/PerfilPractica/Application/Service";
+import type { IPerfilPracticaRepository } from "../../Core/PerfilPractica/Domain/IPerfilPracticaRepository";
+import type { IPerfilPracticaService } from "../../Core/PerfilPractica/Domain/IPerfilPracticaService";
+import { PerfilPracticaRepository } from "../../Core/PerfilPractica/Infrastructure/Repositories/PerfilPracticaRepository";
+
+// tipos de documento
+import { TipoDocumentoService } from "../../Core/TipoDocumento/Application/Service";
+import type { ITipoDocumentoRepository } from "../../Core/TipoDocumento/Domain/ITipoDocumentoRepository";
+import type { ITipoDocumentoService } from "../../Core/TipoDocumento/Domain/ITipoDocumentoService";
+import { TipoDocumentoRepository } from "../../Core/TipoDocumento/Infrastructure/Repositories/TipoDocumentoRepository";
+
+// titulos obtenidos
+import { TituloObtenidoService } from "../../Core/TituloObtenido/Application/Service";
+import type { ITituloObtenidoRepository } from "../../Core/TituloObtenido/Domain/ITituloObtenidoRepository";
+import type { ITituloObtenidoService } from "../../Core/TituloObtenido/Domain/ITituloObtenidoService";
+import { TituloObtenidoRepository } from "../../Core/TituloObtenido/Infrastructure/Repositories/TituloObtenidoRepository";
+
+// tipos de documento en programas
+import { TipoDocumentoEnProgramaService } from "../../Core/TipoDocumentoEnPrograma/Application/Service";
+import type { ITipoDocumentoEnProgramaRepository } from "../../Core/TipoDocumentoEnPrograma/Domain/ITipoDocumentoEnProgramaRepository";
+import type { ITipoDocumentoEnProgramaService } from "../../Core/TipoDocumentoEnPrograma/Domain/ITipoDocumentoEnProgramaService";
+import { TipoDocumentoEnProgramaRepository } from "../../Core/TipoDocumentoEnPrograma/Infrastructure/Repositories/TipoDocumentoEnProgramaRepository";
+
+// programas
+import { ProgramaService } from "../../Core/Programa/Application/Service";
+import type { IProgramaRepository } from "../../Core/Programa/Domain/IProgramaRepository";
+import type { IProgramaService } from "../../Core/Programa/Domain/IProgramaService";
+import { ProgramaRepository } from "../../Core/Programa/Infrastructure/Repositories/ProgramaRepository";
+
+// coordinaciones
+import { CoordinacionService } from "../../Core/Coordinacion/Application/Service";
+import type { ICoordinacionRepository } from "../../Core/Coordinacion/Domain/ICoordinacionRepository";
+import type { ICoordinacionService } from "../../Core/Coordinacion/Domain/ICoordinacionService";
+import { CoordinacionRepository } from "../../Core/Coordinacion/Infrastructure/Repositories/CoordinacionRepository";
+
+// niveles de malla
+import { NivelMallaService } from "../../Core/NivelMalla/Application/Service";
+import type { INivelMallaRepository } from "../../Core/NivelMalla/Domain/INivelMallaRepository";
+import type { INivelMallaService } from "../../Core/NivelMalla/Domain/INivelMallaService";
+import { NivelMallaRepository } from "../../Core/NivelMalla/Infrastructure/Repositories/NivelMallaRepository";
+
+// asignaturas en niveles de malla
+import { AsignaturaEnNivelMallaService } from "../../Core/AsignaturaEnNivelMalla/Application/Service";
+import type { IAsignaturaEnNivelMallaRepository } from "../../Core/AsignaturaEnNivelMalla/Domain/IAsignaturaEnNivelMallaRepository";
+import type { IAsignaturaEnNivelMallaService } from "../../Core/AsignaturaEnNivelMalla/Domain/IAsignaturaEnNivelMallaService";
+import { AsignaturaEnNivelMallaRepository } from "../../Core/AsignaturaEnNivelMalla/Infrastructure/Repositories/AsignaturaEnNivelMallaRepository";
+
+// asignaturas modulo en malla
+import { AsignaturaModuloEnMallaService } from "../../Core/AsignaturaModuloEnMalla/Application/Service";
+import type { IAsignaturaModuloEnMallaRepository } from "../../Core/AsignaturaModuloEnMalla/Domain/IAsignaturaModuloEnMallaRepository";
+import type { IAsignaturaModuloEnMallaService } from "../../Core/AsignaturaModuloEnMalla/Domain/IAsignaturaModuloEnMallaService";
+import { AsignaturaModuloEnMallaRepository } from "../../Core/AsignaturaModuloEnMalla/Infrastructure/Repositories/AsignaturaModuloEnMallaRepository";
+
+// practicas comunitarias en malla
+import { PracticaComunitariaEnMallaService } from "../../Core/PracticaComunitariaEnMalla/Application/Service";
+import type { IPracticaComunitariaEnMallaRepository } from "../../Core/PracticaComunitariaEnMalla/Domain/IPracticaComunitariaEnMallaRepository";
+import type { IPracticaComunitariaEnMallaService } from "../../Core/PracticaComunitariaEnMalla/Domain/IPracticaComunitariaEnMallaService";
+import { PracticaComunitariaEnMallaRepository } from "../../Core/PracticaComunitariaEnMalla/Infrastructure/Repositories/PracticaComunitariaEnMallaRepository";
+
+// practicas pre profesionales en malla
+import { PracticaPreProfesionalEnMallaService } from "../../Core/PracticaPreProfesionalEnMalla/Application/Service";
+import type { IPracticaPreProfesionalEnMallaRepository } from "../../Core/PracticaPreProfesionalEnMalla/Domain/IPracticaPreProfesionalEnMallaRepository";
+import type { IPracticaPreProfesionalEnMallaService } from "../../Core/PracticaPreProfesionalEnMalla/Domain/IPracticaPreProfesionalEnMallaService";
+import { PracticaPreProfesionalEnMallaRepository } from "../../Core/PracticaPreProfesionalEnMalla/Infrastructure/Repositories/PracticaPreProfesionalEnMallaRepository";
+
+// niveles academicos
+import { NivelAcademicoService } from "../../Core/NivelAcademico/Application/Service";
+import type { INivelAcademicoRepository } from "../../Core/NivelAcademico/Domain/INivelAcademicoRepository";
+import type { INivelAcademicoService } from "../../Core/NivelAcademico/Domain/INivelAcademicoService";
+import { NivelAcademicoRepository } from "../../Core/NivelAcademico/Infrastructure/Repositories/NivelAcademicoRepository";
+
+// materias en niveles academicos
+import { MateriaEnNivelAcademicoService } from "../../Core/MateriaEnNivelAcademico/Application/Service";
+import type { IMateriaEnNivelAcademicoRepository } from "../../Core/MateriaEnNivelAcademico/Domain/IMateriaEnNivelAcademicoRepository";
+import type { IMateriaEnNivelAcademicoService } from "../../Core/MateriaEnNivelAcademico/Domain/IMateriaEnNivelAcademicoService";
+import { MateriaEnNivelAcademicoRepository } from "../../Core/MateriaEnNivelAcademico/Infrastructure/Repositories/MateriaEnNivelAcademicoRepository";
+
+// materias en horario
+import { MateriaEnHorarioService } from "../../Core/MateriaEnHorario/Application/Service";
+import type { IMateriaEnHorarioRepository } from "../../Core/MateriaEnHorario/Domain/IMateriaEnHorarioRepository";
+import type { IMateriaEnHorarioService } from "../../Core/MateriaEnHorario/Domain/IMateriaEnHorarioService";
+import { MateriaEnHorarioRepository } from "../../Core/MateriaEnHorario/Infrastructure/Repositories/MateriaEnHorarioRepository";
+
+// ubicaciones
+import { UbicacionService } from "../../Core/Ubicacion/Application/Service";
+import type { IUbicacionRepository } from "../../Core/Ubicacion/Domain/IUbicacionRepository";
+import type { IUbicacionService } from "../../Core/Ubicacion/Domain/IUbicacionService";
+import { UbicacionRepository } from "../../Core/Ubicacion/Infrastructure/Repositories/UbicacionRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -147,12 +243,12 @@ const StartupBuilder = new Container();
 // prisma
 StartupBuilder.bind<PrismaClient>(TYPES.PrismaClient).toConstantValue(Prisma);
 
-// institucion
-StartupBuilder.bind<IInstitucionRepository>(TYPES.InstitucionRepository)
-	.to(InstitucionRepository)
+// sedes
+StartupBuilder.bind<ISedeRepository>(TYPES.SedeRepository)
+	.to(SedeRepository)
 	.inSingletonScope();
-StartupBuilder.bind<IInstitucionService>(TYPES.InstitucionService)
-	.to(InstitucionService)
+StartupBuilder.bind<ISedeService>(TYPES.SedeService)
+	.to(SedeService)
 	.inSingletonScope();
 
 // malla curricular
@@ -204,16 +300,6 @@ StartupBuilder.bind<ICompetenciaRepository>(TYPES.CompetenciaRepository)
 	.inSingletonScope();
 StartupBuilder.bind<ICompetenciaService>(TYPES.CompetenciaService)
 	.to(CompetenciaService)
-	.inSingletonScope();
-
-// asignatura en malla
-StartupBuilder.bind<IAsignaturaEnMallaRepository>(
-	TYPES.AsignaturaEnMallaRepository,
-)
-	.to(AsignaturaEnMallaRepository)
-	.inSingletonScope();
-StartupBuilder.bind<IAsignaturaEnMallaService>(TYPES.AsignaturaEnMallaService)
-	.to(AsignaturaEnMallaService)
 	.inSingletonScope();
 
 // eje formativo
@@ -358,6 +444,172 @@ StartupBuilder.bind<ICampoProyectoIntegradorService>(
 	TYPES.CampoProyectoIntegradorService,
 )
 	.to(CampoProyectoIntegradorService)
+	.inSingletonScope();
+
+// niveles de titulacion
+StartupBuilder.bind<INivelTitulacionRepository>(TYPES.NivelTitulacionRepository)
+	.to(NivelTitulacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<INivelTitulacionService>(TYPES.NivelTitulacionService)
+	.to(NivelTitulacionService)
+	.inSingletonScope();
+
+// detalles de nivel de titulacion
+StartupBuilder.bind<IDetalleNivelTitulacionRepository>(
+	TYPES.DetalleNivelTitulacionRepository,
+)
+	.to(DetalleNivelTitulacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IDetalleNivelTitulacionService>(
+	TYPES.DetalleNivelTitulacionService,
+)
+	.to(DetalleNivelTitulacionService)
+	.inSingletonScope();
+
+// perfiles de practica
+StartupBuilder.bind<IPerfilPracticaRepository>(TYPES.PerfilPracticaRepository)
+	.to(PerfilPracticaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IPerfilPracticaService>(TYPES.PerfilPracticaService)
+	.to(PerfilPracticaService)
+	.inSingletonScope();
+
+// tipos de documento
+StartupBuilder.bind<ITipoDocumentoRepository>(TYPES.TipoDocumentoRepository)
+	.to(TipoDocumentoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ITipoDocumentoService>(TYPES.TipoDocumentoService)
+	.to(TipoDocumentoService)
+	.inSingletonScope();
+
+// titulos obtenidos
+StartupBuilder.bind<ITituloObtenidoRepository>(TYPES.TituloObtenidoRepository)
+	.to(TituloObtenidoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ITituloObtenidoService>(TYPES.TituloObtenidoService)
+	.to(TituloObtenidoService)
+	.inSingletonScope();
+
+// tipos de documento en programas
+StartupBuilder.bind<ITipoDocumentoEnProgramaRepository>(
+	TYPES.TipoDocumentoEnProgramaRepository,
+)
+	.to(TipoDocumentoEnProgramaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ITipoDocumentoEnProgramaService>(
+	TYPES.TipoDocumentoEnProgramaService,
+)
+	.to(TipoDocumentoEnProgramaService)
+	.inSingletonScope();
+
+// programas
+StartupBuilder.bind<IProgramaRepository>(TYPES.ProgramaRepository)
+	.to(ProgramaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IProgramaService>(TYPES.ProgramaService)
+	.to(ProgramaService)
+	.inSingletonScope();
+
+// coordinaciones
+StartupBuilder.bind<ICoordinacionRepository>(TYPES.CoordinacionRepository)
+	.to(CoordinacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICoordinacionService>(TYPES.CoordinacionService)
+	.to(CoordinacionService)
+	.inSingletonScope();
+
+// niveles de malla
+StartupBuilder.bind<INivelMallaRepository>(TYPES.NivelMallaRepository)
+	.to(NivelMallaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<INivelMallaService>(TYPES.NivelMallaService)
+	.to(NivelMallaService)
+	.inSingletonScope();
+
+// asignaturas en niveles de malla
+StartupBuilder.bind<IAsignaturaEnNivelMallaRepository>(
+	TYPES.AsignaturaEnNivelMallaRepository,
+)
+	.to(AsignaturaEnNivelMallaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsignaturaEnNivelMallaService>(
+	TYPES.AsignaturaEnNivelMallaService,
+)
+	.to(AsignaturaEnNivelMallaService)
+	.inSingletonScope();
+
+// asignaturas modulo en malla
+StartupBuilder.bind<IAsignaturaModuloEnMallaRepository>(
+	TYPES.AsignaturaModuloEnMallaRepository,
+)
+	.to(AsignaturaModuloEnMallaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsignaturaModuloEnMallaService>(
+	TYPES.AsignaturaModuloEnMallaService,
+)
+	.to(AsignaturaModuloEnMallaService)
+	.inSingletonScope();
+
+// practicas comunitarias en malla
+StartupBuilder.bind<IPracticaComunitariaEnMallaRepository>(
+	TYPES.PracticaComunitariaEnMallaRepository,
+)
+	.to(PracticaComunitariaEnMallaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IPracticaComunitariaEnMallaService>(
+	TYPES.PracticaComunitariaEnMallaService,
+)
+	.to(PracticaComunitariaEnMallaService)
+	.inSingletonScope();
+
+// practicas pre profesionales en malla
+StartupBuilder.bind<IPracticaPreProfesionalEnMallaRepository>(
+	TYPES.PracticaPreProfesionalEnMallaRepository,
+)
+	.to(PracticaPreProfesionalEnMallaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IPracticaPreProfesionalEnMallaService>(
+	TYPES.PracticaPreProfesionalEnMallaService,
+)
+	.to(PracticaPreProfesionalEnMallaService)
+	.inSingletonScope();
+
+// niveles academicos
+StartupBuilder.bind<INivelAcademicoRepository>(TYPES.NivelAcademicoRepository)
+	.to(NivelAcademicoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<INivelAcademicoService>(TYPES.NivelAcademicoService)
+	.to(NivelAcademicoService)
+	.inSingletonScope();
+
+// materias en niveles academicos
+StartupBuilder.bind<IMateriaEnNivelAcademicoRepository>(
+	TYPES.MateriaEnNivelAcademicoRepository,
+)
+	.to(MateriaEnNivelAcademicoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IMateriaEnNivelAcademicoService>(
+	TYPES.MateriaEnNivelAcademicoService,
+)
+	.to(MateriaEnNivelAcademicoService)
+	.inSingletonScope();
+
+// materias en horario
+StartupBuilder.bind<IMateriaEnHorarioRepository>(
+	TYPES.MateriaEnHorarioRepository,
+)
+	.to(MateriaEnHorarioRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IMateriaEnHorarioService>(TYPES.MateriaEnHorarioService)
+	.to(MateriaEnHorarioService)
+	.inSingletonScope();
+
+// ubicaciones
+StartupBuilder.bind<IUbicacionRepository>(TYPES.UbicacionRepository)
+	.to(UbicacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IUbicacionService>(TYPES.UbicacionService)
+	.to(UbicacionService)
 	.inSingletonScope();
 
 export { StartupBuilder };

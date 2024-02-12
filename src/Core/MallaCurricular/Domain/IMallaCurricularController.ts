@@ -5,10 +5,6 @@ import type {
 } from "@azure/functions";
 
 export type IMallaCurricularController = {
-	mallasCurricularesCreate(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
 	mallasCurricularesDeleteById(
 		req: HttpRequest,
 		ctx: InvocationContext,
@@ -30,15 +26,15 @@ export type IMallaCurricularController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-	mallasCurricularesCreateAsignaturaEnMalla(
-		req: HttpRequest,
-		ctx: InvocationContext,
-	): Promise<HttpResponseInit>;
 	mallasCurricularesGetByIdWithLugaresEjecucion(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
 	mallasCurricularesGetByIdWithAsignaturas(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
+	mallasCurricularesCreateModulo(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;

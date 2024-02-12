@@ -4,7 +4,10 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreateTurno } from "../../Domain/ICreateTurno";
 import type { ITurno } from "../../Domain/ITurno";
-import type { ITurnoRepository } from "../../Domain/ITurnoRepository";
+import type {
+	ITurnoRepository,
+	UpdateTurnoParams,
+} from "../../Domain/ITurnoRepository";
 
 @injectable()
 export class TurnoRepository implements ITurnoRepository {
@@ -13,36 +16,65 @@ export class TurnoRepository implements ITurnoRepository {
 	async getAll(): Promise<ITurno[]> {
 		const turnos = await this._client.turno.findMany({
 			include: {
-				sesion: true,
+				sesion: {
+					include: {
+						sede: true,
+					},
+				},
 			},
 		});
 
-		return turnos.map(({ sesion, ...rest }) => ({
+		return turnos.map(({ sesion: { sede, ...sesion }, ...rest }) => ({
 			...rest,
-			enUso: !!sesion,
+			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
+			enUso: false,
 		}));
 	}
 	async getById(id: string): Promise<ITurno | null> {
 		const turno = await this._client.turno.findUnique({
 			where: { id },
 			include: {
-				sesion: true,
+				sesion: {
+					include: {
+						sede: true,
+					},
+				},
 			},
 		});
 
 		if (!turno) return null;
 
-		const { sesion, ...rest } = turno;
+		const {
+			sesion: { sede, ...sesion },
+			...rest
+		} = turno;
 
-		return { ...rest, enUso: !!sesion };
+		return {
+			...rest,
+			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
+			enUso: false,
+		};
 	}
 	async deleteById(id: string): Promise<ITurno> {
 		const turno = await this._client.turno.delete({
 			where: { id },
+			include: {
+				sesion: {
+					include: {
+						sede: true,
+					},
+				},
+			},
 		});
 
+		const {
+			sesion: { sede, ...sesion },
+			...rest
+		} = turno;
+
 		return {
-			...turno,
+			...rest,
+			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
 			enUso: false,
 		};
 	}
@@ -57,11 +89,49 @@ export class TurnoRepository implements ITurnoRepository {
 					},
 				},
 			},
+			include: {
+				sesion: {
+					include: {
+						sede: true,
+					},
+				},
+			},
 		});
 
-		return { ...turno, enUso: true };
-	}
-	// update(params: IUpdateTurnoParams): Promise<ITurno>; {
+		const {
+			sesion: { sede, ...sesion },
+			...rest
+		} = turno;
 
-	// }
+		return {
+			...rest,
+			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
+			enUso: false,
+		};
+	}
+
+	async update({ id, data }: UpdateTurnoParams): Promise<ITurno> {
+		const turno = await this._client.turno.update({
+			where: { id },
+			data,
+			include: {
+				sesion: {
+					include: {
+						sede: true,
+					},
+				},
+			},
+		});
+
+		const {
+			sesion: { sede, ...sesion },
+			...rest
+		} = turno;
+
+		return {
+			...rest,
+			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
+			enUso: false,
+		};
+	}
 }

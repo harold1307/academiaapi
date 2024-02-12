@@ -192,6 +192,6 @@ const updateBodySchema = z.object<ZodInferSchema<IUpdateModeloNivelacion>>({
 	notaMaxima: z.number().optional(),
 	notaAprobatoria: z.number().optional(),
 	decimalesNotaFinal: z.number().optional(),
-	// @ts-expect-error ZodInferSchema not well typed for nullable optional fields
+
 	observaciones: z.string().nullable().optional(),
 });
