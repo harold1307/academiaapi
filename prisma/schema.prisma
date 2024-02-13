@@ -168,6 +168,9 @@ model NivelMalla {
   asignaturas            AsignaturaEnNivelMalla[]
   nivelesAcademicos      NivelAcademico[]
 
+  cronogramasMatriculacion CronogramaMatriculacion[]
+  requisitosMatriculacion  RequisitoMatriculacion[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -780,7 +783,8 @@ model TipoDocumento {
   examenIngreso     Boolean
   paraPasantia      Boolean
 
-  programas TipoDocumentoEnPrograma[]
+  programas  TipoDocumentoEnPrograma[]
+  requisitos RequisitoMatriculacion[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -1008,9 +1012,146 @@ model Ubicacion {
   materiasEnHorario MateriaEnHorario[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("ubicaciones")
+}
+
+model Corte {
+  id     String @id @default(uuid())
+  nombre String
+
+  periodos PeriodoLectivo[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("cortes")
+}
+
+model CalculoCosto {
+  id   String           @id @default(uuid())
+  tipo TipoCalculoCosto
+
+  costoPorSesion Boolean?
+
+  estudiantesEligenOpcionPago Boolean?
+  cronogramaFechasOpcionPago  Boolean?
+
+  periodos PeriodoLectivo[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("calculos_costos")
+}
+
+model RequisitoMatriculacion {
+  id String @id @default(uuid())
+
+  obligatorio      Boolean
+  transferenciaIES Boolean
+  primeraMatricula Boolean
+  repitenMaterias  Boolean
+
+  descripcion String?
+
+  tipoDocumentoId String
+  tipoDocumento   TipoDocumento  @relation(fields: [tipoDocumentoId], references: [id])
+  periodoId       String
+  periodo         PeriodoLectivo @relation(fields: [periodoId], references: [id], onDelete: Cascade)
+  nivelId         String
+  nivel           NivelMalla     @relation(fields: [nivelId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("requisitos_matriculacion")
+}
+
+model CronogramaMatriculacion {
+  id String @id @default(uuid())
+
+  fechaInicio DateTime
+  fechaFin    DateTime
+
+  nivelId String
+  nivel   NivelMalla @relation(fields: [nivelId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("cronogramas_matriculacion")
+}
+
+model SubPeriodoLectivo {
+  id String @id @default(uuid())
+
+  nombre      String
+  fechaInicio DateTime
+  fechaFin    DateTime
+
+  periodoId String
+  periodo   PeriodoLectivo @relation(fields: [periodoId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("sub_periodos_lectivos")
+}
+
+model PeriodoLectivo {
+  id         String  @id @default(uuid())
+  matriculas Boolean @default(false)
+  estado     Boolean @default(true)
+  abierto    Boolean @default(true)
+
+  nombre String
+  inicio DateTime
+  fin    DateTime
+
+  limiteMatriculaOrdinaria                DateTime?
+  limiteMatriculaExtraordinaria           DateTime?
+  limiteMatriculaEspecial                 DateTime?
+  automatriculaAlumnosFechaExtraordinaria Boolean?
+
+  tipo                                      TipoPeriodo
+  estudianteSeleccionaParaleloAutomatricula Boolean?
+  seImpartioNivelacion                      Boolean
+  planificacionCargaHoraria                 Boolean
+
+  planificacionProfesoresFormaTotal Boolean?
+  aprobacionPlanificacionProfesores Boolean?
+
+  cronogramaNotasCoordinacion                  Boolean
+  legalizacionAutomaticaContraPagos            Boolean?
+  puedenMatricularseArrastre                   Boolean
+  puedenAutomatricularseSegundasOMasMatriculas Boolean
+
+  numeroSecuencia Int?
+
+  numeroMatriculaAutomatico   Boolean?
+  numeroMatricularAlLegalizar Boolean?
+
+  actividadesDocencia                  Boolean @default(true)
+  actividadesInvestigacion             Boolean @default(true)
+  actividadesGestion                   Boolean @default(true)
+  actividadesPracticasComunitarias     Boolean @default(false)
+  actividadesPracticasPreprofesionales Boolean @default(false)
+  otrasActividades                     Boolean @default(false)
+
+  corteId        String?
+  corte          Corte?       @relation(fields: [corteId], references: [id])
+  calculoCostoId String
+  calculoCosto   CalculoCosto @relation(fields: [calculoCostoId], references: [id])
+
+  requisitosMatriculacion RequisitoMatriculacion[]
+  subPeriodos             SubPeriodoLectivo[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("periodos_lectivos")
 }
 
 model Account {
@@ -1119,4 +1260,18 @@ enum Dia {
   DOMINGO
 
   @@map("dia")
+}
+
+enum TipoPeriodo {
+  GRADO
+  POSGRADO
+
+  @@map("tipo_periodo")
+}
+
+enum TipoCalculoCosto {
+  COSTO_POR_NIVEL_Y_MATERIAS
+  COSTO_POR_PLAN_CUOTA
+
+  @@map("tipo_calculo_costo")
 }
