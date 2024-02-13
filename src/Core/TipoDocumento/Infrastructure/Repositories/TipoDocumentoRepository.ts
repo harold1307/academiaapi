@@ -19,12 +19,15 @@ export class TipoDocumentoRepository implements ITipoDocumentoRepository {
 				programas: {
 					take: 1,
 				},
+				requisitos: {
+					take: 1,
+				},
 			},
 		});
 
-		return tipos.map(({ programas, ...rest }) => ({
+		return tipos.map(({ programas, requisitos, ...rest }) => ({
 			...rest,
-			enUso: programas.length > 0,
+			enUso: programas.length > 0 || requisitos.length > 0,
 		}));
 	}
 	async getById(id: string): Promise<ITipoDocumento | null> {
@@ -34,16 +37,19 @@ export class TipoDocumentoRepository implements ITipoDocumentoRepository {
 				programas: {
 					take: 1,
 				},
+				requisitos: {
+					take: 1,
+				},
 			},
 		});
 
 		if (!tipo) return null;
 
-		const { programas, ...rest } = tipo;
+		const { programas, requisitos, ...rest } = tipo;
 
 		return {
 			...rest,
-			enUso: programas.length > 0,
+			enUso: programas.length > 0 || requisitos.length > 0,
 		};
 	}
 	async deleteById(id: string): Promise<ITipoDocumento> {
@@ -70,14 +76,17 @@ export class TipoDocumentoRepository implements ITipoDocumentoRepository {
 				programas: {
 					take: 1,
 				},
+				requisitos: {
+					take: 1,
+				},
 			},
 		});
 
-		const { programas, ...rest } = tipo;
+		const { programas, requisitos, ...rest } = tipo;
 
 		return {
 			...rest,
-			enUso: programas.length > 0,
+			enUso: programas.length > 0 || requisitos.length > 0,
 		};
 	}
 }
