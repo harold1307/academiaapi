@@ -19,6 +19,9 @@ import type { INivelMallaService } from "../../NivelMalla/Domain/INivelMallaServ
 import { RequisitoMatriculacionService } from "../../RequisitoMatriculacion/Application/Service";
 import type { ICreateRequisitoMatriculacion } from "../../RequisitoMatriculacion/Domain/ICreateRequisitoMatriculacion";
 import type { IRequisitoMatriculacionService } from "../../RequisitoMatriculacion/Domain/IRequisitoMatriculacionService";
+import { SubPeriodoLectivoService } from "../../SubPeriodoLectivo/Application/Service";
+import type { ICreateSubPeriodoLectivo } from "../../SubPeriodoLectivo/Domain/ICreateSubPeriodoLectivo";
+import type { ISubPeriodoLectivoService } from "../../SubPeriodoLectivo/Domain/ISubPeriodoLectivoService";
 import { TipoDocumentoService } from "../../TipoDocumento/Application/Service";
 import type { ITipoDocumentoService } from "../../TipoDocumento/Domain/ITipoDocumentoService";
 import type { ICreatePeriodoLectivo } from "../Domain/ICreatePeriodoLectivo";
@@ -34,6 +37,7 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 	private _requisitoMatriculacionService: IRequisitoMatriculacionService;
 	private _nivelMallaService: INivelMallaService;
 	private _tipoDocumentoService: ITipoDocumentoService;
+	private _subPeriodoLectivoService: ISubPeriodoLectivoService;
 
 	constructor() {
 		this._periodoLectivoService = StartupBuilder.resolve(PeriodoLectivoService);
@@ -44,6 +48,9 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 		);
 		this._nivelMallaService = StartupBuilder.resolve(NivelMallaService);
 		this._tipoDocumentoService = StartupBuilder.resolve(TipoDocumentoService);
+		this._subPeriodoLectivoService = StartupBuilder.resolve(
+			SubPeriodoLectivoService,
+		);
 	}
 
 	async periodosLectivosGetAll(
@@ -317,7 +324,67 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async periodosLectivosCreateSubPeriodo(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const periodoLectivoId = req.params.periodoLectivoId;
+
+			if (!periodoLectivoId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createSubPeriodoBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const periodo =
+				await this._periodoLectivoService.getPeriodoLectivoById(
+					periodoLectivoId,
+				);
+
+			if (!periodo)
+				return {
+					jsonBody: {
+						message: "El periodo lectivo no existe",
+					},
+					status: 400,
+				};
+
+			const { fechaFin, fechaInicio, ...data } = bodyVal.data;
+
+			const newSubPeriodoLectivo =
+				await this._subPeriodoLectivoService.createSubPeriodoLectivo({
+					...data,
+					fechaFin: new Date(fechaFin),
+					fechaInicio: new Date(fechaInicio),
+					periodoId: periodo.id,
+				});
+
+			ctx.log({ newSubPeriodoLectivo });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
+
+const createSubPeriodoBodySchema = z.object<
+	ZodInferSchema<
+		Omit<ICreateSubPeriodoLectivo, "fechaFin" | "fechaInicio" | "periodoId"> & {
+			fechaFin: string;
+			fechaInicio: string;
+		}
+	>
+>({
+	fechaFin: z.string().datetime(),
+	fechaInicio: z.string().datetime(),
+	nombre: z.string(),
+});
 
 const createRequisitoMatriculacionBodySchema = z.object<
 	ZodInferSchema<Omit<ICreateRequisitoMatriculacion, "periodoId">>

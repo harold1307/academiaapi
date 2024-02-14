@@ -49,3 +49,10 @@ app.post("periodosLectivosCreateRequisitoMatriculacion", {
 		controller.periodosLectivosCreateRequisitoMatriculacion(req, ctx),
 	route: "periodos-lectivos/{periodoLectivoId}/requisitos-matriculacion",
 });
+
+// sub periodos lectivos
+app.post("periodosLectivosCreateSubPeriodo", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.periodosLectivosCreateSubPeriodo(req, ctx),
+	route: "periodos-lectivos/{periodoLectivoId}/sub-periodos-lectivos",
+});

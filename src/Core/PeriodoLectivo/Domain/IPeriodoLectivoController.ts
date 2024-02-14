@@ -34,4 +34,8 @@ export type IPeriodoLectivoController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
+	periodosLectivosCreateSubPeriodo(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 };

@@ -55,6 +55,7 @@
   - No se podra actualizar el _formato de costos_.
   - No se podra activar/desactivar el periodo.
   - No se podran actualizar los campos: _actividades de docencia_, _actividades de investigacion_ y _actividades de gestion_.
+  - No se podra eliminar ni actualizar los subperiodos.
 
 - Si el periodo lectivo esta activo:
   - No se podra actualizar los campos: _cronogramaNotasCoordinacion_, _legalizacionAutomaticaContraPagos_, _numeroMatriculaAutomatico_ y _numeroMatricularAlLegalizar_
