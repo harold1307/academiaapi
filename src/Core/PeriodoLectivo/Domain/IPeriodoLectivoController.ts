@@ -1,5 +1,3 @@
-
-
 import type {
 	HttpRequest,
 	HttpResponseInit,
@@ -7,7 +5,7 @@ import type {
 } from "@azure/functions";
 
 export type IPeriodoLectivoController = {
-  periodosLectivosCreate(
+	periodosLectivosCreate(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
@@ -27,4 +25,9 @@ export type IPeriodoLectivoController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-}
+
+	periodosLectivosUpdateCalculoCosto(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
+};

@@ -9,6 +9,9 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { CalculoCostoService } from "../../CalculoCosto/Application/Service";
+import type { ICalculoCostoService } from "../../CalculoCosto/Domain/ICalculoCostoService";
+import type { IUpdateCalculoCosto } from "../../CalculoCosto/Domain/IUpdateCalculoCosto";
 import { CorteService } from "../../Corte/Application/Service";
 import type { ICorteService } from "../../Corte/Domain/ICorteService";
 import type { ICreatePeriodoLectivo } from "../Domain/ICreatePeriodoLectivo";
@@ -20,10 +23,12 @@ import { PeriodoLectivoService } from "./Service";
 export class PeriodoLectivoController implements IPeriodoLectivoController {
 	private _periodoLectivoService: IPeriodoLectivoService;
 	private _corteService: ICorteService;
+	private _calculoCostoService: ICalculoCostoService;
 
 	constructor() {
 		this._periodoLectivoService = StartupBuilder.resolve(PeriodoLectivoService);
 		this._corteService = StartupBuilder.resolve(CorteService);
+		this._calculoCostoService = StartupBuilder.resolve(CalculoCostoService);
 	}
 
 	async periodosLectivosGetAll(
@@ -204,7 +209,56 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async periodosLectivosUpdateCalculoCosto(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+			const periodoLectivoId = req.params.periodoLectivoId;
+
+			if (!periodoLectivoId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = updateCalculoCostoBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const periodo =
+				await this._periodoLectivoService.getPeriodoLectivoById(
+					periodoLectivoId,
+				);
+
+			if (!periodo)
+				return {
+					jsonBody: { message: "El periodo lectivo no existe" },
+					status: 400,
+				};
+
+			const updatedCalculo =
+				await this._calculoCostoService.updateCalculoCostoById({
+					id: periodo.calculoCostoId,
+					data: bodyVal.data,
+				});
+
+			return CommonResponse.successful({ data: updatedCalculo });
+		} catch (error) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
+
+const updateCalculoCostoBodySchema = z.object<
+	ZodInferSchema<IUpdateCalculoCosto>
+>({
+	costoPorSesion: z.boolean().nullable().optional(),
+	cronogramaFechasOpcionPago: z.boolean().nullable().optional(),
+	estudiantesEligenOpcionPago: z.boolean().nullable().optional(),
+	tipo: z
+		.enum(["COSTO_POR_NIVEL_Y_MATERIAS", "COSTO_POR_PLAN_CUOTA"] as const)
+		.optional(),
+});
 
 const createBodySchema = z.object<
 	ZodInferSchema<

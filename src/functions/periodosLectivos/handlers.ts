@@ -33,3 +33,11 @@ app.patch("periodosLectivosUpdateById", {
 	handler: (req, ctx) => controller.periodosLectivosUpdateById(req, ctx),
 	route: "periodos-lectivos/{periodoLectivoId}",
 });
+
+// calculos de costo
+app.patch("periodosLectivosUpdateCalculoCosto", {
+	authLevel: "anonymous",
+	handler: (req, ctx) =>
+		controller.periodosLectivosUpdateCalculoCosto(req, ctx),
+	route: "periodos-lectivos/{periodoLectivoId}/calculos-costo",
+});

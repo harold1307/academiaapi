@@ -243,6 +243,12 @@ import type { ICorteRepository } from "../../Core/Corte/Domain/ICorteRepository"
 import type { ICorteService } from "../../Core/Corte/Domain/ICorteService";
 import { CorteRepository } from "../../Core/Corte/Infrastructure/Repositories/CorteRepository";
 
+// calculos de costo
+import { CalculoCostoService } from "../../Core/CalculoCosto/Application/Service";
+import type { ICalculoCostoRepository } from "../../Core/CalculoCosto/Domain/ICalculoCostoRepository";
+import type { ICalculoCostoService } from "../../Core/CalculoCosto/Domain/ICalculoCostoService";
+import { CalculoCostoRepository } from "../../Core/CalculoCosto/Infrastructure/Repositories/CalculoCostoRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -640,4 +646,13 @@ StartupBuilder.bind<ICorteService>(TYPES.CorteService)
 	.to(CorteService)
 	.inSingletonScope();
 
+// calculos de costo
+StartupBuilder.bind<ICalculoCostoRepository>(TYPES.CalculoCostoRepository)
+	.to(CalculoCostoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICalculoCostoService>(TYPES.CalculoCostoService)
+	.to(CalculoCostoService)
+	.inSingletonScope();
+
 export { StartupBuilder };
+

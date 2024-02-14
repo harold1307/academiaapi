@@ -117,4 +117,6 @@ export const TYPES = {
 	PeriodoLectivoService: Symbol.for("PeriodoLectivoService"),
 	CorteRepository: Symbol.for("CorteRepository"),
 	CorteService: Symbol.for("CorteService"),
+	CalculoCostoRepository: Symbol.for("CalculoCostoRepository"),
+	CalculoCostoService: Symbol.for("CalculoCostoService"),
 } as const;
