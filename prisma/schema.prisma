@@ -1075,8 +1075,10 @@ model CronogramaMatriculacion {
   fechaInicio DateTime
   fechaFin    DateTime
 
-  nivelId String
-  nivel   NivelMalla @relation(fields: [nivelId], references: [id], onDelete: Cascade)
+  nivelId   String
+  nivel     NivelMalla     @relation(fields: [nivelId], references: [id], onDelete: Cascade)
+  periodoId String
+  periodo   PeriodoLectivo @relation(fields: [periodoId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -1145,8 +1147,9 @@ model PeriodoLectivo {
   calculoCostoId String
   calculoCosto   CalculoCosto @relation(fields: [calculoCostoId], references: [id])
 
-  requisitosMatriculacion RequisitoMatriculacion[]
-  subPeriodos             SubPeriodoLectivo[]
+  requisitosMatriculacion  RequisitoMatriculacion[]
+  subPeriodos              SubPeriodoLectivo[]
+  cronogramasMatriculacion CronogramaMatriculacion[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
