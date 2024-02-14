@@ -16,6 +16,7 @@ export class BaseValidatorDTO<T, Err extends BaseDTOError<T>> {
 		const parse = schema.safeParse(this.input);
 
 		if (!parse.success) {
+			// console.log(parse.error.issues)
 			throw new Err(parse.error);
 		}
 

@@ -231,6 +231,12 @@ import type { IUbicacionRepository } from "../../Core/Ubicacion/Domain/IUbicacio
 import type { IUbicacionService } from "../../Core/Ubicacion/Domain/IUbicacionService";
 import { UbicacionRepository } from "../../Core/Ubicacion/Infrastructure/Repositories/UbicacionRepository";
 
+// periodos lectivos
+import { PeriodoLectivoService } from "../../Core/PeriodoLectivo/Application/Service";
+import type { IPeriodoLectivoRepository } from "../../Core/PeriodoLectivo/Domain/IPeriodoLectivoRepository";
+import type { IPeriodoLectivoService } from "../../Core/PeriodoLectivo/Domain/IPeriodoLectivoService";
+import { PeriodoLectivoRepository } from "../../Core/PeriodoLectivo/Infrastructure/Repositories/PeriodoLectivoRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -610,6 +616,14 @@ StartupBuilder.bind<IUbicacionRepository>(TYPES.UbicacionRepository)
 	.inSingletonScope();
 StartupBuilder.bind<IUbicacionService>(TYPES.UbicacionService)
 	.to(UbicacionService)
+	.inSingletonScope();
+
+// periodos lectivos
+StartupBuilder.bind<IPeriodoLectivoRepository>(TYPES.PeriodoLectivoRepository)
+	.to(PeriodoLectivoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IPeriodoLectivoService>(TYPES.PeriodoLectivoService)
+	.to(PeriodoLectivoService)
 	.inSingletonScope();
 
 export { StartupBuilder };

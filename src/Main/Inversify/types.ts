@@ -113,4 +113,6 @@ export const TYPES = {
 	MateriaEnHorarioService: Symbol.for("MateriaEnHorarioService"),
 	UbicacionRepository: Symbol.for("UbicacionRepository"),
 	UbicacionService: Symbol.for("UbicacionService"),
+	PeriodoLectivoRepository: Symbol.for("PeriodoLectivoRepository"),
+	PeriodoLectivoService: Symbol.for("PeriodoLectivoService"),
 } as const;
