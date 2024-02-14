@@ -1,5 +1,3 @@
-
-
 import type {
 	HttpRequest,
 	HttpResponseInit,
@@ -7,7 +5,7 @@ import type {
 } from "@azure/functions";
 
 export type ICorteController = {
-  cortesCreate(
+	cortesCreate(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
@@ -27,4 +25,4 @@ export type ICorteController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-}
+};

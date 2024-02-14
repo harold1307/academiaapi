@@ -113,7 +113,10 @@ const schema = z
 				(field): field is null => field === null,
 			);
 
-			if (numeroMatriculaNull.length !== 2 && numeroMatriculaNull.length !== 0) {
+			if (
+				numeroMatriculaNull.length !== 2 &&
+				numeroMatriculaNull.length !== 0
+			) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message:
