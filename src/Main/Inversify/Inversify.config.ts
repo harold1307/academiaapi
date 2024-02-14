@@ -237,6 +237,12 @@ import type { IPeriodoLectivoRepository } from "../../Core/PeriodoLectivo/Domain
 import type { IPeriodoLectivoService } from "../../Core/PeriodoLectivo/Domain/IPeriodoLectivoService";
 import { PeriodoLectivoRepository } from "../../Core/PeriodoLectivo/Infrastructure/Repositories/PeriodoLectivoRepository";
 
+// cortes
+import { CorteService } from "../../Core/Corte/Application/Service";
+import type { ICorteRepository } from "../../Core/Corte/Domain/ICorteRepository";
+import type { ICorteService } from "../../Core/Corte/Domain/ICorteService";
+import { CorteRepository } from "../../Core/Corte/Infrastructure/Repositories/CorteRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -624,6 +630,14 @@ StartupBuilder.bind<IPeriodoLectivoRepository>(TYPES.PeriodoLectivoRepository)
 	.inSingletonScope();
 StartupBuilder.bind<IPeriodoLectivoService>(TYPES.PeriodoLectivoService)
 	.to(PeriodoLectivoService)
+	.inSingletonScope();
+
+// cortes
+StartupBuilder.bind<ICorteRepository>(TYPES.CorteRepository)
+	.to(CorteRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICorteService>(TYPES.CorteService)
+	.to(CorteService)
 	.inSingletonScope();
 
 export { StartupBuilder };

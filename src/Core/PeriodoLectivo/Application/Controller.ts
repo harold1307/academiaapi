@@ -9,6 +9,8 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { CorteService } from "../../Corte/Application/Service";
+import type { ICorteService } from "../../Corte/Domain/ICorteService";
 import type { ICreatePeriodoLectivo } from "../Domain/ICreatePeriodoLectivo";
 import type { IPeriodoLectivoController } from "../Domain/IPeriodoLectivoController";
 import type { IPeriodoLectivoService } from "../Domain/IPeriodoLectivoService";
@@ -17,9 +19,11 @@ import { PeriodoLectivoService } from "./Service";
 
 export class PeriodoLectivoController implements IPeriodoLectivoController {
 	private _periodoLectivoService: IPeriodoLectivoService;
+	private _corteService: ICorteService;
 
 	constructor() {
 		this._periodoLectivoService = StartupBuilder.resolve(PeriodoLectivoService);
+		this._corteService = StartupBuilder.resolve(CorteService);
 	}
 
 	async periodosLectivosGetAll(
@@ -98,8 +102,16 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 				limiteMatriculaEspecial,
 				limiteMatriculaExtraordinaria,
 				limiteMatriculaOrdinaria,
+				corteId,
 				...data
 			} = bodyVal.data;
+
+			if (corteId) {
+				const corte = await this._corteService.getCorteById(corteId);
+
+				if (!corte)
+					return { jsonBody: { message: "El corte no existe" }, status: 400 };
+			}
 
 			const newPeriodoLectivo =
 				await this._periodoLectivoService.createPeriodoLectivo({
@@ -115,6 +127,7 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 					limiteMatriculaOrdinaria: limiteMatriculaOrdinaria
 						? new Date(limiteMatriculaOrdinaria)
 						: null,
+					corteId,
 				});
 
 			ctx.log({ newPeriodoLectivo });
@@ -146,8 +159,16 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 				limiteMatriculaEspecial,
 				limiteMatriculaExtraordinaria,
 				limiteMatriculaOrdinaria,
+				corteId,
 				...data
 			} = bodyVal.data;
+
+			if (corteId) {
+				const corte = await this._corteService.getCorteById(corteId);
+
+				if (!corte)
+					return { jsonBody: { message: "El corte no existe" }, status: 400 };
+			}
 
 			const periodoLectivo =
 				await this._periodoLectivoService.updatePeriodoLectivoById({
@@ -174,6 +195,7 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 									? new Date(limiteMatriculaOrdinaria)
 									: null
 								: undefined,
+						corteId,
 					},
 				});
 
