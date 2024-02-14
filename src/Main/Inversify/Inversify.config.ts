@@ -249,6 +249,12 @@ import type { ICalculoCostoRepository } from "../../Core/CalculoCosto/Domain/ICa
 import type { ICalculoCostoService } from "../../Core/CalculoCosto/Domain/ICalculoCostoService";
 import { CalculoCostoRepository } from "../../Core/CalculoCosto/Infrastructure/Repositories/CalculoCostoRepository";
 
+// requisitos de matriculacion
+import { RequisitoMatriculacionService } from "../../Core/RequisitoMatriculacion/Application/Service";
+import type { IRequisitoMatriculacionRepository } from "../../Core/RequisitoMatriculacion/Domain/IRequisitoMatriculacionRepository";
+import type { IRequisitoMatriculacionService } from "../../Core/RequisitoMatriculacion/Domain/IRequisitoMatriculacionService";
+import { RequisitoMatriculacionRepository } from "../../Core/RequisitoMatriculacion/Infrastructure/Repositories/RequisitoMatriculacionRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -654,5 +660,16 @@ StartupBuilder.bind<ICalculoCostoService>(TYPES.CalculoCostoService)
 	.to(CalculoCostoService)
 	.inSingletonScope();
 
-export { StartupBuilder };
+// requisitos de matriculacion
+StartupBuilder.bind<IRequisitoMatriculacionRepository>(
+	TYPES.RequisitoMatriculacionRepository,
+)
+	.to(RequisitoMatriculacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IRequisitoMatriculacionService>(
+	TYPES.RequisitoMatriculacionService,
+)
+	.to(RequisitoMatriculacionService)
+	.inSingletonScope();
 
+export { StartupBuilder };

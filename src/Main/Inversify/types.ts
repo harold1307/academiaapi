@@ -119,4 +119,8 @@ export const TYPES = {
 	CorteService: Symbol.for("CorteService"),
 	CalculoCostoRepository: Symbol.for("CalculoCostoRepository"),
 	CalculoCostoService: Symbol.for("CalculoCostoService"),
+	RequisitoMatriculacionRepository: Symbol.for(
+		"RequisitoMatriculacionRepository",
+	),
+	RequisitoMatriculacionService: Symbol.for("RequisitoMatriculacionService"),
 } as const;

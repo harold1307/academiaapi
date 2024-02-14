@@ -14,6 +14,13 @@ import type { ICalculoCostoService } from "../../CalculoCosto/Domain/ICalculoCos
 import type { IUpdateCalculoCosto } from "../../CalculoCosto/Domain/IUpdateCalculoCosto";
 import { CorteService } from "../../Corte/Application/Service";
 import type { ICorteService } from "../../Corte/Domain/ICorteService";
+import { NivelMallaService } from "../../NivelMalla/Application/Service";
+import type { INivelMallaService } from "../../NivelMalla/Domain/INivelMallaService";
+import { RequisitoMatriculacionService } from "../../RequisitoMatriculacion/Application/Service";
+import type { ICreateRequisitoMatriculacion } from "../../RequisitoMatriculacion/Domain/ICreateRequisitoMatriculacion";
+import type { IRequisitoMatriculacionService } from "../../RequisitoMatriculacion/Domain/IRequisitoMatriculacionService";
+import { TipoDocumentoService } from "../../TipoDocumento/Application/Service";
+import type { ITipoDocumentoService } from "../../TipoDocumento/Domain/ITipoDocumentoService";
 import type { ICreatePeriodoLectivo } from "../Domain/ICreatePeriodoLectivo";
 import type { IPeriodoLectivoController } from "../Domain/IPeriodoLectivoController";
 import type { IPeriodoLectivoService } from "../Domain/IPeriodoLectivoService";
@@ -24,11 +31,19 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 	private _periodoLectivoService: IPeriodoLectivoService;
 	private _corteService: ICorteService;
 	private _calculoCostoService: ICalculoCostoService;
+	private _requisitoMatriculacionService: IRequisitoMatriculacionService;
+	private _nivelMallaService: INivelMallaService;
+	private _tipoDocumentoService: ITipoDocumentoService;
 
 	constructor() {
 		this._periodoLectivoService = StartupBuilder.resolve(PeriodoLectivoService);
 		this._corteService = StartupBuilder.resolve(CorteService);
 		this._calculoCostoService = StartupBuilder.resolve(CalculoCostoService);
+		this._requisitoMatriculacionService = StartupBuilder.resolve(
+			RequisitoMatriculacionService,
+		);
+		this._nivelMallaService = StartupBuilder.resolve(NivelMallaService);
+		this._tipoDocumentoService = StartupBuilder.resolve(TipoDocumentoService);
 	}
 
 	async periodosLectivosGetAll(
@@ -247,7 +262,75 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async periodosLectivosCreateRequisitoMatriculacion(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const periodoLectivoId = req.params.periodoLectivoId;
+
+			if (!periodoLectivoId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createRequisitoMatriculacionBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const { nivelId, tipoDocumentoId, ...data } = bodyVal.data;
+
+			const nivel = await this._nivelMallaService.getNivelMallaById(nivelId);
+
+			if (!nivel)
+				return {
+					jsonBody: {
+						message: "El nivel no existe",
+					},
+					status: 400,
+				};
+
+			const tipoDocumento =
+				await this._tipoDocumentoService.getTipoDocumentoById(tipoDocumentoId);
+
+			if (!tipoDocumento)
+				return {
+					jsonBody: {
+						message: "El tipo de documento no existe",
+					},
+					status: 400,
+				};
+
+			const newRequisitoMatriculacion =
+				await this._requisitoMatriculacionService.createRequisitoMatriculacion({
+					...data,
+					periodoId: periodoLectivoId,
+					tipoDocumentoId,
+					nivelId,
+				});
+
+			ctx.log({ newRequisitoMatriculacion });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
+
+const createRequisitoMatriculacionBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateRequisitoMatriculacion, "periodoId">>
+>({
+	obligatorio: z.boolean(),
+	transferenciaIES: z.boolean(),
+	primeraMatricula: z.boolean(),
+	repitenMaterias: z.boolean(),
+	descripcion: z.string().nullable(),
+
+	nivelId: z.string().uuid(),
+	tipoDocumentoId: z.string().uuid(),
+});
 
 const updateCalculoCostoBodySchema = z.object<
 	ZodInferSchema<IUpdateCalculoCosto>

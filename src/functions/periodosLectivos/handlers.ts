@@ -41,3 +41,11 @@ app.patch("periodosLectivosUpdateCalculoCosto", {
 		controller.periodosLectivosUpdateCalculoCosto(req, ctx),
 	route: "periodos-lectivos/{periodoLectivoId}/calculos-costo",
 });
+
+// requisitos de matriculacion
+app.post("periodosLectivosCreateRequisitoMatriculacion", {
+	authLevel: "anonymous",
+	handler: (req, ctx) =>
+		controller.periodosLectivosCreateRequisitoMatriculacion(req, ctx),
+	route: "periodos-lectivos/{periodoLectivoId}/requisitos-matriculacion",
+});
