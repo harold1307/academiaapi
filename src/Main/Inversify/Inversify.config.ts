@@ -261,6 +261,12 @@ import type { ISubPeriodoLectivoRepository } from "../../Core/SubPeriodoLectivo/
 import type { ISubPeriodoLectivoService } from "../../Core/SubPeriodoLectivo/Domain/ISubPeriodoLectivoService";
 import { SubPeriodoLectivoRepository } from "../../Core/SubPeriodoLectivo/Infrastructure/Repositories/SubPeriodoLectivoRepository";
 
+// cronogramas de matriculacion
+import { CronogramaMatriculacionService } from "../../Core/CronogramaMatriculacion/Application/Service";
+import type { ICronogramaMatriculacionRepository } from "../../Core/CronogramaMatriculacion/Domain/ICronogramaMatriculacionRepository";
+import type { ICronogramaMatriculacionService } from "../../Core/CronogramaMatriculacion/Domain/ICronogramaMatriculacionService";
+import { CronogramaMatriculacionRepository } from "../../Core/CronogramaMatriculacion/Infrastructure/Repositories/CronogramaMatriculacionRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -686,6 +692,18 @@ StartupBuilder.bind<ISubPeriodoLectivoRepository>(
 	.inSingletonScope();
 StartupBuilder.bind<ISubPeriodoLectivoService>(TYPES.SubPeriodoLectivoService)
 	.to(SubPeriodoLectivoService)
+	.inSingletonScope();
+
+// cronogramas de matriculacion
+StartupBuilder.bind<ICronogramaMatriculacionRepository>(
+	TYPES.CronogramaMatriculacionRepository,
+)
+	.to(CronogramaMatriculacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICronogramaMatriculacionService>(
+	TYPES.CronogramaMatriculacionService,
+)
+	.to(CronogramaMatriculacionService)
 	.inSingletonScope();
 
 export { StartupBuilder };

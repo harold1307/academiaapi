@@ -127,4 +127,8 @@ export const TYPES = {
 		"SubPeriodoLectivoRepository",
 	),
 	SubPeriodoLectivoService: Symbol.for("SubPeriodoLectivoService"),
+	CronogramaMatriculacionRepository: Symbol.for(
+		"CronogramaMatriculacionRepository",
+	),
+	CronogramaMatriculacionService: Symbol.for("CronogramaMatriculacionService"),
 } as const;

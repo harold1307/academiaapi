@@ -1,11 +1,12 @@
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
+import type { ICronogramaMatriculacion } from "../../CronogramaMatriculacion/Domain/ICronogramaMatriculacion";
 import type { ICreatePeriodoLectivo } from "../Domain/ICreatePeriodoLectivo";
 import type { IPeriodoLectivo } from "../Domain/IPeriodoLectivo";
 import type {
-  IPeriodoLectivoRepository,
-  UpdatePeriodoLectivoParams,
+	IPeriodoLectivoRepository,
+	UpdatePeriodoLectivoParams,
 } from "../Domain/IPeriodoLectivoRepository";
 import type { IPeriodoLectivoService } from "../Domain/IPeriodoLectivoService";
 import { CreatePeriodoLectivoDTO } from "../Infrastructure/DTOs/CreatePeriodoLectivoDTO";
@@ -120,6 +121,17 @@ export class PeriodoLectivoService implements IPeriodoLectivoService {
 		}
 
 		return this._periodoLectivoRepository.update({ id, data: valid });
+	}
+
+	getPeriodoLectivoByIdWithCronogramasMatriculacion(id: string): Promise<
+		| (IPeriodoLectivo & {
+				cronogramasMatriculacion: ICronogramaMatriculacion[];
+		  })
+		| null
+	> {
+		return this._periodoLectivoRepository.getByIdWithCronogramasMatriculacion(
+			id,
+		);
 	}
 }
 

@@ -38,4 +38,13 @@ export type IPeriodoLectivoController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
+	periodosLectivosCreateCronogramaMatriculacion(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
+
+	periodosLectivosGetByIdWithCronogramasMatriculacion(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 };

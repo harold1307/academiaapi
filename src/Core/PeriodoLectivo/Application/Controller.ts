@@ -14,6 +14,9 @@ import type { ICalculoCostoService } from "../../CalculoCosto/Domain/ICalculoCos
 import type { IUpdateCalculoCosto } from "../../CalculoCosto/Domain/IUpdateCalculoCosto";
 import { CorteService } from "../../Corte/Application/Service";
 import type { ICorteService } from "../../Corte/Domain/ICorteService";
+import { CronogramaMatriculacionService } from "../../CronogramaMatriculacion/Application/Service";
+import type { ICreateCronogramaMatriculacion } from "../../CronogramaMatriculacion/Domain/ICreateCronogramaMatriculacion";
+import type { ICronogramaMatriculacionService } from "../../CronogramaMatriculacion/Domain/ICronogramaMatriculacionService";
 import { NivelMallaService } from "../../NivelMalla/Application/Service";
 import type { INivelMallaService } from "../../NivelMalla/Domain/INivelMallaService";
 import { RequisitoMatriculacionService } from "../../RequisitoMatriculacion/Application/Service";
@@ -38,6 +41,7 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 	private _nivelMallaService: INivelMallaService;
 	private _tipoDocumentoService: ITipoDocumentoService;
 	private _subPeriodoLectivoService: ISubPeriodoLectivoService;
+	private _cronogramaMatriculacionService: ICronogramaMatriculacionService;
 
 	constructor() {
 		this._periodoLectivoService = StartupBuilder.resolve(PeriodoLectivoService);
@@ -50,6 +54,9 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 		this._tipoDocumentoService = StartupBuilder.resolve(TipoDocumentoService);
 		this._subPeriodoLectivoService = StartupBuilder.resolve(
 			SubPeriodoLectivoService,
+		);
+		this._cronogramaMatriculacionService = StartupBuilder.resolve(
+			CronogramaMatriculacionService,
 		);
 	}
 
@@ -371,7 +378,97 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async periodosLectivosCreateCronogramaMatriculacion(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const periodoLectivoId = req.params.periodoLectivoId;
+			const nivelMallaId = req.params.nivelMallaId;
+
+			if (!periodoLectivoId || !nivelMallaId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createCronogramaMatriculacionBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const periodo =
+				await this._periodoLectivoService.getPeriodoLectivoById(
+					periodoLectivoId,
+				);
+
+			if (!periodo)
+				return {
+					jsonBody: { message: "El periodo lectivo no existe" },
+					status: 400,
+				};
+
+			const nivelMalla =
+				await this._nivelMallaService.getNivelMallaById(nivelMallaId);
+
+			if (!nivelMalla)
+				return { jsonBody: { message: "El nivel no existe" }, status: 400 };
+
+			const { fechaFin, fechaInicio } = bodyVal.data;
+
+			const newCronogramaMatriculacion =
+				await this._cronogramaMatriculacionService.createCronogramaMatriculacion(
+					{
+						fechaFin: new Date(fechaFin),
+						fechaInicio: new Date(fechaInicio),
+						periodoId: periodo.id,
+						nivelId: nivelMalla.id,
+					},
+				);
+
+			ctx.log({ newCronogramaMatriculacion });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
+
+	async periodosLectivosGetByIdWithCronogramasMatriculacion(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+			const periodoLectivoId = req.params.periodoLectivoId;
+
+			if (!periodoLectivoId) return CommonResponse.invalidId();
+
+			const periodoLectivo =
+				await this._periodoLectivoService.getPeriodoLectivoByIdWithCronogramasMatriculacion(
+					periodoLectivoId,
+				);
+
+			return CommonResponse.successful({ data: periodoLectivo });
+		} catch (error) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
+
+const createCronogramaMatriculacionBodySchema = z.object<
+	ZodInferSchema<
+		Omit<
+			ICreateCronogramaMatriculacion,
+			"fechaInicio" | "fechaFin" | "periodoId" | "nivelId"
+		> & {
+			fechaInicio: string;
+			fechaFin: string;
+		}
+	>
+>({
+	fechaInicio: z.string().datetime(),
+	fechaFin: z.string().datetime(),
+});
 
 const createSubPeriodoBodySchema = z.object<
 	ZodInferSchema<
