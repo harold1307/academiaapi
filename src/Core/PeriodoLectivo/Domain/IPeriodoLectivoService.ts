@@ -14,7 +14,10 @@ export type IPeriodoLectivoService = {
 
 	getPeriodoLectivoByIdWithCronogramasMatriculacion(id: string): Promise<
 		| (IPeriodoLectivo & {
-				cronogramasMatriculacion: ICronogramaMatriculacion[];
+				cronogramasMatriculacion: Omit<
+					ICronogramaMatriculacion,
+					"sede" | "programa" | "modalidad" | "nivel"
+				>[];
 		  })
 		| null
 	>;
