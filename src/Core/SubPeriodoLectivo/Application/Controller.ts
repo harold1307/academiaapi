@@ -9,6 +9,8 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { PeriodoLectivoService } from "../../PeriodoLectivo/Application/Service";
+import type { IPeriodoLectivoService } from "../../PeriodoLectivo/Domain/IPeriodoLectivoService";
 import type { ISubPeriodoLectivoController } from "../Domain/ISubPeriodoLectivoController";
 import type { ISubPeriodoLectivoService } from "../Domain/ISubPeriodoLectivoService";
 import type { IUpdateSubPeriodoLectivo } from "../Domain/IUpdateSubPeriodoLectivo";
@@ -18,11 +20,13 @@ export class SubPeriodoLectivoController
 	implements ISubPeriodoLectivoController
 {
 	private _subPeriodoLectivoService: ISubPeriodoLectivoService;
+	private _periodoLectivoService: IPeriodoLectivoService;
 
 	constructor() {
 		this._subPeriodoLectivoService = StartupBuilder.resolve(
 			SubPeriodoLectivoService,
 		);
+		this._periodoLectivoService = StartupBuilder.resolve(PeriodoLectivoService);
 	}
 
 	async subPeriodosLectivosGetAll(
@@ -77,6 +81,36 @@ export class SubPeriodoLectivoController
 
 			if (!bodyVal.success) return CommonResponse.invalidBody();
 
+			const subPeriodo =
+				await this._subPeriodoLectivoService.getSubPeriodoLectivoById(
+					subPeriodoLectivoId,
+				);
+
+			if (!subPeriodo)
+				return {
+					jsonBody: { message: "El sub periodo lectivo no existe" },
+					status: 400,
+				};
+
+			const periodo = await this._periodoLectivoService.getPeriodoLectivoById(
+				subPeriodo.periodoId,
+			);
+
+			if (!periodo)
+				return {
+					jsonBody: { message: "El periodo lectivo no existe" },
+					status: 400,
+				};
+
+			if (periodo.enUso)
+				return {
+					jsonBody: {
+						message:
+							"El periodo lectivo está en uso, no se pueden actualizar los sub periodos",
+					},
+					status: 400,
+				};
+
 			const { fechaFin, fechaInicio, ...data } = bodyVal.data;
 
 			const subPeriodoLectivo =
@@ -105,6 +139,36 @@ export class SubPeriodoLectivoController
 			const subPeriodoLectivoId = req.params.subPeriodoLectivoId;
 
 			if (!subPeriodoLectivoId) return CommonResponse.invalidId();
+
+			const subPeriodo =
+				await this._subPeriodoLectivoService.getSubPeriodoLectivoById(
+					subPeriodoLectivoId,
+				);
+
+			if (!subPeriodo)
+				return {
+					jsonBody: { message: "El sub periodo lectivo no existe" },
+					status: 400,
+				};
+
+			const periodo = await this._periodoLectivoService.getPeriodoLectivoById(
+				subPeriodo.periodoId,
+			);
+
+			if (!periodo)
+				return {
+					jsonBody: { message: "El periodo lectivo no existe" },
+					status: 400,
+				};
+
+			if (periodo.enUso)
+				return {
+					jsonBody: {
+						message:
+							"El periodo lectivo está en uso, no se pueden eliminar los sub periodos",
+					},
+					status: 400,
+				};
 
 			await this._subPeriodoLectivoService.deleteSubPeriodoLectivoById(
 				subPeriodoLectivoId,

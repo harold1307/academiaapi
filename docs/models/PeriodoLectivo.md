@@ -39,7 +39,7 @@
 
   - Lo relacionado a _numero de matricula_ no podra actualizarse.
   - No se podra cerrar/abrir el periodo.
-  - No se podra actualizar el _formato de costos_.
+  - No se podra actualizar el _formato de costos_/_calculo de costo_.
   - No se podra activar/desactivar el periodo.
   - No se podran actualizar los campos: _actividades de docencia_, _actividades de investigacion_ y _actividades de gestion_.
   - No se podra eliminar ni actualizar los subperiodos.
