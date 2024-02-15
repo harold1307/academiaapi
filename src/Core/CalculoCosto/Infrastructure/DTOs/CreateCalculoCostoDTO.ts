@@ -35,7 +35,7 @@ const schema = z
 						(field): field is null => field === null,
 					);
 
-					if (costoPorSesion && opcionesPagoNull.length !== 0) {
+					if (costoPorSesion !== null && opcionesPagoNull.length !== 0) {
 						ctx.addIssue({
 							code: z.ZodIssueCode.custom,
 							message:
@@ -47,6 +47,20 @@ const schema = z
 							],
 						});
 
+						return;
+					}
+
+					if (costoPorSesion !== null && opcionesPagoNull.length === 0) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message:
+								"En costo por nivel y materias, no se puede costo por sesion y opciones de pago a la vez",
+							path: [
+								"costoPorSesion",
+								"estudiantesEligenOpcionPago",
+								"cronogramaFechasOpcionPago",
+							],
+						});
 						return;
 					}
 

@@ -15,7 +15,11 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
 	async getAll(): Promise<IPeriodoLectivo[]> {
-		const periodos = await this._client.periodoLectivo.findMany();
+		const periodos = await this._client.periodoLectivo.findMany({
+			include: {
+				calculoCosto: true,
+			},
+		});
 
 		return periodos.map(p => ({
 			...p,
@@ -43,6 +47,9 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 	async getById(id: string): Promise<IPeriodoLectivo | null> {
 		const p = await this._client.periodoLectivo.findUnique({
 			where: { id },
+			include: {
+				calculoCosto: true,
+			},
 		});
 
 		if (!p) return null;
@@ -73,6 +80,9 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 	async deleteById(id: string): Promise<IPeriodoLectivo> {
 		const p = await this._client.periodoLectivo.delete({
 			where: { id },
+			include: {
+				calculoCosto: true,
+			},
 		});
 
 		return {
@@ -114,6 +124,9 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 					},
 				},
 			},
+			include: {
+				calculoCosto: true,
+			},
 		});
 
 		return {
@@ -148,6 +161,9 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 			data: {
 				...data,
 				corte: corteId ? { connect: { id: corteId } } : undefined,
+			},
+			include: {
+				calculoCosto: true,
 			},
 		});
 
@@ -185,6 +201,7 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 			where: { id },
 			include: {
 				cronogramasMatriculacion: true,
+				calculoCosto: true,
 			},
 		});
 

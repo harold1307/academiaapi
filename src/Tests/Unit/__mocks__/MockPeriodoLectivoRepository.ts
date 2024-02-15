@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 
+import type { ICronogramaMatriculacion } from "../../../Core/CronogramaMatriculacion/Domain/ICronogramaMatriculacion";
 import type { ICreatePeriodoLectivo } from "../../../Core/PeriodoLectivo/Domain/ICreatePeriodoLectivo";
 import type { IPeriodoLectivo } from "../../../Core/PeriodoLectivo/Domain/IPeriodoLectivo";
 import type {
@@ -27,5 +28,16 @@ export class MockPeriodoLectivoRepository implements IPeriodoLectivoRepository {
 
 	async deleteById(_: string): Promise<IPeriodoLectivo> {
 		return {} as unknown as IPeriodoLectivo;
+	}
+
+	async getByIdWithCronogramasMatriculacion(_: string): Promise<
+		| (IPeriodoLectivo & {
+				cronogramasMatriculacion: ICronogramaMatriculacion[];
+		  })
+		| null
+	> {
+		return {} as unknown as IPeriodoLectivo & {
+			cronogramasMatriculacion: ICronogramaMatriculacion[];
+		};
 	}
 }

@@ -51,7 +51,7 @@ export class CalculoCostoService implements ICalculoCostoService {
 			});
 		} catch (error) {
 			throw new CalculoCostoServiceError(
-				"El calculo de costo a actualizar no es invalido",
+				"El calculo de costo a actualizar es invalido",
 			);
 		}
 

@@ -1,5 +1,7 @@
 import type { PeriodoLectivo } from "@prisma/client";
 
+import type { ICalculoCosto } from "../../CalculoCosto/Domain/ICalculoCosto";
+
 export type IPeriodoLectivo = PeriodoLectivo & {
 	enUso: boolean;
 	fechasEnMatricula: boolean;
@@ -8,4 +10,5 @@ export type IPeriodoLectivo = PeriodoLectivo & {
 	legalizarMatriculas: boolean;
 	secuenciaDesdeNumeroEspecifico: boolean;
 	numeroMatricula: boolean;
+	calculoCosto: ICalculoCosto;
 };

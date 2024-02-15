@@ -22,4 +22,5 @@ export type ICreatePeriodoLectivo = Omit<
 	| "legalizarMatriculas"
 	| "secuenciaDesdeNumeroEspecifico"
 	| "numeroMatricula"
+	| "calculoCosto"
 >;
