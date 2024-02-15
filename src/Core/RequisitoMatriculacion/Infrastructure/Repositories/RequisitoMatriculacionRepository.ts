@@ -16,13 +16,146 @@ export class RequisitoMatriculacionRepository
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
 	async getAll(): Promise<IRequisitoMatriculacion[]> {
-		return this._client.requisitoMatriculacion.findMany();
+		const requisitos = await this._client.requisitoMatriculacion.findMany({
+			include: {
+				nivel: {
+					include: {
+						malla: {
+							select: {
+								modalidad: true,
+								programa: {
+									include: {
+										coordinacion: {
+											select: {
+												sede: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+
+		return requisitos.map(
+			({
+				nivel: {
+					malla: {
+						modalidad,
+						programa: {
+							coordinacion: { sede },
+							...programa
+						},
+					},
+					...nivel
+				},
+				...r
+			}) => ({
+				...r,
+				modalidad,
+				sede,
+				nivel,
+				programa,
+			}),
+		);
 	}
 	async getById(id: string): Promise<IRequisitoMatriculacion | null> {
-		return this._client.requisitoMatriculacion.findUnique({ where: { id } });
+		const requisito = await this._client.requisitoMatriculacion.findUnique({
+			where: { id },
+			include: {
+				nivel: {
+					include: {
+						malla: {
+							select: {
+								modalidad: true,
+								programa: {
+									include: {
+										coordinacion: {
+											select: {
+												sede: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+
+		if (!requisito) return null;
+
+		const {
+			nivel: {
+				malla: {
+					modalidad,
+					programa: {
+						coordinacion: { sede },
+						...programa
+					},
+				},
+				...nivel
+			},
+			...r
+		} = requisito;
+
+		return {
+			...r,
+			modalidad,
+			sede,
+			nivel,
+			programa,
+		};
 	}
 	async deleteById(id: string): Promise<IRequisitoMatriculacion> {
-		return this._client.requisitoMatriculacion.delete({ where: { id } });
+		const requisito = await this._client.requisitoMatriculacion.delete({
+			where: { id },
+			include: {
+				nivel: {
+					include: {
+						malla: {
+							select: {
+								modalidad: true,
+								programa: {
+									include: {
+										coordinacion: {
+											select: {
+												sede: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+
+		const {
+			nivel: {
+				malla: {
+					modalidad,
+					programa: {
+						coordinacion: { sede },
+						...programa
+					},
+				},
+				...nivel
+			},
+			...r
+		} = requisito;
+
+		return {
+			...r,
+			modalidad,
+			sede,
+			nivel,
+			programa,
+		};
 	}
 
 	async create({
@@ -31,20 +164,62 @@ export class RequisitoMatriculacionRepository
 		tipoDocumentoId,
 		...data
 	}: ICreateRequisitoMatriculacion): Promise<IRequisitoMatriculacion> {
-		return this._client.requisitoMatriculacion.create({
+		const requisito = await this._client.requisitoMatriculacion.create({
 			data: {
 				...data,
 				nivel: { connect: { id: nivelId } },
 				periodo: { connect: { id: periodoId } },
 				tipoDocumento: { connect: { id: tipoDocumentoId } },
 			},
+			include: {
+				nivel: {
+					include: {
+						malla: {
+							select: {
+								modalidad: true,
+								programa: {
+									include: {
+										coordinacion: {
+											select: {
+												sede: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		});
+
+		const {
+			nivel: {
+				malla: {
+					modalidad,
+					programa: {
+						coordinacion: { sede },
+						...programa
+					},
+				},
+				...nivel
+			},
+			...r
+		} = requisito;
+
+		return {
+			...r,
+			modalidad,
+			sede,
+			nivel,
+			programa,
+		};
 	}
 	async update({
 		id,
 		data: { nivelId, tipoDocumentoId, ...data },
 	}: UpdateRequisitoMatriculacionParams): Promise<IRequisitoMatriculacion> {
-		return this._client.requisitoMatriculacion.update({
+		const requisito = await this._client.requisitoMatriculacion.update({
 			where: { id },
 			data: {
 				...data,
@@ -53,6 +228,48 @@ export class RequisitoMatriculacionRepository
 					? { connect: { id: tipoDocumentoId } }
 					: undefined,
 			},
+			include: {
+				nivel: {
+					include: {
+						malla: {
+							select: {
+								modalidad: true,
+								programa: {
+									include: {
+										coordinacion: {
+											select: {
+												sede: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		});
+
+		const {
+			nivel: {
+				malla: {
+					modalidad,
+					programa: {
+						coordinacion: { sede },
+						...programa
+					},
+				},
+				...nivel
+			},
+			...r
+		} = requisito;
+
+		return {
+			...r,
+			modalidad,
+			sede,
+			nivel,
+			programa,
+		};
 	}
 }

@@ -2,5 +2,5 @@ import type { IRequisitoMatriculacion } from "./IRequisitoMatriculacion";
 
 export type ICreateRequisitoMatriculacion = Omit<
 	IRequisitoMatriculacion,
-	"id" | "createdAt" | "updatedAt"
+	"id" | "createdAt" | "updatedAt" | "sede" | "programa" | "modalidad" | "nivel"
 >;
