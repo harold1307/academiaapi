@@ -25,10 +25,15 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 						},
 					},
 				},
+				_count: {
+					select: {
+						profesores: true,
+					},
+				},
 			},
 		});
 
-		return coordinaciones.map(({ programas, ...rest }) => ({
+		return coordinaciones.map(({ programas, _count, ...rest }) => ({
 			...rest,
 			programas: programas.map(
 				({
@@ -44,7 +49,8 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 					enUso: true,
 				}),
 			),
-			enUso: programas.length > 0,
+			enUso: programas.length > 0 || _count.profesores > 0,
+			profesores: _count.profesores,
 		}));
 	}
 	async getById(id: string): Promise<ICoordinacion | null> {
@@ -60,12 +66,17 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 						},
 					},
 				},
+				_count: {
+					select: {
+						profesores: true,
+					},
+				},
 			},
 		});
 
 		if (!coordinacion) return null;
 
-		const { programas, ...rest } = coordinacion;
+		const { programas, _count, ...rest } = coordinacion;
 
 		return {
 			...rest,
@@ -83,7 +94,8 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 					enUso: true,
 				}),
 			),
-			enUso: programas.length > 0,
+			enUso: programas.length > 0 || _count.profesores > 0,
+			profesores: _count.profesores,
 		};
 	}
 	async deleteById(id: string): Promise<ICoordinacion> {
@@ -95,6 +107,7 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 			...coordinacion,
 			programas: [],
 			enUso: false,
+			profesores: 0,
 		};
 	}
 
@@ -115,6 +128,7 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 			...coordinacion,
 			programas: [],
 			enUso: false,
+			profesores: 0,
 		};
 	}
 	async update({ id, data }: UpdateCoordinacionParams): Promise<ICoordinacion> {
@@ -131,10 +145,15 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 						},
 					},
 				},
+				_count: {
+					select: {
+						profesores: true,
+					},
+				},
 			},
 		});
 
-		const { programas, ...rest } = coordinacion;
+		const { programas, _count, ...rest } = coordinacion;
 
 		return {
 			...rest,
@@ -152,7 +171,8 @@ export class CoordinacionRepository implements ICoordinacionRepository {
 					enUso: true,
 				}),
 			),
-			enUso: programas.length > 0,
+			enUso: programas.length > 0 || _count.profesores > 0,
+			profesores: _count.profesores,
 		};
 	}
 }

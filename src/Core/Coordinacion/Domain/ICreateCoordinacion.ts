@@ -2,5 +2,5 @@ import type { ICoordinacion } from "./ICoordinacion";
 
 export type ICreateCoordinacion = Omit<
 	ICoordinacion,
-	"id" | "enUso" | "createdAt" | "updatedAt" | "programas"
+	"id" | "enUso" | "createdAt" | "updatedAt" | "programas" | "profesores"
 >;

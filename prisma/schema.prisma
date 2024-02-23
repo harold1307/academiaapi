@@ -244,6 +244,7 @@ model Sede {
   sesiones         Sesion[]
   coordinaciones   Coordinacion[]
   ubicaciones      Ubicacion[]
+  administrativos  Administrativo[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -395,7 +396,7 @@ model AsignaturaEnCursoEscuela {
   cursoEscuelaId     String
   cursoEscuela       CursoEscuela      @relation(fields: [cursoEscuelaId], references: [id], onDelete: Cascade)
   profesorId         String?
-  profesor           User?             @relation(fields: [profesorId], references: [id])
+  profesor           Usuario?          @relation(fields: [profesorId], references: [id])
   modeloEvaluativoId String?
   modeloEvaluativo   ModeloEvaluativo? @relation(fields: [modeloEvaluativoId], references: [id])
 
@@ -525,15 +526,6 @@ model ModeloContrato {
   updatedAt DateTime @default(now()) @updatedAt
 
   @@map("modelos_contrato")
-}
-
-model Grupo {
-  nombre String @id
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  @@map("grupos")
 }
 
 model Modalidad {
@@ -858,7 +850,8 @@ model Coordinacion {
   sedeId String
   sede   Sede   @relation(fields: [sedeId], references: [id])
 
-  programas Programa[]
+  programas  Programa[]
+  profesores Profesor[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -883,6 +876,7 @@ model Programa {
   titulosObtenidos          TituloObtenido[]
   documentosRequeridos      TipoDocumentoEnPrograma[]
   mallasCurriculares        MallaCurricular[]
+  profesores                Profesor[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -1150,11 +1144,312 @@ model PeriodoLectivo {
   requisitosMatriculacion  RequisitoMatriculacion[]
   subPeriodos              SubPeriodoLectivo[]
   cronogramasMatriculacion CronogramaMatriculacion[]
+  alumnos                  Alumno[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
   @@map("periodos_lectivos")
+}
+
+model CentroInformacion {
+  id     String @id @default(uuid())
+  nombre String @unique
+
+  alumnos     Alumno[]
+  asesoresCrm AsesorCrmEnCentroInformacion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("centros_informacion")
+}
+
+model Grupo {
+  id     String @id @default(uuid())
+  nombre String @unique
+
+  usuarios UsuarioEnGrupo[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("grupos")
+}
+
+model UsuarioEnGrupo {
+  grupoId   String
+  grupo     Grupo   @relation(fields: [grupoId], references: [id])
+  usuarioId String
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@id([grupoId, usuarioId])
+  @@map("usuarios_en_grupos")
+}
+
+model Alumno {
+  id                     String           @id @default(uuid())
+  estado                 EstadoAlumno     @default(ACTIVO)
+  colegio                String?
+  especialidad           String?
+  fechaInscripcion       DateTime
+  codigoPromocion        String?
+  archivador             String?
+  comoNosConocio         ComoConocio
+  razonesParaInscribirse RazonInscripcion
+
+  fechaExamenSNNA DateTime?
+  puntajeSNNA     Float?
+
+  titulo                        Boolean
+  papeletaVotacion              Boolean
+  copiaLicencia                 Boolean
+  condicionado                  Boolean
+  rindioExamenEgresoInstitucion Boolean
+  actaGrado                     Boolean
+  partidaNacimiento             Boolean
+  certificadoAntecedentes       Boolean
+  planillaServicioBasico        Boolean
+  transferenciaOtraIES          Boolean
+  certificadoEstudios           Boolean
+  documentosHomologacion        Boolean
+  certificadoSanguineo          Boolean
+  silabos                       Boolean
+  cedula                        Boolean
+  fotos                         Boolean
+  certificadoSalud              Boolean
+  transcript                    Boolean
+
+  observaciones String?
+
+  usuarioId           String
+  usuario             Usuario           @relation(fields: [usuarioId], references: [id])
+  centroInformacionId String
+  centroInformacion   CentroInformacion @relation(fields: [centroInformacionId], references: [id])
+  periodoId           String
+  periodo             PeriodoLectivo    @relation(fields: [periodoId], references: [id])
+  asesorCrmId         String
+  asesorCrm           AsesorCrm         @relation(fields: [asesorCrmId], references: [id])
+
+  asesores AsesorEstudianteEnAlumno[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("alumnos")
+}
+
+model ResponsableCrm {
+  id String @id @default(uuid())
+
+  estado Boolean @default(true)
+
+  administrativoId String         @unique
+  administrativo   Administrativo @relation(fields: [administrativoId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("responsables_crm")
+}
+
+model AsesorEstudianteEnAlumno {
+  id String @id @default(uuid())
+
+  seguimientoBienestar  Boolean
+  seguimientoExpediente Boolean
+
+  asesorEstudianteId String
+  asesorEstudiante   AsesorEstudiante @relation(fields: [asesorEstudianteId], references: [id])
+  alumnoId           String
+  alumno             Alumno           @relation(fields: [alumnoId], references: [id])
+
+  @@unique([asesorEstudianteId, alumnoId])
+  @@map("asesores_estudiantes_alumnos")
+}
+
+model AsesorEstudiante {
+  id String @id @default(uuid())
+
+  estado                Boolean @default(true)
+  seguimientoBienestar  Boolean
+  seguimientoExpediente Boolean
+
+  administrativoId String         @unique
+  administrativo   Administrativo @relation(fields: [administrativoId], references: [id])
+
+  estudiantes  AsesorEstudianteEnAlumno[]
+  responsables ResponsableEnAsesorEstudiante[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("asesores_estudiantes")
+}
+
+model ResponsableEnAsesorEstudiante {
+  id String @id @default(uuid())
+
+  responsableId      String
+  responsable        ResponsableAsesorEstudiante @relation(fields: [responsableId], references: [id])
+  asesorEstudianteId String
+  asesorEstudiante   AsesorEstudiante            @relation(fields: [asesorEstudianteId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([responsableId, asesorEstudianteId])
+  @@map("responsable_en_asesores_estudiantes")
+}
+
+model ResponsableAsesorEstudiante {
+  id String @id @default(uuid())
+
+  seguimientoBienestar  Boolean
+  seguimientoExpediente Boolean
+
+  asesores ResponsableEnAsesorEstudiante[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("responsables_asesores_estudiantes")
+}
+
+model AsesorCrm {
+  id String @id @default(uuid())
+
+  centrosInformacion AsesorCrmEnCentroInformacion[]
+  inscritos          Alumno[]
+
+  administrativoId String         @unique
+  administrativo   Administrativo @relation(fields: [administrativoId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("asesores_crm")
+}
+
+model AsesorCrmEnCentroInformacion {
+  id String @id @default(uuid())
+
+  asesorId            String
+  asesor              AsesorCrm         @relation(fields: [asesorId], references: [id])
+  centroInformacionId String
+  centroInformacion   CentroInformacion @relation(fields: [centroInformacionId], references: [id])
+
+  @@unique([asesorId, centroInformacionId])
+  @@map("asesores_centros_informacion")
+}
+
+model Administrativo {
+  id String @id @default(uuid())
+
+  estado Boolean @default(true)
+
+  parametrosInstitucion  Boolean
+  talentoHumano          Boolean
+  personalAdministrativo Boolean
+  profesores             Boolean
+  periodosLectivos       Boolean
+  asignaturas            Boolean
+  modelosEvaluativos     Boolean
+
+  crmPreinscritos Boolean
+
+  sedeId    String
+  sede      Sede    @relation(fields: [sedeId], references: [id])
+  usuarioId String  @unique
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  responsableCrm   ResponsableCrm?
+  asesorCrm        AsesorCrm?
+  asesorEstudiante AsesorEstudiante?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("administrativos")
+}
+
+model Profesor {
+  id               String           @id @default(uuid())
+  estado           Boolean          @default(true)
+  tiempoDedicacion TiempoDedicacion
+  categoria        TipoCategoria
+
+  coordinacionId String
+  coordinacion   Coordinacion @relation(fields: [coordinacionId], references: [id])
+  programaId     String?
+  programa       Programa?    @relation(fields: [programaId], references: [id])
+  usuarioId      String       @unique
+  usuario        Usuario      @relation(fields: [usuarioId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("profesores")
+}
+
+model Usuario {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?   @db.Text
+  accounts      Account[]
+  sessions      Session[]
+
+  estado Boolean @default(true)
+
+  cedula                String?
+  pasaporte             String?
+  nombres               String
+  primerApellido        String
+  segundoApellido       String?
+  nacionalidad          String?
+  paisNacimiento        String?
+  provinciaNacimiento   String?
+  cantonNacimiento      String?
+  parroquiaNacimiento   String?
+  fechaNacimiento       DateTime
+  sexo                  Sexo
+  genero                Genero?
+  etnia                 Etnia?
+  estadoCivil           EstadoCivil?
+  tipoSangre            String?
+  paisResidencia        String?
+  callePrincipal        String?
+  calleSecundaria       String?
+  numeroDomicilio       String?
+  provinciaDondeSufraga String?
+  telefonoMovil         String?
+  telefonoFijo          String?
+  correoElectronico     String?
+  correoInstitucional   String?      @unique
+
+  administrativo Administrativo?
+  profesor       Profesor?
+
+  alumnos                    Alumno[]
+  grupos                     UsuarioEnGrupo[]
+  asignaturasEnCursoEscuelas AsignaturaEnCursoEscuela[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }
 
 model Account {
@@ -1172,7 +1467,7 @@ model Account {
   session_state     String?
   expires_in        Int?
   ext_expires_in    Int?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              Usuario @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -1187,37 +1482,10 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         Usuario  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId], map: "sessions_userId_fkey")
   @@map("sessions")
-}
-
-model User {
-  id            String    @id @default(uuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?   @db.Text
-  accounts      Account[]
-  sessions      Session[]
-
-  asignaturasEnCursoEscuelas AsignaturaEnCursoEscuela[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  @@map("users")
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@id([identifier, token])
-  @@unique([identifier, token])
-  @@map("verification_tokens")
 }
 
 enum TipoDuracion {
@@ -1277,4 +1545,97 @@ enum TipoCalculoCosto {
   COSTO_POR_PLAN_CUOTA
 
   @@map("tipo_calculo_costo")
+}
+
+enum Sexo {
+  HOMBRE
+  MUJER
+
+  @@map("sexo")
+}
+
+enum Genero {
+  FEMENINO
+  MASCULINO
+
+  @@map("genero")
+}
+
+enum Etnia {
+  AFROECUATORIANO
+  BLANCO
+  INDIGENA
+  MESTIZO
+  MONTUVIO
+  MULATO
+  NEGRO
+  OTRO
+
+  @@map("etnia")
+}
+
+enum EstadoCivil {
+  SOLTERO
+  CASADO
+  DIVORCIADO
+  UNION_LIBRE
+  UNION_DE_HECHO
+  VIUDO
+
+  @@map("estado_civil")
+}
+
+enum EstadoAlumno {
+  ACTIVO
+  EGRESADO
+  RETIRADO
+
+  @@map("estado_alumno")
+}
+
+enum ComoConocio {
+  FACEBOOK
+  INSTAGRAM
+  OTROS_MEDIOS
+  PERIODICO
+  PUBLICIDAD_FISICA
+  RADIO
+  REDES_SOCIALES
+  TELEVISION
+  TIKTOK
+  TWITTER
+  UN_AMIGO_ESTUDIO_AQUI
+  UN_FAMILIAR_ESTUDIO_AQUI
+  VISITAS_A_COLEGIOS
+
+  @@map("como_conocio")
+}
+
+enum RazonInscripcion {
+  AMIGOS
+  CARRERAS
+  HORARIOS
+  INSTALACIONES
+  MENCIONES
+
+  @@map("razon_inscripcion")
+}
+
+enum TiempoDedicacion {
+  TIEMPO_COMPLETO
+  TIEMPO_PARCIAL
+  MEDIO_TIEMPO
+
+  @@map("tiempo_dedicacion")
+}
+
+enum TipoCategoria {
+  HONORARIO
+  INVITADO
+  OCASIONAL
+  TITULAR_AGREGADO
+  TITULAR_AUXILIAR
+  TITULAR_PRINCIPAL
+
+  @@map("tipo_categoria")
 }
