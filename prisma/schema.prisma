@@ -1154,6 +1154,7 @@ model PeriodoLectivo {
 
 model CentroInformacion {
   id     String @id @default(uuid())
+  estado Boolean @default(true)
   nombre String @unique
 
   alumnos     Alumno[]
