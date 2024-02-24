@@ -1,0 +1,8 @@
+export class Constants {
+	static STATIC_GROUPS = {
+		ADMINISTRATIVOS: "ADMINISTRATIVOS",
+		PROFESORES: "PROFESORES",
+		ALUMNOS: "ALUMNOS",
+		EMPLEADORES: "EMPLEADORES",
+	} as const;
+}
