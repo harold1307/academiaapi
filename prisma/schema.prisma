@@ -1153,9 +1153,9 @@ model PeriodoLectivo {
 }
 
 model CentroInformacion {
-  id     String @id @default(uuid())
+  id     String  @id @default(uuid())
   estado Boolean @default(true)
-  nombre String @unique
+  nombre String  @unique
 
   alumnos     Alumno[]
   asesoresCrm AsesorCrmEnCentroInformacion[]
@@ -1433,7 +1433,7 @@ model Usuario {
   administrativo Administrativo?
   profesor       Profesor?
 
-  alumnos                    Alumno[]
+  inscripciones              Alumno[]
   grupos                     UsuarioEnGrupo[]
   asignaturasEnCursoEscuelas AsignaturaEnCursoEscuela[]
 
