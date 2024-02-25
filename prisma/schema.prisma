@@ -1402,7 +1402,8 @@ model Usuario {
   accounts      Account[]
   sessions      Session[]
 
-  estado Boolean @default(true)
+  tipo   TipoUsuario
+  estado Boolean     @default(true)
 
   cedula                String?
   pasaporte             String?
@@ -1639,4 +1640,12 @@ enum TipoCategoria {
   TITULAR_PRINCIPAL
 
   @@map("tipo_categoria")
+}
+
+enum TipoUsuario {
+  PROFESOR
+  ADMINISTRATIVO
+  ALUMNO
+
+  @@map("tipo_usuario")
 }
