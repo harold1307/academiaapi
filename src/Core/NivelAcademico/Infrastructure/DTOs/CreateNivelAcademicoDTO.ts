@@ -32,6 +32,7 @@ const schema = z
 		modeloEvaluativoId: z.string().uuid(),
 		sesionId: z.string().uuid(),
 		nivelMallaId: z.string().uuid(),
+		periodoId: z.string().uuid(),
 	})
 	.superRefine(
 		(
