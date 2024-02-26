@@ -960,14 +960,17 @@ model NivelAcademico {
   sesion             Sesion           @relation(fields: [sesionId], references: [id])
   nivelMallaId       String
   nivelMalla         NivelMalla       @relation(fields: [nivelMallaId], references: [id])
+  periodoId          String
+  periodo            PeriodoLectivo   @relation(fields: [periodoId], references: [id])
 
-  materias MateriaEnNivelAcademico[]
-  horario  MateriaEnHorario[]
+  materias  MateriaEnNivelAcademico[]
+  horario   MateriaEnHorario[]
+  inscritos Inscripcion[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  @@unique([paraleloId, nivelMallaId, sesionId])
+  @@unique([paraleloId, nivelMallaId, sesionId, periodoId])
   @@map("niveles_academicos")
 }
 
@@ -1144,7 +1147,7 @@ model PeriodoLectivo {
   requisitosMatriculacion  RequisitoMatriculacion[]
   subPeriodos              SubPeriodoLectivo[]
   cronogramasMatriculacion CronogramaMatriculacion[]
-  alumnos                  Alumno[]
+  nivelesAcademicos        NivelAcademico[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -1188,6 +1191,24 @@ model UsuarioEnGrupo {
   @@map("usuarios_en_grupos")
 }
 
+model Inscripcion {
+  id String @id @default(uuid())
+
+  matricula             Boolean @default(true)
+  matricularseConLimite Boolean @default(false)
+
+  alumnoId         String
+  alumno           Alumno         @relation(fields: [alumnoId], references: [id])
+  nivelAcademicoId String
+  nivelAcademico   NivelAcademico @relation(fields: [nivelAcademicoId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([alumnoId, nivelAcademicoId])
+  @@map("inscripciones")
+}
+
 model Alumno {
   id                     String           @id @default(uuid())
   estado                 EstadoAlumno     @default(ACTIVO)
@@ -1223,16 +1244,15 @@ model Alumno {
 
   observaciones String?
 
-  usuarioId           String
+  usuarioId           String            @unique
   usuario             Usuario           @relation(fields: [usuarioId], references: [id])
   centroInformacionId String
   centroInformacion   CentroInformacion @relation(fields: [centroInformacionId], references: [id])
-  periodoId           String
-  periodo             PeriodoLectivo    @relation(fields: [periodoId], references: [id])
   asesorCrmId         String
   asesorCrm           AsesorCrm         @relation(fields: [asesorCrmId], references: [id])
 
-  asesores AsesorEstudianteEnAlumno[]
+  asesores      AsesorEstudianteEnAlumno[]
+  inscripciones Inscripcion[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -1433,8 +1453,8 @@ model Usuario {
 
   administrativo Administrativo?
   profesor       Profesor?
+  alumno         Alumno?
 
-  inscripciones              Alumno[]
   grupos                     UsuarioEnGrupo[]
   asignaturasEnCursoEscuelas AsignaturaEnCursoEscuela[]
 
