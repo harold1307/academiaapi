@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { BaseDTOError, BaseValidatorDTO } from "../../../../Utils/Bases";
 import type { ZodInferSchema } from "../../../../types";
 import type { ICreateAsignaturaEnVarianteCurso } from "../../Domain/ICreateAsignaturaEnVarianteCurso";
 
@@ -136,28 +137,30 @@ const schema = z
 				return;
 			}
 
-			console.log({
-				asistenciaAprobar,
-				cantidadDecimales,
-				notaMaxima,
-				notaMinima,
-				nonNullValues,
-			});
+			// console.log({
+			// 	asistenciaAprobar,
+			// 	cantidadDecimales,
+			// 	notaMaxima,
+			// 	notaMinima,
+			// 	nonNullValues,
+			// });
 		},
 	);
 
-export class CreateAsignaturaEnVarianteCursoDTO {
-	private data: ICreateAsignaturaEnVarianteCurso | undefined;
+class CreateAsignaturaEnVarianteCursoDTOError extends BaseDTOError<ICreateAsignaturaEnVarianteCurso> {
+	constructor(error: z.ZodError<ICreateAsignaturaEnVarianteCurso>) {
+		super(error);
+		this.name = "CreateAsignaturaEnVarianteCursoDTOError";
+		this.message =
+			"Error de validacion para crear la asignatura en la variante de curso";
+	}
+}
 
-	constructor(private input: unknown) {}
-
-	validate() {
-		const parse = schema.safeParse(this.input);
-
-		if (parse.success) {
-			this.data = parse.data;
-		}
-
-		return parse;
+export class CreateAsignaturaEnVarianteCursoDTO extends BaseValidatorDTO<
+	ICreateAsignaturaEnVarianteCurso,
+	CreateAsignaturaEnVarianteCursoDTOError
+> {
+	constructor(input: unknown) {
+		super(schema, CreateAsignaturaEnVarianteCursoDTOError, input);
 	}
 }
