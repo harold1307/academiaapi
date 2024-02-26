@@ -1349,15 +1349,15 @@ model Administrativo {
 
   estado Boolean @default(true)
 
-  parametrosInstitucion  Boolean
-  talentoHumano          Boolean
-  personalAdministrativo Boolean
-  profesores             Boolean
-  periodosLectivos       Boolean
-  asignaturas            Boolean
-  modelosEvaluativos     Boolean
+  parametrosInstitucion  Boolean @default(false)
+  talentoHumano          Boolean @default(false)
+  personalAdministrativo Boolean @default(false)
+  profesores             Boolean @default(false)
+  periodosLectivos       Boolean @default(false)
+  asignaturas            Boolean @default(false)
+  modelosEvaluativos     Boolean @default(false)
 
-  crmPreinscritos Boolean
+  crmPreinscritos Boolean @default(false)
 
   sedeId    String
   sede      Sede    @relation(fields: [sedeId], references: [id])
