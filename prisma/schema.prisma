@@ -329,15 +329,47 @@ model Titulo {
   @@map("titulos")
 }
 
+model UbicacionCursoEscuela {
+  id     String @id @default(uuid())
+  nombre String
+
+  cursoEscuelaId String
+  cursoEscuela   CursoEscuela @relation(fields: [cursoEscuelaId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([nombre])
+  @@map("ubicaciones_curso_escuelas")
+}
+
+model AdministrativoEnCursoEscuela {
+  id String @id @default(uuid())
+
+  cursoEscuelaId   String
+  cursoEscuela     CursoEscuela   @relation(fields: [cursoEscuelaId], references: [id], onDelete: Cascade)
+  administrativoId String
+  administrativo   Administrativo @relation(fields: [administrativoId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([cursoEscuelaId, administrativoId])
+  @@map("administrativos_curso_escuelas")
+}
+
 model CursoEscuela {
   id     String  @id @default(uuid())
+  estado Boolean @default(true)
   nombre String
   codigo String?
 
   paraleloId String
-  paralelo   Paralelo @relation(fields: [paraleloId], references: [id])
+  paralelo   Paralelo       @relation(fields: [paraleloId], references: [id])
   sesionId   String
-  sesion     Sesion   @relation(fields: [sesionId], references: [id])
+  sesion     Sesion         @relation(fields: [sesionId], references: [id])
+  periodoId  String
+  periodo    PeriodoLectivo @relation(fields: [periodoId], references: [id])
 
   tema                String
   observaciones       String?
@@ -365,7 +397,9 @@ model CursoEscuela {
   plantillaId String?
   plantilla   VarianteCurso? @relation(fields: [plantillaId], references: [id])
 
-  asignaturas AsignaturaEnCursoEscuela[]
+  asignaturas          AsignaturaEnCursoEscuela[]
+  responsables         AdministrativoEnCursoEscuela[]
+  ubicacionesEjecucion UbicacionCursoEscuela[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -1148,6 +1182,7 @@ model PeriodoLectivo {
   subPeriodos              SubPeriodoLectivo[]
   cronogramasMatriculacion CronogramaMatriculacion[]
   nivelesAcademicos        NivelAcademico[]
+  cursos                   CursoEscuela[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -1384,9 +1419,10 @@ model Administrativo {
   usuarioId String  @unique
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
 
-  responsableCrm   ResponsableCrm?
-  asesorCrm        AsesorCrm?
-  asesorEstudiante AsesorEstudiante?
+  responsableCrm    ResponsableCrm?
+  asesorCrm         AsesorCrm?
+  asesorEstudiante  AsesorEstudiante?
+  cursosResponsable AdministrativoEnCursoEscuela[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
