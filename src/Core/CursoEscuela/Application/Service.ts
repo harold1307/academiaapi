@@ -66,7 +66,8 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 			plantillaId: cursoPlantillaId,
 		});
 
-		const { plantillaId, paraleloId, sesionId, ...restData } = dto.getData();
+		const { plantillaId, paraleloId, sesionId, periodoId, ...restData } =
+			dto.getData();
 
 		if (!plantillaId)
 			throw new CursoEscuelaServiceError(
@@ -95,6 +96,11 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 					sesion: {
 						connect: {
 							id: sesionId,
+						},
+					},
+					periodo: {
+						connect: {
+							id: periodoId,
 						},
 					},
 					asignaturas: {

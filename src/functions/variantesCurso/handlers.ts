@@ -28,3 +28,11 @@ app.post("createAsignaturaEnVarianteCurso", {
 		controller.variantesCursoByIdCreateAsignatura(req, ctx),
 	route: "variantes-curso/{varianteCursoId}/asignaturas/{asignaturaId}",
 });
+
+// curso escuelas
+app.post("variantesCursoByIdCreateCursoEscuela", {
+	authLevel: "anonymous",
+	handler: (req, ctx) =>
+		controller.variantesCursoByIdCreateCursoEscuela(req, ctx),
+	route: "variantes-curso/{varianteCursoId}/curso-escuelas",
+});

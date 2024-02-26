@@ -342,4 +342,5 @@ const createByCursoBodySchema = z.object<
 	matriculaConDeuda: z.boolean(),
 	legalizarMatriculas: z.boolean(),
 	verificaSesion: z.boolean(),
+	periodoId: z.string(),
 });

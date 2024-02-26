@@ -316,4 +316,5 @@ const createBodySchema = z.object<
 	costoPorMateria: z.boolean(),
 	cumpleRequisitosMalla: z.boolean(),
 	pasarRecord: z.boolean(),
+	periodoId: z.string(),
 });

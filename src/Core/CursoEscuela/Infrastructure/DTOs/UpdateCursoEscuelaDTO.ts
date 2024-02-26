@@ -5,6 +5,7 @@ import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateCursoEscuela } from "../../Domain/IUpdateCursoEscuela";
 
 const schema = z.object<ZodInferSchema<IUpdateCursoEscuela>>({
+	estado: z.boolean().optional(),
 	nombre: z.string().optional(),
 
 	codigo: z.string().nullable().optional(),
