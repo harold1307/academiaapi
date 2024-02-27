@@ -7,8 +7,6 @@ import type { ICreateCursoEscuela } from "../../Domain/ICreateCursoEscuela";
 const schema = z.object<ZodInferSchema<ICreateCursoEscuela>>({
 	nombre: z.string(),
 	codigo: z.string().nullable(),
-	paraleloId: z.string().uuid(),
-	sesionId: z.string().uuid(),
 	tema: z.string(),
 	observaciones: z.string().nullable(),
 	departamento: z.string().nullable(),
@@ -16,7 +14,6 @@ const schema = z.object<ZodInferSchema<ICreateCursoEscuela>>({
 	fechaFin: z.date(),
 	fechaLimiteRegistro: z.date(),
 	diasLimitePago: z.number(),
-	nivel: z.number(),
 	cupos: z.number().nullable(),
 	evaluaProfesor: z.boolean(),
 	matriculaConDeuda: z.boolean(),
@@ -30,7 +27,11 @@ const schema = z.object<ZodInferSchema<ICreateCursoEscuela>>({
 	costoPorMateria: z.boolean(),
 	cumpleRequisitosMalla: z.boolean(),
 	pasarRecord: z.boolean(),
+
+	paraleloId: z.string().uuid(),
+	sesionId: z.string().uuid(),
 	plantillaId: z.string().uuid().nullable(),
+	periodoId: z.string().uuid(),
 });
 
 class CreateCursoEscuelaDTOError extends BaseDTOError<ICreateCursoEscuela> {

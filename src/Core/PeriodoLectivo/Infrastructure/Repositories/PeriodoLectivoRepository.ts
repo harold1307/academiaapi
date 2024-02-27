@@ -23,6 +23,12 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 
 		return periodos.map(p => ({
 			...p,
+			calculoCosto: {
+				...p.calculoCosto,
+				planCostos:
+					p.calculoCosto.cronogramaFechasOpcionPago !== null &&
+					p.calculoCosto.estudiantesEligenOpcionPago !== null,
+			},
 			enUso: false,
 			fechasEnMatricula: [
 				p.limiteMatriculaEspecial,
@@ -56,6 +62,12 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 
 		return {
 			...p,
+			calculoCosto: {
+				...p.calculoCosto,
+				planCostos:
+					p.calculoCosto.cronogramaFechasOpcionPago !== null &&
+					p.calculoCosto.estudiantesEligenOpcionPago !== null,
+			},
 			enUso: false,
 			fechasEnMatricula: [
 				p.limiteMatriculaEspecial,
@@ -87,6 +99,12 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 
 		return {
 			...p,
+			calculoCosto: {
+				...p.calculoCosto,
+				planCostos:
+					p.calculoCosto.cronogramaFechasOpcionPago !== null &&
+					p.calculoCosto.estudiantesEligenOpcionPago !== null,
+			},
 			enUso: false,
 			fechasEnMatricula: [
 				p.limiteMatriculaEspecial,
@@ -131,6 +149,12 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 
 		return {
 			...p,
+			calculoCosto: {
+				...p.calculoCosto,
+				planCostos:
+					p.calculoCosto.cronogramaFechasOpcionPago !== null &&
+					p.calculoCosto.estudiantesEligenOpcionPago !== null,
+			},
 			enUso: false,
 			fechasEnMatricula: [
 				p.limiteMatriculaEspecial,
@@ -169,6 +193,12 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 
 		return {
 			...p,
+			calculoCosto: {
+				...p.calculoCosto,
+				planCostos:
+					p.calculoCosto.cronogramaFechasOpcionPago !== null &&
+					p.calculoCosto.estudiantesEligenOpcionPago !== null,
+			},
 			enUso: false,
 			fechasEnMatricula: [
 				p.limiteMatriculaEspecial,
@@ -212,6 +242,12 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 
 		return {
 			...p,
+			calculoCosto: {
+				...p.calculoCosto,
+				planCostos:
+					p.calculoCosto.cronogramaFechasOpcionPago !== null &&
+					p.calculoCosto.estudiantesEligenOpcionPago !== null,
+			},
 			enUso: false,
 			fechasEnMatricula: [
 				p.limiteMatriculaEspecial,

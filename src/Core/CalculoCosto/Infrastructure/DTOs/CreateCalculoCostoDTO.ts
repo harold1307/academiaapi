@@ -35,7 +35,7 @@ const schema = z
 						(field): field is null => field === null,
 					);
 
-					if (costoPorSesion !== null && opcionesPagoNull.length !== 0) {
+					if (costoPorSesion !== null && opcionesPagoNull.length !== 2) {
 						ctx.addIssue({
 							code: z.ZodIssueCode.custom,
 							message:

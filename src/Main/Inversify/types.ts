@@ -129,4 +129,10 @@ export const TYPES = {
 		"CronogramaMatriculacionRepository",
 	),
 	CronogramaMatriculacionService: Symbol.for("CronogramaMatriculacionService"),
+	GrupoRepository: Symbol.for("GrupoRepository"),
+	GrupoService: Symbol.for("GrupoService"),
+	CentroInformacionRepository: Symbol.for("CentroInformacionRepository"),
+	CentroInformacionService: Symbol.for("CentroInformacionService"),
+	UsuarioRepository: Symbol.for("UsuarioRepository"),
+	UsuarioService: Symbol.for("UsuarioService"),
 } as const;

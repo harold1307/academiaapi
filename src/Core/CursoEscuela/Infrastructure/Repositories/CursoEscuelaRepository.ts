@@ -49,6 +49,7 @@ export class CursoEscuelaRepository implements ICursoEscuelaRepository {
 		paraleloId,
 		plantillaId,
 		sesionId,
+		periodoId,
 		...rest
 	}: ICreateCursoEscuela): Promise<ICursoEscuela> {
 		const curso = await this._client.cursoEscuela.create({
@@ -62,6 +63,11 @@ export class CursoEscuelaRepository implements ICursoEscuelaRepository {
 				sesion: {
 					connect: {
 						id: sesionId,
+					},
+				},
+				periodo: {
+					connect: {
+						id: periodoId,
 					},
 				},
 				plantilla: plantillaId

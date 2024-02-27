@@ -1,5 +1,8 @@
-import type { ICreateCursoEscuela } from "./ICreateCursoEscuela";
+import type { ICursoEscuela } from "./ICursoEscuela";
 
 export type IUpdateCursoEscuela = Partial<
-	Omit<ICreateCursoEscuela, "plantillaId">
+	Omit<
+		ICursoEscuela,
+		"plantillaId" | "id" | "createdAt" | "updatedAt" | "enUso" | "periodoId"
+	>
 >;

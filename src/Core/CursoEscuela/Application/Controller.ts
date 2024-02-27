@@ -302,7 +302,6 @@ const createBodySchema = z.object<
 	fechaFin: z.string(),
 	fechaLimiteRegistro: z.string(),
 	diasLimitePago: z.number(),
-	nivel: z.number(),
 	cupos: z.number().nullable(),
 	evaluaProfesor: z.boolean(),
 	matriculaConDeuda: z.boolean(),
@@ -316,4 +315,5 @@ const createBodySchema = z.object<
 	costoPorMateria: z.boolean(),
 	cumpleRequisitosMalla: z.boolean(),
 	pasarRecord: z.boolean(),
+	periodoId: z.string(),
 });

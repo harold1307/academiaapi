@@ -41,6 +41,9 @@ export class SedeRepository implements ISedeRepository {
 				ubicaciones: {
 					take: 1,
 				},
+				administrativos: {
+					take: 1,
+				},
 			},
 		});
 
@@ -51,6 +54,7 @@ export class SedeRepository implements ISedeRepository {
 				sesiones,
 				titulos,
 				ubicaciones,
+				administrativos,
 				...rest
 			}) => ({
 				...rest,
@@ -59,7 +63,8 @@ export class SedeRepository implements ISedeRepository {
 					lugaresEjecucion.length > 0 ||
 					sesiones.length > 0 ||
 					titulos.length > 0 ||
-					ubicaciones.length > 0,
+					ubicaciones.length > 0 ||
+					administrativos.length > 0,
 			}),
 		);
 	}
@@ -83,6 +88,9 @@ export class SedeRepository implements ISedeRepository {
 				ubicaciones: {
 					take: 1,
 				},
+				administrativos: {
+					take: 1,
+				},
 			},
 		});
 
@@ -94,6 +102,7 @@ export class SedeRepository implements ISedeRepository {
 			sesiones,
 			titulos,
 			ubicaciones,
+			administrativos,
 			...rest
 		} = sede;
 
@@ -104,7 +113,8 @@ export class SedeRepository implements ISedeRepository {
 				lugaresEjecucion.length > 0 ||
 				sesiones.length > 0 ||
 				titulos.length > 0 ||
-				ubicaciones.length > 0,
+				ubicaciones.length > 0 ||
+				administrativos.length > 0,
 		};
 	}
 
@@ -130,6 +140,9 @@ export class SedeRepository implements ISedeRepository {
 				ubicaciones: {
 					take: 1,
 				},
+				administrativos: {
+					take: 1,
+				},
 			},
 		});
 
@@ -139,6 +152,7 @@ export class SedeRepository implements ISedeRepository {
 			sesiones,
 			titulos,
 			ubicaciones,
+			administrativos,
 			...rest
 		} = sede;
 
@@ -149,7 +163,8 @@ export class SedeRepository implements ISedeRepository {
 				lugaresEjecucion.length > 0 ||
 				sesiones.length > 0 ||
 				titulos.length > 0 ||
-				ubicaciones.length > 0,
+				ubicaciones.length > 0 ||
+				administrativos.length > 0,
 		};
 	}
 

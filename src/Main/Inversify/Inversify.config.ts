@@ -267,6 +267,18 @@ import type { ICronogramaMatriculacionRepository } from "../../Core/CronogramaMa
 import type { ICronogramaMatriculacionService } from "../../Core/CronogramaMatriculacion/Domain/ICronogramaMatriculacionService";
 import { CronogramaMatriculacionRepository } from "../../Core/CronogramaMatriculacion/Infrastructure/Repositories/CronogramaMatriculacionRepository";
 
+// grupos
+import { GrupoService } from "../../Core/Grupo/Application/Service";
+import type { IGrupoRepository } from "../../Core/Grupo/Domain/IGrupoRepository";
+import type { IGrupoService } from "../../Core/Grupo/Domain/IGrupoService";
+import { GrupoRepository } from "../../Core/Grupo/Infrastructure/Repositories/GrupoRepository";
+
+// centros de informacion
+import { CentroInformacionService } from "../../Core/CentroInformacion/Application/Service";
+import type { ICentroInformacionRepository } from "../../Core/CentroInformacion/Domain/ICentroInformacionRepository";
+import type { ICentroInformacionService } from "../../Core/CentroInformacion/Domain/ICentroInformacionService";
+import { CentroInformacionRepository } from "../../Core/CentroInformacion/Infrastructure/Repositories/CentroInformacionRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -704,6 +716,24 @@ StartupBuilder.bind<ICronogramaMatriculacionService>(
 	TYPES.CronogramaMatriculacionService,
 )
 	.to(CronogramaMatriculacionService)
+	.inSingletonScope();
+
+// grupos
+StartupBuilder.bind<IGrupoRepository>(TYPES.GrupoRepository)
+	.to(GrupoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IGrupoService>(TYPES.GrupoService)
+	.to(GrupoService)
+	.inSingletonScope();
+
+// centros de informacion
+StartupBuilder.bind<ICentroInformacionRepository>(
+	TYPES.CentroInformacionRepository,
+)
+	.to(CentroInformacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<ICentroInformacionService>(TYPES.CentroInformacionService)
+	.to(CentroInformacionService)
 	.inSingletonScope();
 
 export { StartupBuilder };

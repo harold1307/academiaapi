@@ -50,3 +50,29 @@
 ## TODO
 
 - [] Implementar en uso
+
+## Frontend
+
+### Tabla
+
+- Inscritos 👉 Cantidad de inscritos en el periodo lectivo [_Aun no implementado_]
+
+- Materias 👉 Desconocido
+- Matriculas 👉 Desconocido
+- Fecha matriculacion 👉 Campo `fechasEnMatricula` desde la respuesta del API.
+- Matriculacion 👉 Campo _matriculas_ desde la respuesta del API
+- Estructura por nivel 👉 Campo `estructuraParalelosAgrupadosPorNivel` desde la respuesta del API.
+- Nivelacion 👉 Campo `seImpartioNivelacion` desde la respuesta del API.
+- Legalizar matriculas 👉 Campo `legalizarMatriculas` desde la respuesta del API.
+- Legalizacion por pago 👉 Campo `legalizacionAutomaticaContraPagos` desde la respuesta del API.
+- Cerrado 👉 Negacion del campo `abierto` desde la respuesta del API.
+- Vigente 👉 Fecha actual es menor que campo `fin` y mayor que campo `inicio`
+- Planif. carga horaria/Planif. distributivos 👉 Campo `planificacionCargaHoraria` desde la respuesta del API.
+- Notas por coordinacion 👉 Campo `cronogramaNotasCoordinacion` desde la respuesta del API.
+- Automat. extraordinaria 👉 Campo `automatriculaAlumnosFechaExtraordinaria` desde la respuesta del API.
+- Automat. con arrastre 👉 Campo `puedenMatricularseArrastre` desde la respuesta del API.
+- Automat. 2das matriculas 👉 Campo `puedenAutomatricularseSegundasOMasMatriculas` desde la respuesta del API.
+- '#' Matricula 👉 Campo `numeroMatricula` desde la respuesta del API.
+- Evaluacion docente 👉 Desconocido
+- Activo 👉 Campo `estado` desde la respuesta del API.
+- Costos por sesion y Plan de costos 👉 Campos dentro de `calculoCosto`

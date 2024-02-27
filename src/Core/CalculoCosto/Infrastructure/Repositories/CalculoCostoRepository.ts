@@ -14,16 +14,34 @@ export class CalculoCostoRepository implements ICalculoCostoRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
 	// getAll(): Promise<ICalculoCosto[]> {}
-	getById(id: string): Promise<ICalculoCosto | null> {
-		return this._client.calculoCosto.findUnique({ where: { id } });
+	async getById(id: string): Promise<ICalculoCosto | null> {
+		const calculo = await this._client.calculoCosto.findUnique({
+			where: { id },
+		});
+
+		if (!calculo) return null;
+
+		return {
+			...calculo,
+			planCostos:
+				calculo.cronogramaFechasOpcionPago !== null &&
+				calculo.estudiantesEligenOpcionPago !== null,
+		};
 	}
 	// deleteById(id: string): Promise<ICalculoCosto> {}
 
 	// create(data: ICreateCalculoCosto): Promise<ICalculoCosto> {}
-	update({ id, data }: UpdateCalculoCostoParams): Promise<ICalculoCosto> {
-		return this._client.calculoCosto.update({
+	async update({ id, data }: UpdateCalculoCostoParams): Promise<ICalculoCosto> {
+		const calculo = await this._client.calculoCosto.update({
 			where: { id },
 			data,
 		});
+
+		return {
+			...calculo,
+			planCostos:
+				calculo.cronogramaFechasOpcionPago !== null &&
+				calculo.estudiantesEligenOpcionPago !== null,
+		};
 	}
 }

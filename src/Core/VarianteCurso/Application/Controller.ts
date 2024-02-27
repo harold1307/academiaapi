@@ -336,10 +336,10 @@ const createByCursoBodySchema = z.object<
 	fechaFin: z.string(),
 	fechaLimiteRegistro: z.string(),
 	diasLimitePago: z.number(),
-	nivel: z.number(),
 	cupos: z.number().nullable(),
 	evaluaProfesor: z.boolean(),
 	matriculaConDeuda: z.boolean(),
 	legalizarMatriculas: z.boolean(),
 	verificaSesion: z.boolean(),
+	periodoId: z.string(),
 });

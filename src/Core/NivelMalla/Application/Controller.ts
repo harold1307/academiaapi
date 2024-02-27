@@ -29,6 +29,8 @@ import type { ICreateNivelAcademico } from "../../NivelAcademico/Domain/ICreateN
 import type { INivelAcademicoService } from "../../NivelAcademico/Domain/INivelAcademicoService";
 import { ParaleloService } from "../../Paralelo/Application/Service";
 import type { IParaleloService } from "../../Paralelo/Domain/IParaleloService";
+import { PeriodoLectivoService } from "../../PeriodoLectivo/Application/Service";
+import type { IPeriodoLectivoService } from "../../PeriodoLectivo/Domain/IPeriodoLectivoService";
 import { SesionService } from "../../Sesion/Application/Service";
 import type { ISesionService } from "../../Sesion/Domain/ISesionService";
 import type { INivelMallaController } from "../Domain/INivelMallaController";
@@ -48,6 +50,7 @@ export class NivelMallaController implements INivelMallaController {
 	private _sesionService: ISesionService;
 	private _paraleloService: IParaleloService;
 	private _modeloEvaluativoService: IModeloEvaluativoService;
+	private _periodoLectivoService: IPeriodoLectivoService;
 
 	constructor() {
 		this._nivelMallaService = StartupBuilder.resolve(NivelMallaService);
@@ -70,6 +73,7 @@ export class NivelMallaController implements INivelMallaController {
 		this._modeloEvaluativoService = StartupBuilder.resolve(
 			ModeloEvaluativoService,
 		);
+		this._periodoLectivoService = StartupBuilder.resolve(PeriodoLectivoService);
 	}
 
 	async nivelesMallaGetAll(
@@ -293,6 +297,8 @@ export class NivelMallaController implements INivelMallaController {
 			const {
 				paraleloId,
 				modeloEvaluativoId,
+				periodoId,
+
 				fechaInicio,
 				fechaFin,
 				inicioAgregaciones,
@@ -319,6 +325,15 @@ export class NivelMallaController implements INivelMallaController {
 					status: 400,
 				};
 
+			const periodo =
+				await this._periodoLectivoService.getPeriodoLectivoById(periodoId);
+
+			if (!periodo)
+				return {
+					jsonBody: { message: "El periodo lectivo no existe" },
+					status: 400,
+				};
+
 			const newNivelAcademico =
 				await this._nivelAcademicoService.createNivelAcademico({
 					...data,
@@ -326,6 +341,8 @@ export class NivelMallaController implements INivelMallaController {
 					sesionId,
 					paraleloId,
 					modeloEvaluativoId,
+					periodoId,
+
 					fechaInicio: new Date(fechaInicio),
 					fechaFin: new Date(fechaFin),
 					inicioAgregaciones: new Date(inicioAgregaciones),
@@ -437,4 +454,5 @@ const createNivelAcademicoBodySchema = z.object<
 
 	paraleloId: z.string(),
 	modeloEvaluativoId: z.string(),
+	periodoId: z.string(),
 });
