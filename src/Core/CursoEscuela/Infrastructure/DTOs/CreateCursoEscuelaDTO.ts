@@ -14,7 +14,6 @@ const schema = z.object<ZodInferSchema<ICreateCursoEscuela>>({
 	fechaFin: z.date(),
 	fechaLimiteRegistro: z.date(),
 	diasLimitePago: z.number(),
-	nivel: z.number(),
 	cupos: z.number().nullable(),
 	evaluaProfesor: z.boolean(),
 	matriculaConDeuda: z.boolean(),

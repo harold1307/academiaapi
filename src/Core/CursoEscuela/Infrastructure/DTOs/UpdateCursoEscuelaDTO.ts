@@ -20,7 +20,6 @@ const schema = z.object<ZodInferSchema<IUpdateCursoEscuela>>({
 	fechaFin: z.date().optional(),
 	fechaLimiteRegistro: z.date().optional(),
 	diasLimitePago: z.number().optional(),
-	nivel: z.number().optional(),
 
 	cupos: z.number().nullable().optional(),
 	evaluaProfesor: z.boolean().optional(),
