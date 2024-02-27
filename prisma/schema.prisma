@@ -138,7 +138,7 @@ model AsignaturaEnNivelMalla {
   ejeFormativoId     String
   ejeFormativo       EjeFormativo     @relation(fields: [ejeFormativoId], references: [id])
   nivelMallaId       String
-  nivelMalla         NivelMalla       @relation(fields: [nivelMallaId], references: [id])
+  nivelMalla         NivelMalla       @relation(fields: [nivelMallaId], references: [id], onDelete: Cascade)
   asignaturaId       String
   asignatura         Asignatura       @relation(fields: [asignaturaId], references: [id])
   areaConocimientoId String
