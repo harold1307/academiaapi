@@ -378,7 +378,6 @@ model CursoEscuela {
   fechaFin            DateTime
   fechaLimiteRegistro DateTime
   diasLimitePago      Int
-  nivel               Int
   cupos               Int?
   evaluaProfesor      Boolean
   matriculaConDeuda   Boolean
