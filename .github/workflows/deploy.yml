@@ -61,7 +61,7 @@ jobs:
           cat .env
 
       - name: Apply all pending migrations to the database
-        run: pnpm dlx prisma migrate deploy
+        run: pnpm db:deploy
 
       - name: Resolve Project Dependencies Using pnpm
         shell: pwsh
@@ -130,7 +130,7 @@ jobs:
           cat .env
 
       - name: Apply all pending migrations to the database
-        run: pnpm dlx prisma migrate deploy
+        run: pnpm db:deploy
 
       - name: Resolve Project Dependencies Using pnpm
         shell: pwsh

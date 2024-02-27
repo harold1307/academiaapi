@@ -14,6 +14,8 @@
 		"create:modulo": "hygen modulo new",
 		"create:controller": "hygen controller new",
 		"db:pull": "prisma db pull",
+		"db:migrate": "prisma migrate dev",
+		"db:deploy": "prisma migrate deploy",
 		"db:studio": "prisma studio --browser none",
 		"format:check": "prettier --check \"src/**/*.ts\"",
 		"format:write": "prettier --write \"src/**/*.ts\"",
