@@ -24,14 +24,14 @@ export class UsuarioService implements IUsuarioService {
 		return this._usuarioRepository.getById(id);
 	}
 
-	deleteUsuarioById(id: string): Promise<IUsuario> {
+	deleteUsuarioById(_: string): Promise<IUsuario> {
 		throw new UsuarioServiceError("Not implemented");
 	}
 
-	createUsuario(data: ICreateUsuario): Promise<IUsuario> {
+	createUsuario(_: ICreateUsuario): Promise<IUsuario> {
 		throw new UsuarioServiceError("Not implemented");
 	}
-	updateUsuarioById(params: UpdateUsuarioParams): Promise<IUsuario> {
+	updateUsuarioById(_: UpdateUsuarioParams): Promise<IUsuario> {
 		throw new UsuarioServiceError("Not implemented");
 	}
 }

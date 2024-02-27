@@ -1,5 +1,3 @@
-
-
 import type {
 	HttpRequest,
 	HttpResponseInit,
@@ -7,7 +5,7 @@ import type {
 } from "@azure/functions";
 
 export type IGrupoController = {
-  gruposCreate(
+	gruposCreate(
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
@@ -27,4 +25,4 @@ export type IGrupoController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
-}
+};

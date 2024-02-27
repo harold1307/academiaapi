@@ -7,7 +7,6 @@ export type ICreateAdministrativo = Omit<
 	| "createdAt"
 	| "updatedAt"
 	| "usuarioId"
-	
 	| "parametrosInstitucion"
 	| "talentoHumano"
 	| "personalAdministrativo"
