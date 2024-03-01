@@ -279,6 +279,18 @@ import type { ICentroInformacionRepository } from "../../Core/CentroInformacion/
 import type { ICentroInformacionService } from "../../Core/CentroInformacion/Domain/ICentroInformacionService";
 import { CentroInformacionRepository } from "../../Core/CentroInformacion/Infrastructure/Repositories/CentroInformacionRepository";
 
+// inscripciones
+import { InscripcionService } from "../../Core/Inscripcion/Application/Service";
+import type { IInscripcionRepository } from "../../Core/Inscripcion/Domain/IInscripcionRepository";
+import type { IInscripcionService } from "../../Core/Inscripcion/Domain/IInscripcionService";
+import { InscripcionRepository } from "../../Core/Inscripcion/Infrastructure/Repositories/InscripcionRepository";
+
+// usuarios
+import { UsuarioService } from "../../Core/Usuario/Application/Service";
+import type { IUsuarioRepository } from "../../Core/Usuario/Domain/IUsuarioRepository";
+import type { IUsuarioService } from "../../Core/Usuario/Domain/IUsuarioService";
+import { UsuarioRepository } from "../../Core/Usuario/Infrastructure/Repositories/UsuarioRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -734,6 +746,22 @@ StartupBuilder.bind<ICentroInformacionRepository>(
 	.inSingletonScope();
 StartupBuilder.bind<ICentroInformacionService>(TYPES.CentroInformacionService)
 	.to(CentroInformacionService)
+	.inSingletonScope();
+
+// usuarios
+StartupBuilder.bind<IUsuarioRepository>(TYPES.UsuarioRepository)
+	.to(UsuarioRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IUsuarioService>(TYPES.UsuarioService)
+	.to(UsuarioService)
+	.inSingletonScope();
+
+// inscripciones
+StartupBuilder.bind<IInscripcionRepository>(TYPES.InscripcionRepository)
+	.to(InscripcionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IInscripcionService>(TYPES.InscripcionService)
+	.to(InscripcionService)
 	.inSingletonScope();
 
 export { StartupBuilder };
