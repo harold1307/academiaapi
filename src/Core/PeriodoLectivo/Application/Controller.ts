@@ -305,17 +305,8 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 
 			if (!bodyVal.success) return CommonResponse.invalidBody();
 
-			const { nivelId, tipoDocumentoId, ...data } = bodyVal.data;
-
-			const nivel = await this._nivelMallaService.getNivelMallaById(nivelId);
-
-			if (!nivel)
-				return {
-					jsonBody: {
-						message: "El nivel no existe",
-					},
-					status: 400,
-				};
+			const { tipoDocumentoId, sedeId, programaId, modalidadId, ...data } =
+				bodyVal.data;
 
 			const tipoDocumento =
 				await this._tipoDocumentoService.getTipoDocumentoById(tipoDocumentoId);
@@ -328,12 +319,50 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 					status: 400,
 				};
 
+			if (programaId) {
+				const programa =
+					await this._programaService.getProgramaById(programaId);
+
+				if (!programa)
+					return {
+						jsonBody: {
+							message: "El programa no existe",
+						},
+						status: 400,
+					};
+			}
+
+			const sede = await this._sedeService.getSedeById(sedeId);
+
+			if (!sede)
+				return {
+					jsonBody: {
+						message: "La sede no existe",
+					},
+					status: 400,
+				};
+
+			if (modalidadId) {
+				const modalidad =
+					await this._modalidadService.getModalidadById(modalidadId);
+
+				if (!modalidad)
+					return {
+						jsonBody: {
+							message: "La modalidad no existe",
+						},
+						status: 400,
+					};
+			}
+
 			const newRequisitoMatriculacion =
 				await this._requisitoMatriculacionService.createRequisitoMatriculacion({
 					...data,
 					periodoId: periodoLectivoId,
 					tipoDocumentoId,
-					nivelId,
+					modalidadId,
+					programaId,
+					sedeId,
 				});
 
 			ctx.log({ newRequisitoMatriculacion });
@@ -399,9 +428,8 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 			ctx.log(`Http function processed request for url '${req.url}'`);
 
 			const periodoLectivoId = req.params.periodoLectivoId;
-			const nivelMallaId = req.params.nivelMallaId;
 
-			if (!periodoLectivoId || !nivelMallaId) return CommonResponse.invalidId();
+			if (!periodoLectivoId) return CommonResponse.invalidId();
 
 			const body = await req.json();
 			const bodyVal = createCronogramaMatriculacionBodySchema.safeParse(body);
@@ -418,12 +446,6 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 					jsonBody: { message: "El periodo lectivo no existe" },
 					status: 400,
 				};
-
-			const nivelMalla =
-				await this._nivelMallaService.getNivelMallaById(nivelMallaId);
-
-			if (!nivelMalla)
-				return { jsonBody: { message: "El nivel no existe" }, status: 400 };
 
 			const {
 				fechaFin,
@@ -529,6 +551,27 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async periodosLectivosGetByIdWithRequisitosMatriculacion(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+			const periodoLectivoId = req.params.periodoLectivoId;
+
+			if (!periodoLectivoId) return CommonResponse.invalidId();
+
+			const periodoLectivo =
+				await this._periodoLectivoService.getPeriodoLectivoByIdWithRequisitosMatriculacion(
+					periodoLectivoId,
+				);
+
+			return CommonResponse.successful({ data: periodoLectivo });
+		} catch (error) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const createCronogramaMatriculacionBodySchema = z.object<
@@ -571,9 +614,13 @@ const createRequisitoMatriculacionBodySchema = z.object<
 	primeraMatricula: z.boolean(),
 	repitenMaterias: z.boolean(),
 	descripcion: z.string().nullable(),
+	nivel: z.number().nullable(),
+	nombre: z.string(),
 
-	nivelId: z.string().uuid(),
-	tipoDocumentoId: z.string().uuid(),
+	programaId: z.string().nullable(),
+	sedeId: z.string(),
+	modalidadId: z.string().nullable(),
+	tipoDocumentoId: z.string(),
 });
 
 const updateCalculoCostoBodySchema = z.object<

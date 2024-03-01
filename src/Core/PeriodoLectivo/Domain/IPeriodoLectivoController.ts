@@ -51,4 +51,8 @@ export type IPeriodoLectivoController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
+	periodosLectivosGetByIdWithRequisitosMatriculacion(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 };

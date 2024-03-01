@@ -49,6 +49,12 @@ app.post("periodosLectivosCreateRequisitoMatriculacion", {
 		controller.periodosLectivosCreateRequisitoMatriculacion(req, ctx),
 	route: "periodos-lectivos/{periodoLectivoId}/requisitos-matriculacion",
 });
+app.get("periodosLectivosGetByIdWithRequisitosMatriculacion", {
+	authLevel: "anonymous",
+	handler: (req, ctx) =>
+		controller.periodosLectivosGetByIdWithRequisitosMatriculacion(req, ctx),
+	route: "periodos-lectivos/{periodoLectivoId}/requisitos-matriculacion",
+});
 
 // sub periodos lectivos
 app.post("periodosLectivosCreateSubPeriodo", {
@@ -68,7 +74,7 @@ app.post("periodosLectivosCreateCronogramaMatriculacion", {
 	authLevel: "anonymous",
 	handler: (req, ctx) =>
 		controller.periodosLectivosCreateCronogramaMatriculacion(req, ctx),
-	route: "periodos-lectivos/{periodoLectivoId}/niveles-malla/{nivelMallaId}",
+	route: "periodos-lectivos/{periodoLectivoId}/cronogramas-matriculacion",
 });
 app.get("periodosLectivosGetByIdWithCronogramasMatriculacion", {
 	authLevel: "anonymous",
