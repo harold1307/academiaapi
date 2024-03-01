@@ -9,8 +9,14 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { ModalidadService } from "../../Modalidad/Application/Service";
+import type { IModalidadService } from "../../Modalidad/Domain/IModalidadService";
 import { PeriodoLectivoService } from "../../PeriodoLectivo/Application/Service";
 import type { IPeriodoLectivoService } from "../../PeriodoLectivo/Domain/IPeriodoLectivoService";
+import { ProgramaService } from "../../Programa/Application/Service";
+import type { IProgramaService } from "../../Programa/Domain/IProgramaService";
+import { SedeService } from "../../Sede/Application/Service";
+import type { ISedeService } from "../../Sede/Domain/ISedeService";
 import type { ICronogramaMatriculacionController } from "../Domain/ICronogramaMatriculacionController";
 import type { ICronogramaMatriculacionService } from "../Domain/ICronogramaMatriculacionService";
 import type { IUpdateCronogramaMatriculacion } from "../Domain/IUpdateCronogramaMatriculacion";
@@ -21,12 +27,18 @@ export class CronogramaMatriculacionController
 {
 	private _cronogramaMatriculacionService: ICronogramaMatriculacionService;
 	private _periodoLectivoService: IPeriodoLectivoService;
+	private _modalidadService: IModalidadService;
+	private _programaService: IProgramaService;
+	private _sedeService: ISedeService;
 
 	constructor() {
 		this._cronogramaMatriculacionService = StartupBuilder.resolve(
 			CronogramaMatriculacionService,
 		);
 		this._periodoLectivoService = StartupBuilder.resolve(PeriodoLectivoService);
+		this._modalidadService = StartupBuilder.resolve(ModalidadService);
+		this._programaService = StartupBuilder.resolve(ProgramaService);
+		this._sedeService = StartupBuilder.resolve(SedeService);
 	}
 
 	async cronogramasMatriculacionGetById(
@@ -65,15 +77,64 @@ export class CronogramaMatriculacionController
 
 			if (!bodyVal.success) return CommonResponse.invalidBody();
 
-			const { fechaFin, fechaInicio } = bodyVal.data;
+			const {
+				fechaFin,
+				fechaInicio,
+				modalidadId,
+				programaId,
+				sedeId,
+				...rest
+			} = bodyVal.data;
+
+			if (programaId) {
+				const programa =
+					await this._programaService.getProgramaById(programaId);
+
+				if (!programa)
+					return {
+						jsonBody: {
+							message: "El programa no existe",
+						},
+						status: 400,
+					};
+			}
+
+			if (sedeId) {
+				const sede = await this._sedeService.getSedeById(sedeId);
+
+				if (!sede)
+					return {
+						jsonBody: {
+							message: "La sede no existe",
+						},
+						status: 400,
+					};
+			}
+
+			if (modalidadId) {
+				const modalidad =
+					await this._modalidadService.getModalidadById(modalidadId);
+
+				if (!modalidad)
+					return {
+						jsonBody: {
+							message: "La modalidad no existe",
+						},
+						status: 400,
+					};
+			}
 
 			const cronogramaMatriculacion =
 				await this._cronogramaMatriculacionService.updateCronogramaMatriculacionById(
 					{
 						id: cronogramaMatriculacionId,
 						data: {
+							...rest,
 							fechaFin: fechaFin ? new Date(fechaFin) : undefined,
 							fechaInicio: fechaInicio ? new Date(fechaInicio) : undefined,
+							modalidadId,
+							programaId,
+							sedeId,
 						},
 					},
 				);
@@ -145,4 +206,8 @@ const updateBodySchema = z.object<
 >({
 	fechaFin: z.string().datetime().optional(),
 	fechaInicio: z.string().datetime().optional(),
+	modalidadId: z.string().nullable().optional(),
+	nivel: z.number().nullable().optional(),
+	programaId: z.string().optional(),
+	sedeId: z.string().optional(),
 });

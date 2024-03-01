@@ -7,6 +7,11 @@ import type { IUpdateCronogramaMatriculacion } from "../../Domain/IUpdateCronogr
 const schema = z.object<ZodInferSchema<IUpdateCronogramaMatriculacion>>({
 	fechaInicio: z.date().optional(),
 	fechaFin: z.date().optional(),
+	nivel: z.number().int().min(0).max(10).nullable().optional(),
+
+	modalidadId: z.string().uuid().nullable().optional(),
+	sedeId: z.string().uuid().optional(),
+	programaId: z.string().uuid().optional(),
 });
 
 class UpdateCronogramaMatriculacionDTOError extends BaseDTOError<IUpdateCronogramaMatriculacion> {

@@ -16,254 +16,76 @@ export class CronogramaMatriculacionRepository
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
 	async getAll(): Promise<ICronogramaMatriculacion[]> {
-		const cronogramas = await this._client.cronogramaMatriculacion.findMany({
+		return this._client.cronogramaMatriculacion.findMany({
 			include: {
-				nivel: {
-					include: {
-						malla: {
-							select: {
-								modalidad: true,
-								programa: {
-									include: {
-										coordinacion: {
-											select: {
-												sede: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+				sede: true,
+				programa: true,
+				modalidad: true,
 			},
 		});
-
-		return cronogramas.map(
-			({
-				nivel: {
-					malla: {
-						modalidad,
-						programa: {
-							coordinacion: { sede },
-							...programa
-						},
-					},
-					...nivel
-				},
-				...c
-			}) => ({
-				...c,
-				modalidad,
-				sede,
-				nivel,
-				programa,
-			}),
-		);
 	}
 	async getById(id: string): Promise<ICronogramaMatriculacion | null> {
-		const cronograma = await this._client.cronogramaMatriculacion.findUnique({
+		return this._client.cronogramaMatriculacion.findUnique({
 			where: {
 				id,
 			},
 			include: {
-				nivel: {
-					include: {
-						malla: {
-							select: {
-								modalidad: true,
-								programa: {
-									include: {
-										coordinacion: {
-											select: {
-												sede: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+				sede: true,
+				programa: true,
+				modalidad: true,
 			},
 		});
-
-		if (!cronograma) return null;
-
-		const {
-			nivel: {
-				malla: {
-					modalidad,
-					programa: {
-						coordinacion: { sede },
-						...programa
-					},
-				},
-				...nivel
-			},
-			...c
-		} = cronograma;
-
-		return {
-			...c,
-			modalidad,
-			sede,
-			nivel,
-			programa,
-		};
 	}
 	async deleteById(id: string): Promise<ICronogramaMatriculacion> {
-		const cronograma = await this._client.cronogramaMatriculacion.delete({
+		return this._client.cronogramaMatriculacion.delete({
 			where: { id },
 			include: {
-				nivel: {
-					include: {
-						malla: {
-							select: {
-								modalidad: true,
-								programa: {
-									include: {
-										coordinacion: {
-											select: {
-												sede: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+				sede: true,
+				programa: true,
+				modalidad: true,
 			},
 		});
-
-		const {
-			nivel: {
-				malla: {
-					modalidad,
-					programa: {
-						coordinacion: { sede },
-						...programa
-					},
-				},
-				...nivel
-			},
-			...c
-		} = cronograma;
-
-		return {
-			...c,
-			modalidad,
-			sede,
-			nivel,
-			programa,
-		};
 	}
 
 	async create({
-		nivelId,
+		programaId,
+		sedeId,
 		periodoId,
+		modalidadId,
 		...data
 	}: ICreateCronogramaMatriculacion): Promise<ICronogramaMatriculacion> {
-		const cronograma = await this._client.cronogramaMatriculacion.create({
+		return this._client.cronogramaMatriculacion.create({
 			data: {
 				...data,
-				nivel: { connect: { id: nivelId } },
 				periodo: { connect: { id: periodoId } },
+				programa: { connect: { id: programaId } },
+				sede: { connect: { id: sedeId } },
+				modalidad: modalidadId ? { connect: { id: modalidadId } } : undefined,
 			},
 			include: {
-				nivel: {
-					include: {
-						malla: {
-							select: {
-								modalidad: true,
-								programa: {
-									include: {
-										coordinacion: {
-											select: {
-												sede: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+				sede: true,
+				programa: true,
+				modalidad: true,
 			},
 		});
-
-		const {
-			nivel: {
-				malla: {
-					modalidad,
-					programa: {
-						coordinacion: { sede },
-						...programa
-					},
-				},
-				...nivel
-			},
-			...c
-		} = cronograma;
-
-		return {
-			...c,
-			modalidad,
-			sede,
-			nivel,
-			programa,
-		};
 	}
 	async update({
 		id,
-		data,
+		data: { modalidadId, programaId, sedeId, ...data },
 	}: UpdateCronogramaMatriculacionParams): Promise<ICronogramaMatriculacion> {
-		const cronograma = await this._client.cronogramaMatriculacion.update({
+		return this._client.cronogramaMatriculacion.update({
 			where: { id },
-			data,
+			data: {
+				...data,
+				programa: programaId ? { connect: { id: programaId } } : undefined,
+				sede: sedeId ? { connect: { id: sedeId } } : undefined,
+				modalidad: modalidadId ? { connect: { id: modalidadId } } : undefined,
+			},
 			include: {
-				nivel: {
-					include: {
-						malla: {
-							select: {
-								modalidad: true,
-								programa: {
-									include: {
-										coordinacion: {
-											select: {
-												sede: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+				sede: true,
+				programa: true,
+				modalidad: true,
 			},
 		});
-
-		const {
-			nivel: {
-				malla: {
-					modalidad,
-					programa: {
-						coordinacion: { sede },
-						...programa
-					},
-				},
-				...nivel
-			},
-			...c
-		} = cronograma;
-
-		return {
-			...c,
-			modalidad,
-			sede,
-			nivel,
-			programa,
-		};
 	}
 }
