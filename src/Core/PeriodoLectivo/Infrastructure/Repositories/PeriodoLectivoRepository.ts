@@ -223,17 +223,21 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 
 	async getByIdWithCronogramasMatriculacion(id: string): Promise<
 		| (IPeriodoLectivo & {
-				cronogramasMatriculacion: Omit<
-					ICronogramaMatriculacion,
-					"sede" | "programa" | "modalidad" | "nivel"
-				>[];
+				cronogramasMatriculacion: ICronogramaMatriculacion[];
 		  })
 		| null
 	> {
 		const p = await this._client.periodoLectivo.findUnique({
 			where: { id },
 			include: {
-				cronogramasMatriculacion: true,
+				cronogramasMatriculacion: {
+					include: {
+						modalidad: true,
+						periodo: true,
+						programa: true,
+						sede: true,
+					},
+				},
 				calculoCosto: true,
 			},
 		});
