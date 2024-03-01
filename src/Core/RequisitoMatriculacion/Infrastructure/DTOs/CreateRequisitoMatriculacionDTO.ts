@@ -10,8 +10,12 @@ const schema = z.object<ZodInferSchema<ICreateRequisitoMatriculacion>>({
 	primeraMatricula: z.boolean(),
 	repitenMaterias: z.boolean(),
 	descripcion: z.string().nullable(),
+	nivel: z.number().int().min(0).max(10).nullable(),
+	nombre: z.string(),
 
-	nivelId: z.string().uuid(),
+	programaId: z.string().uuid().nullable(),
+	sedeId: z.string().uuid(),
+	modalidadId: z.string().uuid().nullable(),
 	periodoId: z.string().uuid(),
 	tipoDocumentoId: z.string().uuid(),
 });

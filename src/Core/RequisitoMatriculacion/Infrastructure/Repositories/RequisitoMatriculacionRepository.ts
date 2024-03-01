@@ -16,260 +16,84 @@ export class RequisitoMatriculacionRepository
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
 	async getAll(): Promise<IRequisitoMatriculacion[]> {
-		const requisitos = await this._client.requisitoMatriculacion.findMany({
+		return this._client.requisitoMatriculacion.findMany({
 			include: {
-				nivel: {
-					include: {
-						malla: {
-							select: {
-								modalidad: true,
-								programa: {
-									include: {
-										coordinacion: {
-											select: {
-												sede: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+				modalidad: true,
+				programa: true,
+				sede: true,
+				tipoDocumento: true,
 			},
 		});
-
-		return requisitos.map(
-			({
-				nivel: {
-					malla: {
-						modalidad,
-						programa: {
-							coordinacion: { sede },
-							...programa
-						},
-					},
-					...nivel
-				},
-				...r
-			}) => ({
-				...r,
-				modalidad,
-				sede,
-				nivel,
-				programa,
-			}),
-		);
 	}
 	async getById(id: string): Promise<IRequisitoMatriculacion | null> {
-		const requisito = await this._client.requisitoMatriculacion.findUnique({
+		return this._client.requisitoMatriculacion.findUnique({
 			where: { id },
 			include: {
-				nivel: {
-					include: {
-						malla: {
-							select: {
-								modalidad: true,
-								programa: {
-									include: {
-										coordinacion: {
-											select: {
-												sede: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+				modalidad: true,
+				programa: true,
+				sede: true,
+				tipoDocumento: true,
 			},
 		});
-
-		if (!requisito) return null;
-
-		const {
-			nivel: {
-				malla: {
-					modalidad,
-					programa: {
-						coordinacion: { sede },
-						...programa
-					},
-				},
-				...nivel
-			},
-			...r
-		} = requisito;
-
-		return {
-			...r,
-			modalidad,
-			sede,
-			nivel,
-			programa,
-		};
 	}
 	async deleteById(id: string): Promise<IRequisitoMatriculacion> {
-		const requisito = await this._client.requisitoMatriculacion.delete({
+		return this._client.requisitoMatriculacion.delete({
 			where: { id },
 			include: {
-				nivel: {
-					include: {
-						malla: {
-							select: {
-								modalidad: true,
-								programa: {
-									include: {
-										coordinacion: {
-											select: {
-												sede: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+				modalidad: true,
+				programa: true,
+				sede: true,
+				tipoDocumento: true,
 			},
 		});
-
-		const {
-			nivel: {
-				malla: {
-					modalidad,
-					programa: {
-						coordinacion: { sede },
-						...programa
-					},
-				},
-				...nivel
-			},
-			...r
-		} = requisito;
-
-		return {
-			...r,
-			modalidad,
-			sede,
-			nivel,
-			programa,
-		};
 	}
 
 	async create({
-		nivelId,
+		sedeId,
+		modalidadId,
+		programaId,
 		periodoId,
 		tipoDocumentoId,
 		...data
 	}: ICreateRequisitoMatriculacion): Promise<IRequisitoMatriculacion> {
-		const requisito = await this._client.requisitoMatriculacion.create({
+		return this._client.requisitoMatriculacion.create({
 			data: {
 				...data,
-				nivel: { connect: { id: nivelId } },
 				periodo: { connect: { id: periodoId } },
 				tipoDocumento: { connect: { id: tipoDocumentoId } },
+				sede: { connect: { id: sedeId } },
+				modalidad: modalidadId ? { connect: { id: modalidadId } } : undefined,
+				programa: programaId ? { connect: { id: programaId } } : undefined,
 			},
 			include: {
-				nivel: {
-					include: {
-						malla: {
-							select: {
-								modalidad: true,
-								programa: {
-									include: {
-										coordinacion: {
-											select: {
-												sede: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+				modalidad: true,
+				programa: true,
+				sede: true,
+				tipoDocumento: true,
 			},
 		});
-
-		const {
-			nivel: {
-				malla: {
-					modalidad,
-					programa: {
-						coordinacion: { sede },
-						...programa
-					},
-				},
-				...nivel
-			},
-			...r
-		} = requisito;
-
-		return {
-			...r,
-			modalidad,
-			sede,
-			nivel,
-			programa,
-		};
 	}
 	async update({
 		id,
-		data: { nivelId, tipoDocumentoId, ...data },
+		data: { tipoDocumentoId, sedeId, programaId, modalidadId, ...data },
 	}: UpdateRequisitoMatriculacionParams): Promise<IRequisitoMatriculacion> {
-		const requisito = await this._client.requisitoMatriculacion.update({
+		return this._client.requisitoMatriculacion.update({
 			where: { id },
 			data: {
 				...data,
-				nivel: nivelId ? { connect: { id: nivelId } } : undefined,
 				tipoDocumento: tipoDocumentoId
 					? { connect: { id: tipoDocumentoId } }
 					: undefined,
+				sede: sedeId ? { connect: { id: sedeId } } : undefined,
+				modalidad: modalidadId ? { connect: { id: modalidadId } } : undefined,
+				programa: programaId ? { connect: { id: programaId } } : undefined,
 			},
 			include: {
-				nivel: {
-					include: {
-						malla: {
-							select: {
-								modalidad: true,
-								programa: {
-									include: {
-										coordinacion: {
-											select: {
-												sede: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+				modalidad: true,
+				programa: true,
+				sede: true,
+				tipoDocumento: true,
 			},
 		});
-
-		const {
-			nivel: {
-				malla: {
-					modalidad,
-					programa: {
-						coordinacion: { sede },
-						...programa
-					},
-				},
-				...nivel
-			},
-			...r
-		} = requisito;
-
-		return {
-			...r,
-			modalidad,
-			sede,
-			nivel,
-			programa,
-		};
 	}
 }
