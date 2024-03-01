@@ -77,52 +77,7 @@ export class CronogramaMatriculacionController
 
 			if (!bodyVal.success) return CommonResponse.invalidBody();
 
-			const {
-				fechaFin,
-				fechaInicio,
-				modalidadId,
-				programaId,
-				sedeId,
-				...rest
-			} = bodyVal.data;
-
-			if (programaId) {
-				const programa =
-					await this._programaService.getProgramaById(programaId);
-
-				if (!programa)
-					return {
-						jsonBody: {
-							message: "El programa no existe",
-						},
-						status: 400,
-					};
-			}
-
-			if (sedeId) {
-				const sede = await this._sedeService.getSedeById(sedeId);
-
-				if (!sede)
-					return {
-						jsonBody: {
-							message: "La sede no existe",
-						},
-						status: 400,
-					};
-			}
-
-			if (modalidadId) {
-				const modalidad =
-					await this._modalidadService.getModalidadById(modalidadId);
-
-				if (!modalidad)
-					return {
-						jsonBody: {
-							message: "La modalidad no existe",
-						},
-						status: 400,
-					};
-			}
+			const { fechaFin, fechaInicio, ...rest } = bodyVal.data;
 
 			const cronogramaMatriculacion =
 				await this._cronogramaMatriculacionService.updateCronogramaMatriculacionById(
@@ -132,9 +87,6 @@ export class CronogramaMatriculacionController
 							...rest,
 							fechaFin: fechaFin ? new Date(fechaFin) : undefined,
 							fechaInicio: fechaInicio ? new Date(fechaInicio) : undefined,
-							modalidadId,
-							programaId,
-							sedeId,
 						},
 					},
 				);
@@ -206,8 +158,4 @@ const updateBodySchema = z.object<
 >({
 	fechaFin: z.string().datetime().optional(),
 	fechaInicio: z.string().datetime().optional(),
-	modalidadId: z.string().nullable().optional(),
-	nivel: z.number().nullable().optional(),
-	programaId: z.string().optional(),
-	sedeId: z.string().optional(),
 });

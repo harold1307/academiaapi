@@ -71,16 +71,11 @@ export class CronogramaMatriculacionRepository
 	}
 	async update({
 		id,
-		data: { modalidadId, programaId, sedeId, ...data },
+		data,
 	}: UpdateCronogramaMatriculacionParams): Promise<ICronogramaMatriculacion> {
 		return this._client.cronogramaMatriculacion.update({
 			where: { id },
-			data: {
-				...data,
-				programa: programaId ? { connect: { id: programaId } } : undefined,
-				sede: sedeId ? { connect: { id: sedeId } } : undefined,
-				modalidad: modalidadId ? { connect: { id: modalidadId } } : undefined,
-			},
+			data,
 			include: {
 				sede: true,
 				programa: true,
