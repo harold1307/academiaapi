@@ -1,4 +1,4 @@
-import type { EstadoAlumno } from "@prisma/client";
+import type { EstadoAlumno, TipoUsuario } from "@prisma/client";
 
 import type { IUsuario } from "./IUsuario";
 
@@ -13,7 +13,9 @@ export type IUsuarioQueryFilter = Partial<
 		| "id"
 		| "createdAt"
 		| "updatedAt"
+		| "tipo"
 	> & {
+		tipo: TipoUsuario[] | TipoUsuario;
 		administrativo_estado: boolean;
 		profesor_estado: boolean;
 		alumno_estado: EstadoAlumno;

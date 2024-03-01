@@ -50,13 +50,206 @@ export class UsuarioRepository implements IUsuarioRepository {
 			alumno_estado,
 			grupoId,
 			sedeId,
+			tipo,
 			...plainFilters
 		} = params?.filters || {};
+
+		if (tipo && typeof tipo === "string") {
+			if (tipo === "ALUMNO") {
+				return this._client.usuario.findMany({
+					where: params?.filters
+						? {
+								...plainFilters,
+								administrativo: administrativo_estado
+									? {
+											estado: administrativo_estado,
+										}
+									: undefined,
+								profesor: profesor_estado
+									? {
+											estado: profesor_estado,
+										}
+									: undefined,
+								alumno: alumno_estado
+									? {
+											estado: alumno_estado,
+										}
+									: { isNot: null },
+								grupos: grupoId ? { some: { grupoId } } : undefined,
+
+								OR: sedeId
+									? [
+											{
+												administrativo: {
+													sedeId,
+												},
+											},
+											{
+												profesor: {
+													coordinacion: {
+														sedeId,
+													},
+												},
+											},
+											{
+												alumno: {
+													inscripciones: {
+														some: {
+															nivelAcademico: {
+																nivelMalla: {
+																	malla: {
+																		programa: {
+																			coordinacion: {
+																				sedeId,
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										]
+									: undefined,
+							}
+						: undefined,
+					include: INCLUDE_FIELD,
+				});
+			}
+
+			if (tipo === "ADMINISTRATIVO") {
+				return this._client.usuario.findMany({
+					where: params?.filters
+						? {
+								...plainFilters,
+								administrativo: administrativo_estado
+									? {
+											estado: administrativo_estado,
+										}
+									: { isNot: null },
+								profesor: profesor_estado
+									? {
+											estado: profesor_estado,
+										}
+									: undefined,
+								alumno: alumno_estado
+									? {
+											estado: alumno_estado,
+										}
+									: undefined,
+								grupos: grupoId ? { some: { grupoId } } : undefined,
+
+								OR: sedeId
+									? [
+											{
+												administrativo: {
+													sedeId,
+												},
+											},
+											{
+												profesor: {
+													coordinacion: {
+														sedeId,
+													},
+												},
+											},
+											{
+												alumno: {
+													inscripciones: {
+														some: {
+															nivelAcademico: {
+																nivelMalla: {
+																	malla: {
+																		programa: {
+																			coordinacion: {
+																				sedeId,
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										]
+									: undefined,
+							}
+						: undefined,
+					include: INCLUDE_FIELD,
+				});
+			}
+
+			return this._client.usuario.findMany({
+				where: params?.filters
+					? {
+							...plainFilters,
+							administrativo: administrativo_estado
+								? {
+										estado: administrativo_estado,
+									}
+								: undefined,
+							profesor: profesor_estado
+								? {
+										estado: profesor_estado,
+									}
+								: { isNot: null },
+							alumno: alumno_estado
+								? {
+										estado: alumno_estado,
+									}
+								: undefined,
+							grupos: grupoId ? { some: { grupoId } } : undefined,
+
+							OR: sedeId
+								? [
+										{
+											administrativo: {
+												sedeId,
+											},
+										},
+										{
+											profesor: {
+												coordinacion: {
+													sedeId,
+												},
+											},
+										},
+										{
+											alumno: {
+												inscripciones: {
+													some: {
+														nivelAcademico: {
+															nivelMalla: {
+																malla: {
+																	programa: {
+																		coordinacion: {
+																			sedeId,
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									]
+								: undefined,
+						}
+					: undefined,
+				include: INCLUDE_FIELD,
+			});
+		}
 
 		return this._client.usuario.findMany({
 			where: params?.filters
 				? {
 						...plainFilters,
+						tipo: {
+							in: tipo,
+						},
 						administrativo: administrativo_estado
 							? {
 									estado: administrativo_estado,

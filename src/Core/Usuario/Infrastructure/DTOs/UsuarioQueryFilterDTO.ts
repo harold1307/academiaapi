@@ -56,7 +56,10 @@ const schema = z
 		telefonoFijo: z.string().nullable().optional(),
 		correoElectronico: z.string().email().nullable().optional(),
 		correoInstitucional: z.string().email().nullable().optional(),
-		tipo: z.enum(["ALUMNO", "PROFESOR", "ADMINISTRATIVO"] as const).optional(),
+		tipo: z
+			.array(z.enum(["ALUMNO", "PROFESOR", "ADMINISTRATIVO"] as const))
+			.or(z.enum(["ALUMNO", "PROFESOR", "ADMINISTRATIVO"] as const))
+			.optional(),
 
 		email: z.string().email().nullable().optional(),
 		emailVerified: z.date().nullable().optional(),
