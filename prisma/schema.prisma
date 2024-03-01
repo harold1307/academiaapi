@@ -138,19 +138,18 @@ model AsignaturaEnNivelMalla {
 }
 
 model NivelMalla {
-  id                      String                         @id @default(uuid())
-  nivel                   Int
-  mallaId                 String
-  tituloObtenidoId        String?
-  createdAt               DateTime                       @default(now())
-  updatedAt               DateTime                       @default(now()) @updatedAt
-  asignaturas             AsignaturaEnNivelMalla[]
-  nivelesAcademicos       NivelAcademico[]
-  malla                   MallaCurricular                @relation(fields: [mallaId], references: [id], onDelete: Cascade)
-  tituloObtenido          TituloObtenido?                @relation(fields: [tituloObtenidoId], references: [id])
-  practicaComunitaria     PracticaComunitariaEnMalla?
-  practicaPreProfesional  PracticaPreProfesionalEnMalla?
-  requisitosMatriculacion RequisitoMatriculacion[]
+  id                     String                         @id @default(uuid())
+  nivel                  Int
+  mallaId                String
+  tituloObtenidoId       String?
+  createdAt              DateTime                       @default(now())
+  updatedAt              DateTime                       @default(now()) @updatedAt
+  asignaturas            AsignaturaEnNivelMalla[]
+  nivelesAcademicos      NivelAcademico[]
+  malla                  MallaCurricular                @relation(fields: [mallaId], references: [id], onDelete: Cascade)
+  tituloObtenido         TituloObtenido?                @relation(fields: [tituloObtenidoId], references: [id])
+  practicaComunitaria    PracticaComunitariaEnMalla?
+  practicaPreProfesional PracticaPreProfesionalEnMalla?
 
   @@unique([nivel, mallaId])
   @@index([mallaId], map: "niveles_mallas_mallaId_fkey")
@@ -224,6 +223,7 @@ model Sede {
   titulos                  Titulo[]
   ubicaciones              Ubicacion[]
   cronogramasMatriculacion CronogramaMatriculacion[]
+  requisitosMatriculacion  RequisitoMatriculacion[]
 
   @@map("sedes")
 }
@@ -592,6 +592,7 @@ model Modalidad {
   filtrosVariantesCurso    ProgramaEnVarianteCurso[]
   filtrosCursoEscuela      ProgramaEnCursoEscuela[]
   cronogramasMatriculacion CronogramaMatriculacion[]
+  requisitosMatriculacion  RequisitoMatriculacion[]
 
   @@map("modalidades")
 }
@@ -909,6 +910,7 @@ model Programa {
   filtrosVariantesCurso    ProgramaEnVarianteCurso[]
   filtrosCursoEscuela      ProgramaEnCursoEscuela[]
   cronogramasMatriculacion CronogramaMatriculacion[]
+  requisitoMatriculacion   RequisitoMatriculacion[]
 
   @@index([coordinacionId], map: "programas_coordinacionId_fkey")
   @@index([detalleNivelTitulacionId], map: "programas_detalleNivelTitulacionId_fkey")
@@ -1065,22 +1067,29 @@ model CalculoCosto {
 }
 
 model RequisitoMatriculacion {
-  id               String         @id @default(uuid())
+  id               String  @id @default(uuid())
+  nombre           String
   obligatorio      Boolean
   transferenciaIES Boolean
   primeraMatricula Boolean
   repitenMaterias  Boolean
   descripcion      String?
-  tipoDocumentoId  String
-  periodoId        String
-  nivelId          String
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @default(now()) @updatedAt
-  nivel            NivelMalla     @relation(fields: [nivelId], references: [id], onDelete: Cascade)
-  periodo          PeriodoLectivo @relation(fields: [periodoId], references: [id], onDelete: Cascade)
-  tipoDocumento    TipoDocumento  @relation(fields: [tipoDocumentoId], references: [id])
+  nivel            Int?
 
-  @@index([nivelId], map: "requisitos_matriculacion_nivelId_fkey")
+  tipoDocumentoId String
+  tipoDocumento   TipoDocumento  @relation(fields: [tipoDocumentoId], references: [id])
+  sedeId          String
+  sede            Sede           @relation(fields: [sedeId], references: [id])
+  programaId      String?
+  programa        Programa?      @relation(fields: [programaId], references: [id], onDelete: SetNull)
+  modalidadId     String?
+  modalidad       Modalidad?     @relation(fields: [modalidadId], references: [id], onDelete: SetNull)
+  periodoId       String
+  periodo         PeriodoLectivo @relation(fields: [periodoId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@index([periodoId], map: "requisitos_matriculacion_periodoId_fkey")
   @@index([tipoDocumentoId], map: "requisitos_matriculacion_tipoDocumentoId_fkey")
   @@map("requisitos_matriculacion")
