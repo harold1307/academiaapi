@@ -3,6 +3,7 @@ import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICronogramaMatriculacion } from "../../../CronogramaMatriculacion/Domain/ICronogramaMatriculacion";
+import type { ISubPeriodoLectivo } from "../../../SubPeriodoLectivo/Domain/ISubPeriodoLectivo";
 import type { ICreatePeriodoLectivo } from "../../Domain/ICreatePeriodoLectivo";
 import type { IPeriodoLectivo } from "../../Domain/IPeriodoLectivo";
 import type {
@@ -238,6 +239,52 @@ export class PeriodoLectivoRepository implements IPeriodoLectivoRepository {
 						sede: true,
 					},
 				},
+				calculoCosto: true,
+			},
+		});
+
+		if (!p) return null;
+
+		return {
+			...p,
+			calculoCosto: {
+				...p.calculoCosto,
+				planCostos:
+					p.calculoCosto.cronogramaFechasOpcionPago !== null &&
+					p.calculoCosto.estudiantesEligenOpcionPago !== null,
+			},
+			enUso: false,
+			fechasEnMatricula: [
+				p.limiteMatriculaEspecial,
+				p.limiteMatriculaExtraordinaria,
+				p.limiteMatriculaOrdinaria,
+				p.automatriculaAlumnosFechaExtraordinaria,
+			].every(v => v !== null),
+			estructuraParalelosAgrupadosPorNivel:
+				p.estudianteSeleccionaParaleloAutomatricula !== null,
+			planificacionProfesoresObligatoria: [
+				p.planificacionProfesoresFormaTotal,
+				p.aprobacionPlanificacionProfesores,
+			].every(v => v !== null),
+			legalizarMatriculas: p.legalizacionAutomaticaContraPagos !== null,
+			secuenciaDesdeNumeroEspecifico: p.numeroSecuencia !== null,
+			numeroMatricula: [
+				p.numeroMatriculaAutomatico,
+				p.numeroMatricularAlLegalizar,
+			].every(v => v !== null),
+		};
+	}
+
+	async getByIdWithSubPeriodos(id: string): Promise<
+		| (IPeriodoLectivo & {
+				subPeriodos: ISubPeriodoLectivo[];
+		  })
+		| null
+	> {
+		const p = await this._client.periodoLectivo.findUnique({
+			where: { id },
+			include: {
+				subPeriodos: true,
 				calculoCosto: true,
 			},
 		});

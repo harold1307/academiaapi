@@ -1,4 +1,5 @@
 import type { ICronogramaMatriculacion } from "../../CronogramaMatriculacion/Domain/ICronogramaMatriculacion";
+import type { ISubPeriodoLectivo } from "../../SubPeriodoLectivo/Domain/ISubPeriodoLectivo";
 import type { ICreatePeriodoLectivo } from "./ICreatePeriodoLectivo";
 import type { IPeriodoLectivo } from "./IPeriodoLectivo";
 import type { IUpdatePeriodoLectivo } from "./IUpdatePeriodoLectivo";
@@ -18,6 +19,12 @@ export type IPeriodoLectivoRepository = {
 	getByIdWithCronogramasMatriculacion(id: string): Promise<
 		| (IPeriodoLectivo & {
 				cronogramasMatriculacion: ICronogramaMatriculacion[];
+		  })
+		| null
+	>;
+	getByIdWithSubPeriodos(id: string): Promise<
+		| (IPeriodoLectivo & {
+				subPeriodos: ISubPeriodoLectivo[];
 		  })
 		| null
 	>;

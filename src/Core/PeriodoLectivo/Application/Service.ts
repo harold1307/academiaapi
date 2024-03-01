@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
 import type { ICronogramaMatriculacion } from "../../CronogramaMatriculacion/Domain/ICronogramaMatriculacion";
+import type { ISubPeriodoLectivo } from "../../SubPeriodoLectivo/Domain/ISubPeriodoLectivo";
 import type { ICreatePeriodoLectivo } from "../Domain/ICreatePeriodoLectivo";
 import type { IPeriodoLectivo } from "../Domain/IPeriodoLectivo";
 import type {
@@ -125,16 +126,22 @@ export class PeriodoLectivoService implements IPeriodoLectivoService {
 
 	getPeriodoLectivoByIdWithCronogramasMatriculacion(id: string): Promise<
 		| (IPeriodoLectivo & {
-				cronogramasMatriculacion: Omit<
-					ICronogramaMatriculacion,
-					"sede" | "programa" | "modalidad" | "nivel"
-				>[];
+				cronogramasMatriculacion: ICronogramaMatriculacion[];
 		  })
 		| null
 	> {
 		return this._periodoLectivoRepository.getByIdWithCronogramasMatriculacion(
 			id,
 		);
+	}
+
+	getPeriodoLectivoByIdWithSubPeriodos(id: string): Promise<
+		| (IPeriodoLectivo & {
+				subPeriodos: ISubPeriodoLectivo[];
+		  })
+		| null
+	> {
+		return this._periodoLectivoRepository.getByIdWithSubPeriodos(id);
 	}
 }
 

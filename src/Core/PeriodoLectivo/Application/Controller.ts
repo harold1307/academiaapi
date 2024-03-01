@@ -508,6 +508,27 @@ export class PeriodoLectivoController implements IPeriodoLectivoController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async periodosLectivosGetByIdWithSubPeriodos(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+			const periodoLectivoId = req.params.periodoLectivoId;
+
+			if (!periodoLectivoId) return CommonResponse.invalidId();
+
+			const periodoLectivo =
+				await this._periodoLectivoService.getPeriodoLectivoByIdWithSubPeriodos(
+					periodoLectivoId,
+				);
+
+			return CommonResponse.successful({ data: periodoLectivo });
+		} catch (error) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const createCronogramaMatriculacionBodySchema = z.object<
