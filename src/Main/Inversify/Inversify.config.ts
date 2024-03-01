@@ -291,6 +291,12 @@ import type { IUsuarioRepository } from "../../Core/Usuario/Domain/IUsuarioRepos
 import type { IUsuarioService } from "../../Core/Usuario/Domain/IUsuarioService";
 import { UsuarioRepository } from "../../Core/Usuario/Infrastructure/Repositories/UsuarioRepository";
 
+// usuarios en grupos
+import { UsuarioEnGrupoService } from "../../Core/UsuarioEnGrupo/Application/Service";
+import type { IUsuarioEnGrupoRepository } from "../../Core/UsuarioEnGrupo/Domain/IUsuarioEnGrupoRepository";
+import type { IUsuarioEnGrupoService } from "../../Core/UsuarioEnGrupo/Domain/IUsuarioEnGrupoService";
+import { UsuarioEnGrupoRepository } from "../../Core/UsuarioEnGrupo/Infrastructure/Repositories/UsuarioEnGrupoRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -748,20 +754,28 @@ StartupBuilder.bind<ICentroInformacionService>(TYPES.CentroInformacionService)
 	.to(CentroInformacionService)
 	.inSingletonScope();
 
-// usuarios
-StartupBuilder.bind<IUsuarioRepository>(TYPES.UsuarioRepository)
-	.to(UsuarioRepository)
-	.inSingletonScope();
-StartupBuilder.bind<IUsuarioService>(TYPES.UsuarioService)
-	.to(UsuarioService)
-	.inSingletonScope();
-
 // inscripciones
 StartupBuilder.bind<IInscripcionRepository>(TYPES.InscripcionRepository)
 	.to(InscripcionRepository)
 	.inSingletonScope();
 StartupBuilder.bind<IInscripcionService>(TYPES.InscripcionService)
 	.to(InscripcionService)
+	.inSingletonScope();
+
+// usuarios en grupos
+StartupBuilder.bind<IUsuarioEnGrupoRepository>(TYPES.UsuarioEnGrupoRepository)
+	.to(UsuarioEnGrupoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IUsuarioEnGrupoService>(TYPES.UsuarioEnGrupoService)
+	.to(UsuarioEnGrupoService)
+	.inSingletonScope();
+
+// usuarios
+StartupBuilder.bind<IUsuarioRepository>(TYPES.UsuarioRepository)
+	.to(UsuarioRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IUsuarioService>(TYPES.UsuarioService)
+	.to(UsuarioService)
 	.inSingletonScope();
 
 export { StartupBuilder };

@@ -137,4 +137,6 @@ export const TYPES = {
 	UsuarioService: Symbol.for("UsuarioService"),
 	InscripcionRepository: Symbol.for("InscripcionRepository"),
 	InscripcionService: Symbol.for("InscripcionService"),
+	UsuarioEnGrupoRepository: Symbol.for("UsuarioEnGrupoRepository"),
+	UsuarioEnGrupoService: Symbol.for("UsuarioEnGrupoService"),
 } as const;
