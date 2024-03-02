@@ -1230,8 +1230,8 @@ model Inscripcion {
 }
 
 model Alumno {
-  id                            String                     @id @default(uuid())
-  estado                        EstadoAlumno               @default(ACTIVO)
+  id                            String           @id @default(uuid())
+  estado                        EstadoAlumno     @default(ACTIVO)
   colegio                       String?
   especialidad                  String?
   fechaInscripcion              DateTime
@@ -1260,16 +1260,19 @@ model Alumno {
   certificadoSalud              Boolean
   transcript                    Boolean
   observaciones                 String?
-  usuarioId                     String                     @unique
-  centroInformacionId           String
-  asesorCrmId                   String
-  createdAt                     DateTime                   @default(now())
-  updatedAt                     DateTime                   @default(now()) @updatedAt
-  asesorCrm                     AsesorCrm                  @relation(fields: [asesorCrmId], references: [id])
-  centroInformacion             CentroInformacion          @relation(fields: [centroInformacionId], references: [id])
-  usuario                       Usuario                    @relation(fields: [usuarioId], references: [id])
-  asesores                      AsesorEstudianteEnAlumno[]
-  inscripciones                 Inscripcion[]
+
+  asesorCrmId         String?
+  asesorCrm           AsesorCrm?        @relation(fields: [asesorCrmId], references: [id])
+  centroInformacionId String
+  centroInformacion   CentroInformacion @relation(fields: [centroInformacionId], references: [id])
+  usuarioId           String            @unique
+  usuario             Usuario           @relation(fields: [usuarioId], references: [id])
+
+  asesores      AsesorEstudianteEnAlumno[]
+  inscripciones Inscripcion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@index([asesorCrmId], map: "alumnos_asesorCrmId_fkey")
   @@index([centroInformacionId], map: "alumnos_centroInformacionId_fkey")
