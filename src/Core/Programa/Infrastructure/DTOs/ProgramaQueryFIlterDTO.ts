@@ -7,12 +7,12 @@ import type { IProgramaQueryFilter } from "../../Domain/IProgramaQueryFilter";
 const schema = z
 	.object<ZodInferSchema<IProgramaQueryFilter>>({
 		nombre: z.string().optional(),
-		mencion: z.string().nullable().optional(),
+		mencion: z.string().optional(),
 		alias: z.string().optional(),
 		detalleNivelTitulacionId: z.string().uuid().optional(),
 		coordinacionId: z.string().uuid().optional(),
 		coordinacion_sedeId: z.string().uuid().optional(),
-		estado: z.boolean().optional(),
+		estado: z.boolean({ coerce: true }).optional(),
 	})
 	.optional();
 

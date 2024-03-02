@@ -6,29 +6,37 @@ import type { INivelAcademicoQueryFilter } from "../../Domain/INivelAcademicoQue
 
 const schema = z
 	.object<ZodInferSchema<INivelAcademicoQueryFilter>>({
-		nombre: z.string().nullable().optional(),
+		nombre: z.string().optional(),
 		fechaInicio: z.date().optional(),
 		fechaFin: z.date().optional(),
 		inicioAgregaciones: z.date().optional(),
 		limiteAgregaciones: z.date().optional(),
-		validaRequisitosMalla: z.boolean().optional(),
-		validaCumplimientoMaterias: z.boolean().optional(),
-		horasMinimasPracticasComunitarias: z.number().nullable().optional(),
-		horasMinimasPracticasPreprofesionales: z.number().nullable().optional(),
-		estudiantesPuedenSeleccionarMaterias: z.boolean().optional(),
-		estudiantesPuedenSeleccionarMateriasOtrosHorarios: z.boolean().optional(),
-		estudiantesPuedenSeleccionarMateriasOtrasModalidades: z
-			.boolean()
+		validaRequisitosMalla: z.boolean({ coerce: true }).optional(),
+		validaCumplimientoMaterias: z.boolean({ coerce: true }).optional(),
+		horasMinimasPracticasComunitarias: z.number({ coerce: true }).optional(),
+		horasMinimasPracticasPreprofesionales: z
+			.number({ coerce: true })
 			.optional(),
-		estudiantesRegistranProyectosIntegradores: z.boolean().optional(),
-		redireccionAPagos: z.boolean().optional(),
+		estudiantesPuedenSeleccionarMaterias: z
+			.boolean({ coerce: true })
+			.optional(),
+		estudiantesPuedenSeleccionarMateriasOtrosHorarios: z
+			.boolean({ coerce: true })
+			.optional(),
+		estudiantesPuedenSeleccionarMateriasOtrasModalidades: z
+			.boolean({ coerce: true })
+			.optional(),
+		estudiantesRegistranProyectosIntegradores: z
+			.boolean({ coerce: true })
+			.optional(),
+		redireccionAPagos: z.boolean({ coerce: true }).optional(),
 		limiteOrdinaria: z.date().optional(),
 		limiteExtraordinaria: z.date().optional(),
 		limiteEspecial: z.date().optional(),
-		diasVencimientoMatricula: z.number().optional(),
-		capacidad: z.number().int().min(0).optional(),
-		mensaje: z.string().nullable().optional(),
-		terminosCondiciones: z.string().nullable().optional(),
+		diasVencimientoMatricula: z.number({ coerce: true }).optional(),
+		capacidad: z.number({ coerce: true }).int().min(0).optional(),
+		mensaje: z.string().optional(),
+		terminosCondiciones: z.string().optional(),
 
 		paraleloId: z.string().optional(),
 		modeloEvaluativoId: z.string().uuid().optional(),
@@ -37,12 +45,12 @@ const schema = z
 		mallaId: z.string().uuid().optional(),
 		periodoId: z.string().uuid().optional(),
 
-		estado: z.boolean().optional(),
-		profesores: z.boolean().optional(),
-		horarios: z.boolean().optional(),
-		cuposMaterias: z.boolean().optional(),
-		planificacionProfesores: z.boolean().optional(),
-		matriculacion: z.boolean().optional(),
+		estado: z.boolean({ coerce: true }).optional(),
+		profesores: z.boolean({ coerce: true }).optional(),
+		horarios: z.boolean({ coerce: true }).optional(),
+		cuposMaterias: z.boolean({ coerce: true }).optional(),
+		planificacionProfesores: z.boolean({ coerce: true }).optional(),
+		matriculacion: z.boolean({ coerce: true }).optional(),
 	})
 	.optional();
 

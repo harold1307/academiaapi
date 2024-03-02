@@ -9,14 +9,14 @@ const schema = z
 		nombre: z.string().optional(),
 		sedeId: z.string().uuid().optional(),
 		alias: z.string().optional(),
-		lunes: z.boolean().optional(),
-		martes: z.boolean().optional(),
-		miercoles: z.boolean().optional(),
-		jueves: z.boolean().optional(),
-		viernes: z.boolean().optional(),
-		sabado: z.boolean().optional(),
-		domingo: z.boolean().optional(),
-		estado: z.boolean().optional(),
+		lunes: z.boolean({ coerce: true }).optional(),
+		martes: z.boolean({ coerce: true }).optional(),
+		miercoles: z.boolean({ coerce: true }).optional(),
+		jueves: z.boolean({ coerce: true }).optional(),
+		viernes: z.boolean({ coerce: true }).optional(),
+		sabado: z.boolean({ coerce: true }).optional(),
+		domingo: z.boolean({ coerce: true }).optional(),
+		estado: z.boolean({ coerce: true }).optional(),
 	})
 	.optional();
 

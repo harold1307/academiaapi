@@ -6,22 +6,19 @@ import type { IUsuarioQueryFilter } from "../../Domain/IUsuarioQueryFilter";
 
 const schema = z
 	.object<ZodInferSchema<IUsuarioQueryFilter>>({
-		cedula: z.string().nullable().optional(),
-		pasaporte: z.string().nullable().optional(),
+		cedula: z.string().optional(),
+		pasaporte: z.string().optional(),
 		nombres: z.string().toUpperCase().optional(),
 		primerApellido: z.string().toUpperCase().optional(),
-		segundoApellido: z.string().toUpperCase().nullable().optional(),
-		nacionalidad: z.string().nullable().optional(),
-		paisNacimiento: z.string().nullable().optional(),
-		provinciaNacimiento: z.string().nullable().optional(),
-		cantonNacimiento: z.string().nullable().optional(),
-		parroquiaNacimiento: z.string().nullable().optional(),
+		segundoApellido: z.string().toUpperCase().optional(),
+		nacionalidad: z.string().optional(),
+		paisNacimiento: z.string().optional(),
+		provinciaNacimiento: z.string().optional(),
+		cantonNacimiento: z.string().optional(),
+		parroquiaNacimiento: z.string().optional(),
 		fechaNacimiento: z.date().optional(),
 		sexo: z.enum(["HOMBRE", "MUJER"] as const).optional(),
-		genero: z
-			.enum(["FEMENINO", "MASCULINO"] as const)
-			.nullable()
-			.optional(),
+		genero: z.enum(["FEMENINO", "MASCULINO"] as const).optional(),
 		etnia: z
 			.enum([
 				"AFROECUATORIANO",
@@ -33,7 +30,6 @@ const schema = z
 				"NEGRO",
 				"OTRO",
 			] as const)
-			.nullable()
 			.optional(),
 		estadoCivil: z
 			.enum([
@@ -44,30 +40,29 @@ const schema = z
 				"UNION_DE_HECHO",
 				"VIUDO",
 			] as const)
-			.nullable()
 			.optional(),
-		tipoSangre: z.string().nullable().optional(),
-		paisResidencia: z.string().nullable().optional(),
-		callePrincipal: z.string().nullable().optional(),
-		calleSecundaria: z.string().nullable().optional(),
-		numeroDomicilio: z.string().nullable().optional(),
-		provinciaDondeSufraga: z.string().nullable().optional(),
-		telefonoMovil: z.string().nullable().optional(),
-		telefonoFijo: z.string().nullable().optional(),
-		correoElectronico: z.string().email().nullable().optional(),
-		correoInstitucional: z.string().email().nullable().optional(),
+		tipoSangre: z.string().optional(),
+		paisResidencia: z.string().optional(),
+		callePrincipal: z.string().optional(),
+		calleSecundaria: z.string().optional(),
+		numeroDomicilio: z.string().optional(),
+		provinciaDondeSufraga: z.string().optional(),
+		telefonoMovil: z.string().optional(),
+		telefonoFijo: z.string().optional(),
+		correoElectronico: z.string().email().optional(),
+		correoInstitucional: z.string().email().optional(),
 		tipo: z
 			.array(z.enum(["ALUMNO", "PROFESOR", "ADMINISTRATIVO"] as const))
 			.or(z.enum(["ALUMNO", "PROFESOR", "ADMINISTRATIVO"] as const))
 			.optional(),
 
-		email: z.string().email().nullable().optional(),
-		emailVerified: z.date().nullable().optional(),
-		image: z.string().nullable().optional(),
-		name: z.string().nullable().optional(),
+		email: z.string().email().optional(),
+		emailVerified: z.date().optional(),
+		image: z.string().optional(),
+		name: z.string().optional(),
 
-		administrativo_estado: z.boolean().optional(),
-		profesor_estado: z.boolean().optional(),
+		administrativo_estado: z.boolean({ coerce: true }).optional(),
+		profesor_estado: z.boolean({ coerce: true }).optional(),
 		alumno_estado: z
 			.enum(["ACTIVO", "EGRESADO", "RETIRADO"] as const)
 			.optional(),
