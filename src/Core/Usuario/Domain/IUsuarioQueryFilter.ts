@@ -19,6 +19,7 @@ export type IUsuarioQueryFilter = Partial<
 		administrativo_estado: boolean;
 		profesor_estado: boolean;
 		alumno_estado: EstadoAlumno;
+		fullTextSearch: string;
 
 		grupoId: string;
 		sedeId: string;

@@ -15,7 +15,7 @@ import type { IInscripcion } from "../../Inscripcion/Domain/IInscripcion";
 import type { IPrograma } from "../../Programa/Domain/IPrograma";
 import type { ISede } from "../../Sede/Domain/ISede";
 
-export type IUsuario = Usuario & {
+export type IUsuarioWithInscripciones = Usuario & {
 	administrativo:
 		| (Administrativo & {
 				responsableCrm: ResponsableCrm | null;
@@ -36,15 +36,7 @@ export type IUsuario = Usuario & {
 
 	alumno:
 		| (Alumno & {
-				inscripciones: Omit<
-					IInscripcion,
-					| "sede"
-					| "modalidad"
-					| "coordinacion"
-					| "malla"
-					| "sesion"
-					| "programa"
-				>[];
+				inscripciones: IInscripcion[];
 		  })
 		| null;
 	grupos: (UsuarioEnGrupo & {

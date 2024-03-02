@@ -60,7 +60,10 @@ const schema = z.object<ZodInferSchema<IUpdateAlumno>>({
 	observaciones: z.string().nullable().optional(),
 
 	centroInformacionId: z.string().uuid().optional(),
-	asesorCrmId: z.string().uuid().optional(),
+
+	nivelAcademicoId: z.string().uuid().optional(),
+	matricula: z.boolean().optional(),
+	matricularseConLimite: z.boolean().optional(),
 });
 
 class UpdateAlumnoDTOError extends BaseDTOError<IUpdateAlumno> {

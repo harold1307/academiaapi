@@ -55,7 +55,7 @@ const schema = z.object<ZodInferSchema<ICreateAlumno>>({
 	observaciones: z.string().nullable(),
 
 	centroInformacionId: z.string().uuid(),
-	asesorCrmId: z.string().uuid(),
+	asesorCrmId: z.string().uuid().nullable(),
 	nivelAcademicoId: z.string().uuid(),
 });
 

@@ -8,6 +8,7 @@ import type { IUpdateProfesor } from "./IUpdateProfesor";
 import type { IUpdateUsuario } from "./IUpdateUsuario";
 import type { IUsuario } from "./IUsuario";
 import type { IUsuarioQueryFilter } from "./IUsuarioQueryFilter";
+import type { IUsuarioWithInscripciones } from "./IUsuarioWithInscripciones";
 
 export type UpdateUsuarioParams = {
 	id: string;
@@ -54,8 +55,8 @@ export type CreateProfesorParams =
 	  };
 
 export type UpdateAlumnoParams = {
-	usuarioId: string;
-	alumnoId: string;
+	id: string;
+	inscripcionId: string;
 	data: IUpdateAlumno;
 };
 
@@ -84,7 +85,10 @@ export type IUsuarioRepository = {
 	updateProfesor(params: UpdateProfesorParams): Promise<IUsuario>;
 
 	getAll(params?: GetAllUsuariosParams): Promise<IUsuario[]>;
+	getAllWithInscripciones(
+		params?: GetAllUsuariosParams,
+	): Promise<IUsuarioWithInscripciones[]>;
 	getById(id: string): Promise<IUsuario | null>;
-	// update(params: UpdateUsuarioParams): Promise<IUsuario>;
+	update(params: UpdateUsuarioParams): Promise<IUsuario>;
 	// deleteById(id: string): Promise<IUsuario>;
 };

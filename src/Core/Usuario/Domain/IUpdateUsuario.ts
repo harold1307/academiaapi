@@ -7,7 +7,6 @@ export type IUpdateUsuario = Partial<
 		| "profesor"
 		| "alumno"
 		| "grupos"
-		| "estado"
 		| "id"
 		| "createdAt"
 		| "updatedAt"

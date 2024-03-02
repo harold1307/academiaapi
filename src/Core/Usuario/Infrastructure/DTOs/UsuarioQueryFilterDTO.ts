@@ -73,6 +73,7 @@ const schema = z
 			.optional(),
 		grupoId: z.string().uuid().optional(),
 		sedeId: z.string().uuid().optional(),
+		fullTextSearch: z.string().optional(),
 	})
 	.optional();
 

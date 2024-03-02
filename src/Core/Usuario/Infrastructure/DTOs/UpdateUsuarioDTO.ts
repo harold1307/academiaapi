@@ -6,11 +6,12 @@ import type { IUpdateUsuario } from "../../Domain/IUpdateUsuario";
 
 const schema = z
 	.object<ZodInferSchema<IUpdateUsuario>>({
+		estado: z.boolean().optional(),
 		cedula: z.string().nullable().optional(),
 		pasaporte: z.string().nullable().optional(),
-		nombres: z.string().toUpperCase().optional(),
-		primerApellido: z.string().toUpperCase().optional(),
-		segundoApellido: z.string().toUpperCase().nullable().optional(),
+		nombres: z.string().toUpperCase().trim().optional(),
+		primerApellido: z.string().toUpperCase().trim().optional(),
+		segundoApellido: z.string().toUpperCase().trim().nullable().optional(),
 		nacionalidad: z.string().nullable().optional(),
 		paisNacimiento: z.string().nullable().optional(),
 		provinciaNacimiento: z.string().nullable().optional(),
