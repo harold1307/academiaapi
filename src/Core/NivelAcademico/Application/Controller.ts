@@ -52,7 +52,9 @@ export class NivelAcademicoController implements INivelAcademicoController {
 			ctx.log(`Http function processed request for url '${req.url}'`);
 
 			const nivelesAcademicos =
-				await this._nivelAcademicoService.getAllNivelAcademicos();
+				await this._nivelAcademicoService.getAllNivelesAcademicos({
+					filters: Object.fromEntries(req.query.entries()),
+				});
 
 			return CommonResponse.successful({ data: nivelesAcademicos });
 		} catch (error) {
