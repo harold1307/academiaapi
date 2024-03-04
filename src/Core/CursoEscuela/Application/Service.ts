@@ -75,10 +75,16 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 			);
 
 		return this._cursoEscuelaRepository.transaction(async tx => {
-			const asignaturasEnPlantilla =
-				await tx.asignaturaEnVarianteCurso.findMany({
-					where: { varianteCursoId: plantillaId },
-				});
+			const plantilla = await tx.varianteCurso.findUnique({
+				where: { id: plantillaId },
+				select: {
+					asignaturas: true,
+					programas: true,
+				},
+			});
+
+			if (!plantilla)
+				throw new CursoEscuelaServiceError("La plantilla de curso no existe");
 
 			const newCursoEscuela = await tx.cursoEscuela.create({
 				data: {
@@ -105,9 +111,32 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 					},
 					asignaturas: {
 						createMany: {
-							data: asignaturasEnPlantilla.map(({ id: _, ...data }) => ({
-								...data,
-							})),
+							data: plantilla.asignaturas.map(
+								({
+									id: _,
+									createdAt: __,
+									updatedAt: ___,
+									varianteCursoId: ____,
+									...data
+								}) => ({
+									...data,
+								}),
+							),
+						},
+					},
+					programas: {
+						createMany: {
+							data: plantilla.programas.map(
+								({
+									id: _,
+									createdAt: __,
+									updatedAt: ___,
+									varianteCursoId: ____,
+									...data
+								}) => ({
+									...data,
+								}),
+							),
 						},
 					},
 				},
