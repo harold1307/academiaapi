@@ -6,6 +6,7 @@ import type {
 import { z } from "zod";
 import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 
+import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
 import { AsignaturaService } from "../../Asignatura/Application/Service";
@@ -16,8 +17,18 @@ import type { ICreateAsignaturaEnVarianteCurso } from "../../AsignaturaEnVariant
 import { CursoEscuelaService } from "../../CursoEscuela/Application/Service";
 import type { ICreateCursoEscuela } from "../../CursoEscuela/Domain/ICreateCursoEscuela";
 import type { ICursoEscuelaService } from "../../CursoEscuela/Domain/ICursoEscuelaService";
+import { MallaCurricularService } from "../../MallaCurricular/Application/Service";
+import type { IMallaCurricularService } from "../../MallaCurricular/Domain/IMallaCurricularService";
+import { ModalidadService } from "../../Modalidad/Application/Service";
+import type { IModalidadService } from "../../Modalidad/Domain/IModalidadService";
 import { ModeloEvaluativoService } from "../../ModeloEvaluativo/Application/Service";
 import type { IModeloEvaluativoService } from "../../ModeloEvaluativo/Domain/IModeloEvaluativoService";
+import { ProgramaService } from "../../Programa/Application/Service";
+import type { IProgramaService } from "../../Programa/Domain/IProgramaService";
+import { ProgramaEnVarianteCursoService } from "../../ProgramaEnVarianteCurso/Application/Service";
+import type { ICreateProgramaEnVarianteCurso } from "../../ProgramaEnVarianteCurso/Domain/ICreateProgramaEnVarianteCurso";
+import type { IProgramaEnVarianteCursoService } from "../../ProgramaEnVarianteCurso/Domain/IProgramaEnVarianteCursoService";
+import type { IUpdateVarianteCurso } from "../Domain/IUpdateVarianteCurso";
 import type { IVarianteCursoController } from "../Domain/IVarianteCursoController";
 import type { IVarianteCursoService } from "../Domain/IVarianteCursoService";
 import { VarianteCursoService } from "./Service";
@@ -28,6 +39,10 @@ export class VarianteCursoController implements IVarianteCursoController {
 	private _cursoEscuelaService: ICursoEscuelaService;
 	private _asignaturaService: IAsignaturaService;
 	private _modeloEvaluativoService: IModeloEvaluativoService;
+	private _programaEnVarianteCursoService: IProgramaEnVarianteCursoService;
+	private _programaService: IProgramaService;
+	private _mallaCurricularService: IMallaCurricularService;
+	private _modalidadService: IModalidadService;
 
 	constructor() {
 		this._varianteCursoService = StartupBuilder.resolve(VarianteCursoService);
@@ -39,6 +54,14 @@ export class VarianteCursoController implements IVarianteCursoController {
 		this._modeloEvaluativoService = StartupBuilder.resolve(
 			ModeloEvaluativoService,
 		);
+		this._programaEnVarianteCursoService = StartupBuilder.resolve(
+			ProgramaEnVarianteCursoService,
+		);
+		this._programaService = StartupBuilder.resolve(ProgramaService);
+		this._mallaCurricularService = StartupBuilder.resolve(
+			MallaCurricularService,
+		);
+		this._modalidadService = StartupBuilder.resolve(ModalidadService);
 	}
 
 	async variantesCursoUpdateById(
@@ -49,25 +72,20 @@ export class VarianteCursoController implements IVarianteCursoController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const varianteCursoId = req.params.varianteCursoId;
 
-			if (!varianteCursoId) {
-				return {
-					jsonBody: { message: "ID invalido o no ha sido proporcionado" },
-					status: 400,
-				};
-			}
+			if (!varianteCursoId) return CommonResponse.invalidId();
 
 			const body = await req.json();
+			const bodyVal = updateBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const varianteCurso =
 				await this._varianteCursoService.updateVarianteCurso({
 					id: varianteCursoId,
-					data: body,
+					data: bodyVal.data,
 				});
 
-			return {
-				jsonBody: { data: varianteCurso, message: "Actualizacion exitosa." },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: varianteCurso });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -81,24 +99,11 @@ export class VarianteCursoController implements IVarianteCursoController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const varianteCursoId = req.params.varianteCursoId;
 
-			if (!varianteCursoId) {
-				return {
-					jsonBody: {
-						message: "ID invalido o no ha sido proporcionado",
-					},
-					status: 400,
-				};
-			}
+			if (!varianteCursoId) return CommonResponse.invalidId();
 
-			const _varianteCursoService =
-				StartupBuilder.resolve(VarianteCursoService);
+			await this._varianteCursoService.deleteVarianteCurso(varianteCursoId);
 
-			await _varianteCursoService.deleteVarianteCurso(varianteCursoId);
-
-			return {
-				jsonBody: { message: "Recurso eliminado con exito." },
-				status: 200,
-			};
+			return CommonResponse.successful();
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -110,17 +115,16 @@ export class VarianteCursoController implements IVarianteCursoController {
 	): Promise<HttpResponseInit> {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
-			const body = await req.json();
 
 			const varianteCursoId = req.params.varianteCursoId;
 			const asignaturaId = req.params.asignaturaId;
 
-			if (!varianteCursoId || !asignaturaId) {
-				return {
-					jsonBody: { message: "ID invalido o no ha sido proporcionado" },
-					status: 400,
-				};
-			}
+			if (!varianteCursoId || !asignaturaId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = byIdCreateAsignaturaBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const variante =
 				await this._varianteCursoService.getVarianteCursoWithAsignaturasById(
@@ -142,15 +146,6 @@ export class VarianteCursoController implements IVarianteCursoController {
 					jsonBody: {
 						message: "La asignatura no existe",
 					},
-					status: 400,
-				};
-			}
-
-			const bodyVal = byIdCreateAsignaturaBodySchema.safeParse(body);
-
-			if (!bodyVal.success) {
-				return {
-					jsonBody: { message: "Peticion invalida" },
 					status: 400,
 				};
 			}
@@ -182,7 +177,7 @@ export class VarianteCursoController implements IVarianteCursoController {
 
 			ctx.log({ newAsignaturaEnVarianteCurso });
 
-			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -211,10 +206,7 @@ export class VarianteCursoController implements IVarianteCursoController {
 					varianteCursoId,
 				);
 
-			return {
-				jsonBody: { data: varianteCurso, message: "Solicitud exitosa." },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: varianteCurso });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -241,13 +233,7 @@ export class VarianteCursoController implements IVarianteCursoController {
 
 			const bodyVal = createByCursoBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				ctx.error(bodyVal.error);
-				return {
-					jsonBody: { message: "Peticion invalida" },
-					status: 400,
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const varianteCurso =
 				await this._varianteCursoService.getVarianteCursoWithAsignaturasById(
@@ -272,12 +258,135 @@ export class VarianteCursoController implements IVarianteCursoController {
 
 			ctx.log({ newCurso });
 
-			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async variantesCursoByIdCreateProgramaEnVariante(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const varianteCursoId = req.params.varianteCursoId;
+
+			if (!varianteCursoId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createProgramaEnVarianteBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const { mallaId, modalidadId, programaId, ...data } = bodyVal.data;
+
+			const varianteCurso =
+				await this._varianteCursoService.getVarianteCursoWithAsignaturasById(
+					varianteCursoId,
+				);
+
+			if (!varianteCurso)
+				return {
+					jsonBody: { message: "La variante de curso no existe" },
+					status: 400,
+				};
+
+			const programa = await this._programaService.getProgramaById(programaId);
+
+			if (!programa)
+				return {
+					jsonBody: {
+						message: "El programa no existe",
+					},
+					status: 400,
+				};
+
+			if (modalidadId) {
+				const modalidad =
+					await this._modalidadService.getModalidadById(modalidadId);
+
+				if (!modalidad)
+					return {
+						jsonBody: { message: "La modalidad no existe" },
+						status: 400,
+					};
+			}
+
+			if (mallaId) {
+				const malla =
+					await this._mallaCurricularService.getMallaCurricularById(mallaId);
+
+				if (!malla)
+					return { jsonBody: { message: "La malla no existe" }, status: 400 };
+
+				if (malla.programaId !== programaId)
+					return {
+						jsonBody: { message: "La malla no pertenece al programa" },
+						status: 400,
+					};
+
+				if (modalidadId && malla.modalidadId !== modalidadId)
+					return {
+						jsonBody: { message: "La malla no pertenece a la modalidad" },
+						status: 400,
+					};
+			}
+
+			const newProgramaEnVariante =
+				await this._programaEnVarianteCursoService.createProgramaEnVarianteCurso(
+					{ ...data, programaId, varianteCursoId, modalidadId, mallaId },
+				);
+
+			ctx.log({ newProgramaEnVariante });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
+
+	async variantesCursoByIdGetProgramas(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const varianteCursoId = req.params.varianteCursoId;
+
+			if (!varianteCursoId) return CommonResponse.invalidId();
+
+			const varianteCurso =
+				await this._varianteCursoService.getVarianteCursoWithProgramasById(
+					varianteCursoId,
+				);
+
+			return CommonResponse.successful({ data: varianteCurso });
+		} catch (error) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
+
+const updateBodySchema = z.object<ZodInferSchema<IUpdateVarianteCurso>>({
+	nombre: z.string().optional(),
+	codigoBase: z.string().optional(),
+	descripcion: z.string().optional(),
+	registroExterno: z.boolean().optional(),
+	registroInterno: z.boolean().optional(),
+	edadMinima: z.number().nullable().optional(),
+	edadMaxima: z.number().nullable().optional(),
+	fechaAprobacion: z.date().optional(),
+	registroDesdeOtraSede: z.boolean().optional(),
+	costoPorMateria: z.boolean().optional(),
+	cumpleRequisitosMalla: z.boolean().optional(),
+	pasarRecord: z.boolean().optional(),
+	estado: z.boolean().optional(),
+	costoPorCantidadMateria: z.boolean().optional(),
+	verificaSesion: z.boolean().optional(),
+});
 
 const byIdCreateAsignaturaBodySchema = z.object<
 	ZodInferSchema<
@@ -342,4 +451,13 @@ const createByCursoBodySchema = z.object<
 	legalizarMatriculas: z.boolean(),
 	verificaSesion: z.boolean(),
 	periodoId: z.string(),
+});
+
+const createProgramaEnVarianteBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateProgramaEnVarianteCurso, "varianteCursoId">>
+>({
+	programaId: z.string(),
+	mallaId: z.string().nullable(),
+	modalidadId: z.string().nullable(),
+	registroExterno: z.boolean(),
 });

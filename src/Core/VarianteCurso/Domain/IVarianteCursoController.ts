@@ -26,6 +26,14 @@ export type IVarianteCursoController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
+	variantesCursoByIdGetProgramas(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
+	variantesCursoByIdCreateProgramaEnVariante(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 	// variantesCursoUpdateById(
 	// 	req: HttpRequest,
 	// 	ctx: InvocationContext,

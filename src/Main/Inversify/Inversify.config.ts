@@ -297,6 +297,12 @@ import type { IUsuarioEnGrupoRepository } from "../../Core/UsuarioEnGrupo/Domain
 import type { IUsuarioEnGrupoService } from "../../Core/UsuarioEnGrupo/Domain/IUsuarioEnGrupoService";
 import { UsuarioEnGrupoRepository } from "../../Core/UsuarioEnGrupo/Infrastructure/Repositories/UsuarioEnGrupoRepository";
 
+// programas en variante de curso
+import { ProgramaEnVarianteCursoService } from "../../Core/ProgramaEnVarianteCurso/Application/Service";
+import type { IProgramaEnVarianteCursoRepository } from "../../Core/ProgramaEnVarianteCurso/Domain/IProgramaEnVarianteCursoRepository";
+import type { IProgramaEnVarianteCursoService } from "../../Core/ProgramaEnVarianteCurso/Domain/IProgramaEnVarianteCursoService";
+import { ProgramaEnVarianteCursoRepository } from "../../Core/ProgramaEnVarianteCurso/Infrastructure/Repositories/ProgramaEnVarianteCursoRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -776,6 +782,18 @@ StartupBuilder.bind<IUsuarioRepository>(TYPES.UsuarioRepository)
 	.inSingletonScope();
 StartupBuilder.bind<IUsuarioService>(TYPES.UsuarioService)
 	.to(UsuarioService)
+	.inSingletonScope();
+
+// programas en variante de curso
+StartupBuilder.bind<IProgramaEnVarianteCursoRepository>(
+	TYPES.ProgramaEnVarianteCursoRepository,
+)
+	.to(ProgramaEnVarianteCursoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IProgramaEnVarianteCursoService>(
+	TYPES.ProgramaEnVarianteCursoService,
+)
+	.to(ProgramaEnVarianteCursoService)
 	.inSingletonScope();
 
 export { StartupBuilder };

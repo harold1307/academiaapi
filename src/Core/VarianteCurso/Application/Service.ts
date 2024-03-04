@@ -1,7 +1,6 @@
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
-import type { IVarianteCursoWithCurso } from "../Domain/IVarianteCursoWithCurso";
 import type { IVarianteCurso } from "../Domain/IVarianteCurso";
 import type { IVarianteCursoRepository } from "../Domain/IVarianteCursoRepository";
 import type {
@@ -9,7 +8,9 @@ import type {
 	IUpdateVarianteCursoByIdParams,
 	IVarianteCursoService,
 } from "../Domain/IVarianteCursoService";
+import type { IVarianteCursoWIthProgramas } from "../Domain/IVarianteCursoWIthProgramas";
 import type { IVarianteCursoWithAsignaturas } from "../Domain/IVarianteCursoWithAsignaturas";
+import type { IVarianteCursoWithCurso } from "../Domain/IVarianteCursoWithCurso";
 import { CreateVarianteCursoDTO } from "../Infrastructure/DTOs/CreateVarianteCursoDTO";
 import { UpdateVarianteCursoDTO } from "../Infrastructure/DTOs/UpdateVarianteCursoDTO";
 
@@ -81,6 +82,12 @@ export class VarianteCursoService implements IVarianteCursoService {
 		id: string,
 	): Promise<IVarianteCursoWithAsignaturas | null> {
 		return this._varianteCursoRepository.withAsignaturasGetById(id);
+	}
+
+	getVarianteCursoWithProgramasById(
+		id: string,
+	): Promise<IVarianteCursoWIthProgramas | null> {
+		return this._varianteCursoRepository.withProgramasGetById(id);
 	}
 }
 

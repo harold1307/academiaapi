@@ -1,8 +1,9 @@
-import type { IVarianteCursoWithCurso } from "./IVarianteCursoWithCurso";
 import type { ICreateVarianteCurso } from "./ICreateVarianteCurso";
 import type { IUpdateVarianteCurso } from "./IUpdateVarianteCurso";
 import type { IVarianteCurso } from "./IVarianteCurso";
+import type { IVarianteCursoWIthProgramas } from "./IVarianteCursoWIthProgramas";
 import type { IVarianteCursoWithAsignaturas } from "./IVarianteCursoWithAsignaturas";
+import type { IVarianteCursoWithCurso } from "./IVarianteCursoWithCurso";
 
 export type IUpdateVarianteCursoByIdParams = {
 	id: string;
@@ -23,4 +24,5 @@ export type IVarianteCursoRepository = {
 	withAsignaturasGetById(
 		id: string,
 	): Promise<IVarianteCursoWithAsignaturas | null>;
+	withProgramasGetById(id: string): Promise<IVarianteCursoWIthProgramas | null>;
 };
