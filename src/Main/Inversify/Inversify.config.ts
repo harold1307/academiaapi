@@ -303,6 +303,12 @@ import type { IProgramaEnVarianteCursoRepository } from "../../Core/ProgramaEnVa
 import type { IProgramaEnVarianteCursoService } from "../../Core/ProgramaEnVarianteCurso/Domain/IProgramaEnVarianteCursoService";
 import { ProgramaEnVarianteCursoRepository } from "../../Core/ProgramaEnVarianteCurso/Infrastructure/Repositories/ProgramaEnVarianteCursoRepository";
 
+// programas en cursos escuela
+import { ProgramaEnCursoEscuelaService } from "../../Core/ProgramaEnCursoEscuela/Application/Service";
+import type { IProgramaEnCursoEscuelaRepository } from "../../Core/ProgramaEnCursoEscuela/Domain/IProgramaEnCursoEscuelaRepository";
+import type { IProgramaEnCursoEscuelaService } from "../../Core/ProgramaEnCursoEscuela/Domain/IProgramaEnCursoEscuelaService";
+import { ProgramaEnCursoEscuelaRepository } from "../../Core/ProgramaEnCursoEscuela/Infrastructure/Repositories/ProgramaEnCursoEscuelaRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -794,6 +800,18 @@ StartupBuilder.bind<IProgramaEnVarianteCursoService>(
 	TYPES.ProgramaEnVarianteCursoService,
 )
 	.to(ProgramaEnVarianteCursoService)
+	.inSingletonScope();
+
+// programas en cursos escuela
+StartupBuilder.bind<IProgramaEnCursoEscuelaRepository>(
+	TYPES.ProgramaEnCursoEscuelaRepository,
+)
+	.to(ProgramaEnCursoEscuelaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IProgramaEnCursoEscuelaService>(
+	TYPES.ProgramaEnCursoEscuelaService,
+)
+	.to(ProgramaEnCursoEscuelaService)
 	.inSingletonScope();
 
 export { StartupBuilder };

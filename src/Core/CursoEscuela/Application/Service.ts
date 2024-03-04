@@ -11,6 +11,7 @@ import type {
 	CreateCursoEscuelaByPlantillaTransactionParams,
 	ICursoEscuelaService,
 } from "../Domain/ICursoEscuelaService";
+import type { ICursoEscuelaWithProgramas } from "../Domain/ICursoEscuelaWithProgramas";
 import { CreateCursoEscuelaDTO } from "../Infrastructure/DTOs/CreateCursoEscuelaDTO";
 
 @injectable()
@@ -28,13 +29,24 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 		return this._cursoEscuelaRepository.getById(id);
 	}
 
+	getCursoEscuelaWithProgramasById(
+		id: string,
+	): Promise<ICursoEscuelaWithProgramas | null> {
+		return this._cursoEscuelaRepository.withProgramasGetById(id);
+	}
+
 	createCursoEscuela(data: ICreateCursoEscuela): Promise<ICursoEscuela> {
 		const dto = new CreateCursoEscuelaDTO(data);
 
 		return this._cursoEscuelaRepository.create(dto.getData());
 	}
 
-	deleteCursoEscuelaById(id: string): Promise<ICursoEscuela> {
+	async deleteCursoEscuelaById(id: string): Promise<ICursoEscuela> {
+		const cursoEscuela = await this._cursoEscuelaRepository.getById(id);
+
+		if (!cursoEscuela)
+			throw new CursoEscuelaServiceError("El curso escuela no existe");
+
 		return this._cursoEscuelaRepository.deleteById(id);
 	}
 

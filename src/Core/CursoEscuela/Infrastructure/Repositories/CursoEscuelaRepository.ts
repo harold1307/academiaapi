@@ -9,6 +9,7 @@ import type {
 	ICursoEscuelaRepository,
 	UpdateCursoEscuelaParams,
 } from "../../Domain/ICursoEscuelaRepository";
+import type { ICursoEscuelaWithProgramas } from "../../Domain/ICursoEscuelaWithProgramas";
 
 @injectable()
 export class CursoEscuelaRepository implements ICursoEscuelaRepository {
@@ -114,6 +115,32 @@ export class CursoEscuelaRepository implements ICursoEscuelaRepository {
 				paralelo: paraleloId ? { connect: { id: paraleloId } } : undefined,
 			},
 		});
+
+		const { ...rest } = curso;
+
+		return {
+			...rest,
+			enUso: false,
+		};
+	}
+
+	async withProgramasGetById(
+		id: string,
+	): Promise<ICursoEscuelaWithProgramas | null> {
+		const curso = await this._client.cursoEscuela.findUnique({
+			where: { id },
+			include: {
+				programas: {
+					include: {
+						modalidad: true,
+						malla: true,
+						programa: true,
+					},
+				},
+			},
+		});
+
+		if (!curso) return null;
 
 		const { ...rest } = curso;
 
