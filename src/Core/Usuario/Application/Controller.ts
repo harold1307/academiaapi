@@ -11,6 +11,11 @@ import { CommonResponse } from "../../../Utils/CommonResponse";
 import { Constants } from "../../../Utils/Constants";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
+import { AsesorCrmService } from "../../AsesorCrm/Application/Service";
+import type { IAsesorCrmService } from "../../AsesorCrm/Domain/IAsesorCrmService";
+import { AsesorCrmEnCentroInformacionService } from "../../AsesorCrmEnCentroInformacion/Application/Service";
+import type { IAsesorCrmEnCentroInformacionService } from "../../AsesorCrmEnCentroInformacion/Domain/IAsesorCrmEnCentroInformacionService";
+import type { ICreateAsesorCrmEnCentroInformacion } from "../../AsesorCrmEnCentroInformacion/Domain/ICreateAsesorCrmEnCentroInformacion";
 import { CentroInformacionService } from "../../CentroInformacion/Application/Service";
 import type { ICentroInformacionService } from "../../CentroInformacion/Domain/ICentroInformacionService";
 import { CoordinacionService } from "../../Coordinacion/Application/Service";
@@ -53,6 +58,8 @@ export class UsuarioController implements IUsuarioController {
 	private _coordinacionService: ICoordinacionService;
 	private _centroInformacionService: ICentroInformacionService;
 	private _sedeService: ISedeService;
+	private _asesorCrmService: IAsesorCrmService;
+	private _asesorCrmEnCentroInformacionService: IAsesorCrmEnCentroInformacionService;
 
 	constructor() {
 		this._usuarioService = StartupBuilder.resolve(UsuarioService);
@@ -67,6 +74,10 @@ export class UsuarioController implements IUsuarioController {
 			CentroInformacionService,
 		);
 		this._sedeService = StartupBuilder.resolve(SedeService);
+		this._asesorCrmService = StartupBuilder.resolve(AsesorCrmService);
+		this._asesorCrmEnCentroInformacionService = StartupBuilder.resolve(
+			AsesorCrmEnCentroInformacionService,
+		);
 	}
 
 	async usuariosGetAll(
@@ -944,6 +955,69 @@ export class UsuarioController implements IUsuarioController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async usuariosCreateAsesorCrm(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const usuarioId = req.params.usuarioId;
+
+			if (!usuarioId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createAsesorCrmBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const usuario = await this._usuarioService.getUsuarioById(usuarioId);
+
+			if (!usuario)
+				return {
+					jsonBody: {
+						message: "El usuario no existe",
+					},
+					status: 400,
+				};
+
+			if (!usuario.administrativo)
+				return {
+					jsonBody: {
+						message:
+							"El usuario no tiene acceso de administrativo, no se puede ser un asesor de CRM",
+					},
+					status: 400,
+				};
+
+			if (usuario.administrativo.asesorCrm)
+				return {
+					jsonBody: {
+						message: "El usuario ya es un asesor de CRM",
+					},
+					status: 400,
+				};
+
+			const newAsesorCrm = await this._asesorCrmService.createAsesorCrm({
+				administrativoId: usuario.administrativo.id,
+			});
+
+			const writtenCentros =
+				await this._asesorCrmEnCentroInformacionService.createAsesorCrmEnCentroInformacion(
+					{
+						asesorCrmId: newAsesorCrm.id,
+						centroInformacionIds: bodyVal.data.centroInformacionIds,
+					},
+				);
+
+			ctx.log({ newAsesorCrm, writtenCentros });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateUsuario>>({
@@ -1311,4 +1385,10 @@ const updateAlumnoWithInscripcionBodySchema = z.object<
 	nivelAcademicoId: z.string().uuid().optional(),
 	matricula: z.boolean().optional(),
 	matricularseConLimite: z.boolean().optional(),
+});
+
+const createAsesorCrmBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateAsesorCrmEnCentroInformacion, "asesorCrmId">>
+>({
+	centroInformacionIds: z.array(z.string()),
 });

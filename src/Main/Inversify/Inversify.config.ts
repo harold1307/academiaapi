@@ -309,6 +309,18 @@ import type { IProgramaEnCursoEscuelaRepository } from "../../Core/ProgramaEnCur
 import type { IProgramaEnCursoEscuelaService } from "../../Core/ProgramaEnCursoEscuela/Domain/IProgramaEnCursoEscuelaService";
 import { ProgramaEnCursoEscuelaRepository } from "../../Core/ProgramaEnCursoEscuela/Infrastructure/Repositories/ProgramaEnCursoEscuelaRepository";
 
+// asesores de crm
+import { AsesorCrmService } from "../../Core/AsesorCrm/Application/Service";
+import type { IAsesorCrmRepository } from "../../Core/AsesorCrm/Domain/IAsesorCrmRepository";
+import type { IAsesorCrmService } from "../../Core/AsesorCrm/Domain/IAsesorCrmService";
+import { AsesorCrmRepository } from "../../Core/AsesorCrm/Infrastructure/Repositories/AsesorCrmRepository";
+
+// asesores de crm en centros de informacion
+import { AsesorCrmEnCentroInformacionService } from "../../Core/AsesorCrmEnCentroInformacion/Application/Service";
+import type { IAsesorCrmEnCentroInformacionRepository } from "../../Core/AsesorCrmEnCentroInformacion/Domain/IAsesorCrmEnCentroInformacionRepository";
+import type { IAsesorCrmEnCentroInformacionService } from "../../Core/AsesorCrmEnCentroInformacion/Domain/IAsesorCrmEnCentroInformacionService";
+import { AsesorCrmEnCentroInformacionRepository } from "../../Core/AsesorCrmEnCentroInformacion/Infrastructure/Repositories/AsesorCrmEnCentroInformacionRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -812,6 +824,26 @@ StartupBuilder.bind<IProgramaEnCursoEscuelaService>(
 	TYPES.ProgramaEnCursoEscuelaService,
 )
 	.to(ProgramaEnCursoEscuelaService)
+	.inSingletonScope();
+
+// asesores de crm
+StartupBuilder.bind<IAsesorCrmRepository>(TYPES.AsesorCrmRepository)
+	.to(AsesorCrmRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsesorCrmService>(TYPES.AsesorCrmService)
+	.to(AsesorCrmService)
+	.inSingletonScope();
+
+// asesores de crm en centros de informacion
+StartupBuilder.bind<IAsesorCrmEnCentroInformacionRepository>(
+	TYPES.AsesorCrmEnCentroInformacionRepository,
+)
+	.to(AsesorCrmEnCentroInformacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsesorCrmEnCentroInformacionService>(
+	TYPES.AsesorCrmEnCentroInformacionService,
+)
+	.to(AsesorCrmEnCentroInformacionService)
 	.inSingletonScope();
 
 export { StartupBuilder };

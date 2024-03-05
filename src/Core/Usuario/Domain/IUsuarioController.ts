@@ -64,4 +64,9 @@ export type IUsuarioController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
+
+	usuariosCreateAsesorCrm(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 };

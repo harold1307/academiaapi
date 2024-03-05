@@ -1,7 +1,6 @@
 import type {
 	Administrativo,
 	Alumno,
-	AsesorCrm,
 	AsesorEstudiante,
 	Grupo,
 	Profesor,
@@ -10,6 +9,7 @@ import type {
 	UsuarioEnGrupo,
 } from "@prisma/client";
 
+import type { IAsesorCrm } from "../../AsesorCrm/Domain/IAsesorCrm";
 import type { ICoordinacion } from "../../Coordinacion/Domain/ICoordinacion";
 import type { IInscripcion } from "../../Inscripcion/Domain/IInscripcion";
 import type { IPrograma } from "../../Programa/Domain/IPrograma";
@@ -19,7 +19,10 @@ export type IUsuario = Usuario & {
 	administrativo:
 		| (Administrativo & {
 				responsableCrm: ResponsableCrm | null;
-				asesorCrm: AsesorCrm | null;
+				asesorCrm: Omit<
+					IAsesorCrm,
+					"administrativo" | "centrosInformacion"
+				> | null;
 				asesorEstudiante: AsesorEstudiante | null;
 				sede: Omit<ISede, "enUso">;
 		  })

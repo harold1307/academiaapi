@@ -87,3 +87,10 @@ app.patch("usuariosUpdateAlumnoWithInscripcion", {
 		controller.usuariosUpdateAlumnoWithInscripcion(req, ctx),
 	route: "usuarios/{usuarioId}/inscripciones/{inscripcionId}",
 });
+
+// asesores crm
+app.post("usuariosCreateAsesorCrm", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.usuariosCreateAsesorCrm(req, ctx),
+	route: "usuarios/{usuarioId}/asesores-crm",
+});
