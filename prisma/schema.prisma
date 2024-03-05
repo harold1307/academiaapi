@@ -1360,7 +1360,7 @@ model AsesorCrmEnCentroInformacion {
   id                  String            @id @default(uuid())
   asesorId            String
   centroInformacionId String
-  asesor              AsesorCrm         @relation(fields: [asesorId], references: [id])
+  asesor              AsesorCrm         @relation(fields: [asesorId], references: [id], onDelete: Cascade)
   centroInformacion   CentroInformacion @relation(fields: [centroInformacionId], references: [id])
 
   @@unique([asesorId, centroInformacionId])
