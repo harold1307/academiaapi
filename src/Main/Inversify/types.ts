@@ -157,4 +157,6 @@ export const TYPES = {
 	),
 	ResponsableCrmRepository: Symbol.for("ResponsableCrmRepository"),
 	ResponsableCrmService: Symbol.for("ResponsableCrmService"),
+	AsesorEstudianteRepository: Symbol.for("AsesorEstudianteRepository"),
+	AsesorEstudianteService: Symbol.for("AsesorEstudianteService"),
 } as const;

@@ -16,6 +16,9 @@ import type { IAsesorCrmService } from "../../AsesorCrm/Domain/IAsesorCrmService
 import { AsesorCrmEnCentroInformacionService } from "../../AsesorCrmEnCentroInformacion/Application/Service";
 import type { IAsesorCrmEnCentroInformacionService } from "../../AsesorCrmEnCentroInformacion/Domain/IAsesorCrmEnCentroInformacionService";
 import type { ICreateAsesorCrmEnCentroInformacion } from "../../AsesorCrmEnCentroInformacion/Domain/ICreateAsesorCrmEnCentroInformacion";
+import { AsesorEstudianteService } from "../../AsesorEstudiante/Application/Service";
+import type { IAsesorEstudianteService } from "../../AsesorEstudiante/Domain/IAsesorEstudianteService";
+import type { ICreateAsesorEstudiante } from "../../AsesorEstudiante/Domain/ICreateAsesorEstudiante";
 import { CentroInformacionService } from "../../CentroInformacion/Application/Service";
 import type { ICentroInformacionService } from "../../CentroInformacion/Domain/ICentroInformacionService";
 import { CoordinacionService } from "../../Coordinacion/Application/Service";
@@ -63,6 +66,7 @@ export class UsuarioController implements IUsuarioController {
 	private _asesorCrmService: IAsesorCrmService;
 	private _asesorCrmEnCentroInformacionService: IAsesorCrmEnCentroInformacionService;
 	private _responsableCrmService: IResponsableCrmService;
+	private _asesorEstudianteService: IAsesorEstudianteService;
 
 	constructor() {
 		this._usuarioService = StartupBuilder.resolve(UsuarioService);
@@ -82,6 +86,9 @@ export class UsuarioController implements IUsuarioController {
 			AsesorCrmEnCentroInformacionService,
 		);
 		this._responsableCrmService = StartupBuilder.resolve(ResponsableCrmService);
+		this._asesorEstudianteService = StartupBuilder.resolve(
+			AsesorEstudianteService,
+		);
 	}
 
 	async usuariosGetAll(
@@ -1073,6 +1080,63 @@ export class UsuarioController implements IUsuarioController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async usuariosCreateAsesorEstudiante(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const usuarioId = req.params.usuarioId;
+
+			if (!usuarioId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createAsesorEstudianteBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const usuario = await this._usuarioService.getUsuarioById(usuarioId);
+
+			if (!usuario)
+				return {
+					jsonBody: {
+						message: "El usuario no existe",
+					},
+					status: 400,
+				};
+
+			if (!usuario.administrativo)
+				return {
+					jsonBody: {
+						message:
+							"El usuario no tiene acceso de administrativo, no se puede ser un asesor de estudiante",
+					},
+					status: 400,
+				};
+
+			if (usuario.administrativo.asesorEstudiante)
+				return {
+					jsonBody: {
+						message: "El usuario ya es un asesor de estudiante",
+					},
+					status: 400,
+				};
+
+			const newasesorEstudiante =
+				await this._asesorEstudianteService.createAsesorEstudiante({
+					...bodyVal.data,
+					administrativoId: usuario.administrativo.id,
+				});
+
+			ctx.log({ newasesorEstudiante });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateUsuario>>({
@@ -1446,4 +1510,11 @@ const createAsesorCrmBodySchema = z.object<
 	ZodInferSchema<Omit<ICreateAsesorCrmEnCentroInformacion, "asesorCrmId">>
 >({
 	centroInformacionIds: z.array(z.string()),
+});
+
+const createAsesorEstudianteBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateAsesorEstudiante, "administrativoId">>
+>({
+	seguimientoBienestar: z.boolean(),
+	seguimientoExpediente: z.boolean(),
 });
