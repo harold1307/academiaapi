@@ -94,3 +94,10 @@ app.post("usuariosCreateAsesorCrm", {
 	handler: (req, ctx) => controller.usuariosCreateAsesorCrm(req, ctx),
 	route: "usuarios/{usuarioId}/asesores-crm",
 });
+
+// responsable de asesores crm
+app.post("usuariosCreateResponsableCrm", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.usuariosCreateResponsableCrm(req, ctx),
+	route: "usuarios/{usuarioId}/responsables-crm",
+});
