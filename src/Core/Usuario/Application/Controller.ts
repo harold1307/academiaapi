@@ -31,6 +31,8 @@ import { NivelMallaService } from "../../NivelMalla/Application/Service";
 import type { INivelMallaService } from "../../NivelMalla/Domain/INivelMallaService";
 import { ProgramaService } from "../../Programa/Application/Service";
 import type { IProgramaService } from "../../Programa/Domain/IProgramaService";
+import { ResponsableCrmService } from "../../ResponsableCrm/Application/Service";
+import type { IResponsableCrmService } from "../../ResponsableCrm/Domain/IResponsableCrmService";
 import { SedeService } from "../../Sede/Application/Service";
 import type { ISedeService } from "../../Sede/Domain/ISedeService";
 import { UsuarioEnGrupoService } from "../../UsuarioEnGrupo/Application/Service";
@@ -60,6 +62,7 @@ export class UsuarioController implements IUsuarioController {
 	private _sedeService: ISedeService;
 	private _asesorCrmService: IAsesorCrmService;
 	private _asesorCrmEnCentroInformacionService: IAsesorCrmEnCentroInformacionService;
+	private _responsableCrmService: IResponsableCrmService;
 
 	constructor() {
 		this._usuarioService = StartupBuilder.resolve(UsuarioService);
@@ -78,6 +81,7 @@ export class UsuarioController implements IUsuarioController {
 		this._asesorCrmEnCentroInformacionService = StartupBuilder.resolve(
 			AsesorCrmEnCentroInformacionService,
 		);
+		this._responsableCrmService = StartupBuilder.resolve(ResponsableCrmService);
 	}
 
 	async usuariosGetAll(
@@ -1012,6 +1016,57 @@ export class UsuarioController implements IUsuarioController {
 				);
 
 			ctx.log({ newAsesorCrm, writtenCentros });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
+
+	async usuariosCreateResponsableCrm(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const usuarioId = req.params.usuarioId;
+
+			if (!usuarioId) return CommonResponse.invalidId();
+
+			const usuario = await this._usuarioService.getUsuarioById(usuarioId);
+
+			if (!usuario)
+				return {
+					jsonBody: {
+						message: "El usuario no existe",
+					},
+					status: 400,
+				};
+
+			if (!usuario.administrativo)
+				return {
+					jsonBody: {
+						message:
+							"El usuario no tiene acceso de administrativo, no se puede ser un responsable de CRM",
+					},
+					status: 400,
+				};
+
+			if (usuario.administrativo.responsableCrm)
+				return {
+					jsonBody: {
+						message: "El usuario ya es un responsable de CRM",
+					},
+					status: 400,
+				};
+
+			const newresponsableCrm =
+				await this._responsableCrmService.createResponsableCrm({
+					administrativoId: usuario.administrativo.id,
+				});
+
+			ctx.log({ newresponsableCrm });
 
 			return CommonResponse.successful({ status: 201 });
 		} catch (error: any) {
