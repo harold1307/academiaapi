@@ -53,5 +53,5 @@ app.post("responsablesAsesoresEstudianteCreateRelation", {
 	handler: (req, ctx) =>
 		controller.responsablesAsesoresEstudianteCreateRelation(req, ctx),
 	route:
-		"responsables-asesores-estudiante/{responsableAsesorEstudianteId}/asesores/${asesorEstudianteId}",
+		"responsables-asesores-estudiante/{responsableAsesorEstudianteId}/asesores/{asesorEstudianteId}",
 });
