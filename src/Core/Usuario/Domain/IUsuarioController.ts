@@ -77,4 +77,8 @@ export type IUsuarioController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
+	usuariosCreateResponsableAsesorEstudiante(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 };

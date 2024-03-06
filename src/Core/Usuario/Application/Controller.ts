@@ -34,6 +34,9 @@ import { NivelMallaService } from "../../NivelMalla/Application/Service";
 import type { INivelMallaService } from "../../NivelMalla/Domain/INivelMallaService";
 import { ProgramaService } from "../../Programa/Application/Service";
 import type { IProgramaService } from "../../Programa/Domain/IProgramaService";
+import { ResponsableAsesorEstudianteService } from "../../ResponsableAsesorEstudiante/Application/Service";
+import type { ICreateResponsableAsesorEstudiante } from "../../ResponsableAsesorEstudiante/Domain/ICreateResponsableAsesorEstudiante";
+import type { IResponsableAsesorEstudianteService } from "../../ResponsableAsesorEstudiante/Domain/IResponsableAsesorEstudianteService";
 import { ResponsableCrmService } from "../../ResponsableCrm/Application/Service";
 import type { IResponsableCrmService } from "../../ResponsableCrm/Domain/IResponsableCrmService";
 import { SedeService } from "../../Sede/Application/Service";
@@ -67,6 +70,7 @@ export class UsuarioController implements IUsuarioController {
 	private _asesorCrmEnCentroInformacionService: IAsesorCrmEnCentroInformacionService;
 	private _responsableCrmService: IResponsableCrmService;
 	private _asesorEstudianteService: IAsesorEstudianteService;
+	private _responsableAsesorEstudianteService: IResponsableAsesorEstudianteService;
 
 	constructor() {
 		this._usuarioService = StartupBuilder.resolve(UsuarioService);
@@ -88,6 +92,9 @@ export class UsuarioController implements IUsuarioController {
 		this._responsableCrmService = StartupBuilder.resolve(ResponsableCrmService);
 		this._asesorEstudianteService = StartupBuilder.resolve(
 			AsesorEstudianteService,
+		);
+		this._responsableAsesorEstudianteService = StartupBuilder.resolve(
+			ResponsableAsesorEstudianteService,
 		);
 	}
 
@@ -1137,6 +1144,66 @@ export class UsuarioController implements IUsuarioController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async usuariosCreateResponsableAsesorEstudiante(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const usuarioId = req.params.usuarioId;
+
+			if (!usuarioId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal =
+				createResponsableAsesorEstudianteBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const usuario = await this._usuarioService.getUsuarioById(usuarioId);
+
+			if (!usuario)
+				return {
+					jsonBody: {
+						message: "El usuario no existe",
+					},
+					status: 400,
+				};
+
+			if (!usuario.administrativo)
+				return {
+					jsonBody: {
+						message:
+							"El usuario no tiene acceso de administrativo, no se puede ser un responsable de asesor de estudiante",
+					},
+					status: 400,
+				};
+
+			if (usuario.administrativo.responsableAsesorEstudiante)
+				return {
+					jsonBody: {
+						message: "El usuario ya es un responsable de asesor de estudiante",
+					},
+					status: 400,
+				};
+
+			const newasesorEstudiante =
+				await this._responsableAsesorEstudianteService.createResponsableAsesorEstudiante(
+					{
+						...bodyVal.data,
+						administrativoId: usuario.administrativo.id,
+					},
+				);
+
+			ctx.log({ newasesorEstudiante });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const updateBodySchema = z.object<ZodInferSchema<IUpdateUsuario>>({
@@ -1514,6 +1581,13 @@ const createAsesorCrmBodySchema = z.object<
 
 const createAsesorEstudianteBodySchema = z.object<
 	ZodInferSchema<Omit<ICreateAsesorEstudiante, "administrativoId">>
+>({
+	seguimientoBienestar: z.boolean(),
+	seguimientoExpediente: z.boolean(),
+});
+
+const createResponsableAsesorEstudianteBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateResponsableAsesorEstudiante, "administrativoId">>
 >({
 	seguimientoBienestar: z.boolean(),
 	seguimientoExpediente: z.boolean(),

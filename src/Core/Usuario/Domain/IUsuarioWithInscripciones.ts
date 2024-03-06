@@ -1,26 +1,37 @@
 import type {
 	Administrativo,
 	Alumno,
-	AsesorCrm,
-	AsesorEstudiante,
 	Grupo,
 	Profesor,
-	ResponsableCrm,
 	Usuario,
 	UsuarioEnGrupo,
 } from "@prisma/client";
 
+import type { IAsesorCrm } from "../../AsesorCrm/Domain/IAsesorCrm";
+import type { IAsesorEstudiante } from "../../AsesorEstudiante/Domain/IAsesorEstudiante";
 import type { ICoordinacion } from "../../Coordinacion/Domain/ICoordinacion";
 import type { IInscripcion } from "../../Inscripcion/Domain/IInscripcion";
 import type { IPrograma } from "../../Programa/Domain/IPrograma";
+import type { IResponsableAsesorEstudiante } from "../../ResponsableAsesorEstudiante/Domain/IResponsableAsesorEstudiante";
+import type { IResponsableCrm } from "../../ResponsableCrm/Domain/IResponsableCrm";
 import type { ISede } from "../../Sede/Domain/ISede";
 
 export type IUsuarioWithInscripciones = Usuario & {
 	administrativo:
 		| (Administrativo & {
-				responsableCrm: ResponsableCrm | null;
-				asesorCrm: AsesorCrm | null;
-				asesorEstudiante: AsesorEstudiante | null;
+				responsableCrm: Omit<IResponsableCrm, "administrativo"> | null;
+				asesorCrm: Omit<
+					IAsesorCrm,
+					"administrativo" | "centrosInformacion"
+				> | null;
+				asesorEstudiante: Omit<
+					IAsesorEstudiante,
+					"administrativo" | "estudiantesCount"
+				> | null;
+				responsableAsesorEstudiante: Omit<
+					IResponsableAsesorEstudiante,
+					"administrativo" | "asesoresCount"
+				> | null;
 				sede: Omit<ISede, "enUso">;
 		  })
 		| null;

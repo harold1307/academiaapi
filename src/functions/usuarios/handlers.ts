@@ -108,3 +108,11 @@ app.post("usuariosCreateAsesorEstudiante", {
 	handler: (req, ctx) => controller.usuariosCreateAsesorEstudiante(req, ctx),
 	route: "usuarios/{usuarioId}/asesores-estudiante",
 });
+
+// responsables de asesores de estudiante
+app.post("usuariosCreateResponsableAsesorEstudiante", {
+	authLevel: "anonymous",
+	handler: (req, ctx) =>
+		controller.usuariosCreateResponsableAsesorEstudiante(req, ctx),
+	route: "usuarios/{usuarioId}/responsables-asesores-estudiante",
+});
