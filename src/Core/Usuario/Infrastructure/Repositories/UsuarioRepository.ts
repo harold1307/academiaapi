@@ -131,21 +131,21 @@ export class UsuarioRepository implements IUsuarioRepository {
 			.filter(s => !!s);
 
 		const searchOR = [
-			{
+			...(searchTexts?.map(s => ({
 				nombres: {
-					in: searchTexts,
+					contains: s,
 				},
-			},
-			{
+			})) || []),
+			...(searchTexts?.map(s => ({
 				primerApellido: {
-					in: searchTexts,
+					contains: s,
 				},
-			},
-			{
+			})) || []),
+			...(searchTexts?.map(s => ({
 				segundoApellido: {
-					in: searchTexts,
+					contains: s,
 				},
-			},
+			})) || []),
 		] satisfies UsuarioORType;
 		const sedeOR = [
 			{
@@ -439,21 +439,21 @@ export class UsuarioRepository implements IUsuarioRepository {
 			.filter(s => !!s);
 
 		const searchOR = [
-			{
+			...(searchTexts?.map(s => ({
 				nombres: {
-					in: searchTexts,
+					contains: s,
 				},
-			},
-			{
+			})) || []),
+			...(searchTexts?.map(s => ({
 				primerApellido: {
-					in: searchTexts,
+					contains: s,
 				},
-			},
-			{
+			})) || []),
+			...(searchTexts?.map(s => ({
 				segundoApellido: {
-					in: searchTexts,
+					contains: s,
 				},
-			},
+			})) || []),
 		] satisfies UsuarioORType;
 		const sedeOR = [
 			{
