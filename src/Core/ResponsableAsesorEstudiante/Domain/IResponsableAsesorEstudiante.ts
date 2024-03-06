@@ -1,6 +1,6 @@
 import type {
-  Administrativo,
-  ResponsableAsesorEstudiante,
+	Administrativo,
+	ResponsableAsesorEstudiante,
 } from "@prisma/client";
 
 import type { IUsuario } from "../../Usuario/Domain/IUsuario";
