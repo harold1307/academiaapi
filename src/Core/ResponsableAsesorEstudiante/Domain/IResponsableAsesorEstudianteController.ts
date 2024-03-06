@@ -25,4 +25,17 @@ export type IResponsableAsesorEstudianteController = {
 	// 	req: HttpRequest,
 	// 	ctx: InvocationContext,
 	// ): Promise<HttpResponseInit>;
+
+	responsablesAsesoresEstudianteCreateRelation(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
+	// responsablesAsesoresEstudianteDeleteRelation(
+	// 	req: HttpRequest,
+	// 	ctx: InvocationContext,
+	// ): Promise<HttpResponseInit>;
+	responsablesAsesoresEstudianteGetByIdWithAsesores(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 };

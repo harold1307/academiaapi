@@ -5,6 +5,7 @@ import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreateResponsableAsesorEstudiante } from "../../Domain/ICreateResponsableAsesorEstudiante";
 import type { IResponsableAsesorEstudiante } from "../../Domain/IResponsableAsesorEstudiante";
 import type { IResponsableAsesorEstudianteRepository } from "../../Domain/IResponsableAsesorEstudianteRepository";
+import type { IResponsableAsesorEstudianteWithAsesores } from "../../Domain/IResponsableAsesorEstudianteWithAsesores";
 
 @injectable()
 export class ResponsableAsesorEstudianteRepository
@@ -128,4 +129,58 @@ export class ResponsableAsesorEstudianteRepository
 	// update(
 	// 	params: UpdateResponsableAsesorEstudianteParams,
 	// ): Promise<IResponsableAsesorEstudiante> {}
+
+	async getByIdWithAsesores(
+		id: string,
+	): Promise<IResponsableAsesorEstudianteWithAsesores | null> {
+		const responsable =
+			await this._client.responsableAsesorEstudiante.findUnique({
+				where: {
+					id,
+				},
+				include: {
+					administrativo: {
+						include: {
+							usuario: true,
+						},
+					},
+					asesores: {
+						include: {
+							asesorEstudiante: {
+								include: {
+									administrativo: {
+										include: {
+											usuario: true,
+										},
+									},
+									_count: {
+										select: {
+											estudiantes: true,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			});
+
+		if (!responsable) return null;
+
+		const { ...r } = responsable;
+
+		return {
+			...r,
+			asesoresCount: r.asesores.length,
+			asesores: r.asesores.map(
+				({ asesorEstudiante: { _count, ...asesorEstudiante }, ...a }) => ({
+					...a,
+					asesorEstudiante: {
+						...asesorEstudiante,
+						estudiantesCount: _count.estudiantes,
+					},
+				}),
+			),
+		};
+	}
 }

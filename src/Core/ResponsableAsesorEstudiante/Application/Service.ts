@@ -5,6 +5,7 @@ import type { ICreateResponsableAsesorEstudiante } from "../Domain/ICreateRespon
 import type { IResponsableAsesorEstudiante } from "../Domain/IResponsableAsesorEstudiante";
 import type { IResponsableAsesorEstudianteRepository } from "../Domain/IResponsableAsesorEstudianteRepository";
 import type { IResponsableAsesorEstudianteService } from "../Domain/IResponsableAsesorEstudianteService";
+import type { IResponsableAsesorEstudianteWithAsesores } from "../Domain/IResponsableAsesorEstudianteWithAsesores";
 import { CreateResponsableAsesorEstudianteDTO } from "../Infrastructure/DTOs/CreateResponsableAsesorEstudianteDTO";
 
 @injectable()
@@ -54,6 +55,12 @@ export class ResponsableAsesorEstudianteService
 	// updateResponsableAsesorEstudianteById(
 	// 	params: UpdateResponsableAsesorEstudianteParams,
 	// ): Promise<IResponsableAsesorEstudiante> {}
+
+	getResponsableAsesorEstudianteByIdWithAsesores(
+		id: string,
+	): Promise<IResponsableAsesorEstudianteWithAsesores | null> {
+		return this._responsableAsesorEstudianteRepository.getByIdWithAsesores(id);
+	}
 }
 
 class ResponsableAsesorEstudianteServiceError extends Error {

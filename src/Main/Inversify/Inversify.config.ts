@@ -339,6 +339,12 @@ import type { IResponsableAsesorEstudianteRepository } from "../../Core/Responsa
 import type { IResponsableAsesorEstudianteService } from "../../Core/ResponsableAsesorEstudiante/Domain/IResponsableAsesorEstudianteService";
 import { ResponsableAsesorEstudianteRepository } from "../../Core/ResponsableAsesorEstudiante/Infrastructure/Repositories/ResponsableAsesorEstudianteRepository";
 
+// responsables en asesores de estudiante
+import { ResponsableEnAsesorEstudianteService } from "../../Core/ResponsableEnAsesorEstudiante/Application/Service";
+import type { IResponsableEnAsesorEstudianteRepository } from "../../Core/ResponsableEnAsesorEstudiante/Domain/IResponsableEnAsesorEstudianteRepository";
+import type { IResponsableEnAsesorEstudianteService } from "../../Core/ResponsableEnAsesorEstudiante/Domain/IResponsableEnAsesorEstudianteService";
+import { ResponsableEnAsesorEstudianteRepository } from "../../Core/ResponsableEnAsesorEstudiante/Infrastructure/Repositories/ResponsableEnAsesorEstudianteRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -892,6 +898,18 @@ StartupBuilder.bind<IResponsableAsesorEstudianteService>(
 	TYPES.ResponsableAsesorEstudianteService,
 )
 	.to(ResponsableAsesorEstudianteService)
+	.inSingletonScope();
+
+// responsables en asesores de estudiante
+StartupBuilder.bind<IResponsableEnAsesorEstudianteRepository>(
+	TYPES.ResponsableEnAsesorEstudianteRepository,
+)
+	.to(ResponsableEnAsesorEstudianteRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IResponsableEnAsesorEstudianteService>(
+	TYPES.ResponsableEnAsesorEstudianteService,
+)
+	.to(ResponsableEnAsesorEstudianteService)
 	.inSingletonScope();
 
 export { StartupBuilder };

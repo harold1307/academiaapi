@@ -38,3 +38,20 @@ app.deleteRequest("responsablesAsesoresEstudianteDeleteById", {
 // 		controller.responsablesAsesoresEstudianteUpdateById(req, ctx),
 // 	route: "responsables-asesores-estudiante/{responsableAsesorEstudianteId}",
 // });
+
+// asesores
+app.get("responsablesAsesoresEstudianteGetByIdWithAsesores", {
+	authLevel: "anonymous",
+	handler: (req, ctx) =>
+		controller.responsablesAsesoresEstudianteGetByIdWithAsesores(req, ctx),
+	route:
+		"responsables-asesores-estudiante/{responsableAsesorEstudianteId}/asesores",
+});
+
+app.post("responsablesAsesoresEstudianteCreateRelation", {
+	authLevel: "anonymous",
+	handler: (req, ctx) =>
+		controller.responsablesAsesoresEstudianteCreateRelation(req, ctx),
+	route:
+		"responsables-asesores-estudiante/{responsableAsesorEstudianteId}/asesores/${asesorEstudianteId}",
+});
