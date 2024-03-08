@@ -11,6 +11,7 @@ import type {
 	CreateCursoEscuelaByPlantillaTransactionParams,
 	ICursoEscuelaService,
 } from "../Domain/ICursoEscuelaService";
+import type { ICursoEscuelaWithProgramas } from "../Domain/ICursoEscuelaWithProgramas";
 import { CreateCursoEscuelaDTO } from "../Infrastructure/DTOs/CreateCursoEscuelaDTO";
 
 @injectable()
@@ -28,13 +29,24 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 		return this._cursoEscuelaRepository.getById(id);
 	}
 
+	getCursoEscuelaWithProgramasById(
+		id: string,
+	): Promise<ICursoEscuelaWithProgramas | null> {
+		return this._cursoEscuelaRepository.withProgramasGetById(id);
+	}
+
 	createCursoEscuela(data: ICreateCursoEscuela): Promise<ICursoEscuela> {
 		const dto = new CreateCursoEscuelaDTO(data);
 
 		return this._cursoEscuelaRepository.create(dto.getData());
 	}
 
-	deleteCursoEscuelaById(id: string): Promise<ICursoEscuela> {
+	async deleteCursoEscuelaById(id: string): Promise<ICursoEscuela> {
+		const cursoEscuela = await this._cursoEscuelaRepository.getById(id);
+
+		if (!cursoEscuela)
+			throw new CursoEscuelaServiceError("El curso escuela no existe");
+
 		return this._cursoEscuelaRepository.deleteById(id);
 	}
 
@@ -75,10 +87,16 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 			);
 
 		return this._cursoEscuelaRepository.transaction(async tx => {
-			const asignaturasEnPlantilla =
-				await tx.asignaturaEnVarianteCurso.findMany({
-					where: { varianteCursoId: plantillaId },
-				});
+			const plantilla = await tx.varianteCurso.findUnique({
+				where: { id: plantillaId },
+				select: {
+					asignaturas: true,
+					programas: true,
+				},
+			});
+
+			if (!plantilla)
+				throw new CursoEscuelaServiceError("La plantilla de curso no existe");
 
 			const newCursoEscuela = await tx.cursoEscuela.create({
 				data: {
@@ -105,9 +123,32 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 					},
 					asignaturas: {
 						createMany: {
-							data: asignaturasEnPlantilla.map(({ id: _, ...data }) => ({
-								...data,
-							})),
+							data: plantilla.asignaturas.map(
+								({
+									id: _,
+									createdAt: __,
+									updatedAt: ___,
+									varianteCursoId: ____,
+									...data
+								}) => ({
+									...data,
+								}),
+							),
+						},
+					},
+					programas: {
+						createMany: {
+							data: plantilla.programas.map(
+								({
+									id: _,
+									createdAt: __,
+									updatedAt: ___,
+									varianteCursoId: ____,
+									...data
+								}) => ({
+									...data,
+								}),
+							),
 						},
 					},
 				},

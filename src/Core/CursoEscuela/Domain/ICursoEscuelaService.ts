@@ -1,6 +1,7 @@
 import type { ICreateCursoEscuela } from "./ICreateCursoEscuela";
 import type { ICursoEscuela } from "./ICursoEscuela";
 import type { UpdateCursoEscuelaParams } from "./ICursoEscuelaRepository";
+import type { ICursoEscuelaWithProgramas } from "./ICursoEscuelaWithProgramas";
 
 export type CreateCursoEscuelaByPlantillaTransactionParams = {
 	cursoEscuela: ICreateCursoEscuela;
@@ -19,4 +20,7 @@ export type ICursoEscuelaService = {
 	createCursoEscuelaByPlantillaTransaction(
 		params: CreateCursoEscuelaByPlantillaTransactionParams,
 	): Promise<ICursoEscuela>;
+	getCursoEscuelaWithProgramasById(
+		id: string,
+	): Promise<ICursoEscuelaWithProgramas | null>;
 };

@@ -5,6 +5,7 @@ import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreatePrograma } from "../../Domain/ICreatePrograma";
 import type { IPrograma } from "../../Domain/IPrograma";
 import type {
+	GetAllProgramaParams,
 	IProgramaRepository,
 	UpdateProgramaParams,
 } from "../../Domain/IProgramaRepository";
@@ -13,8 +14,21 @@ import type {
 export class ProgramaRepository implements IProgramaRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	async getAll(): Promise<IPrograma[]> {
+	async getAll(params?: GetAllProgramaParams): Promise<IPrograma[]> {
+		const { filters } = params || {};
+		const { coordinacion_sedeId, coordinacionId, ...plainFilters } =
+			filters || {};
+
 		const programas = await this._client.programa.findMany({
+			where: filters
+				? {
+						...plainFilters,
+						coordinacion: {
+							id: coordinacionId,
+							sedeId: coordinacion_sedeId,
+						},
+					}
+				: undefined,
 			include: {
 				detalleNivelTitulacion: {
 					include: {

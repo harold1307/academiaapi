@@ -9,8 +9,12 @@ import { StartupBuilder } from "../../../Main/Inversify/Inversify.config";
 import { CommonResponse } from "../../../Utils/CommonResponse";
 import { ErrorHandler } from "../../../Utils/ErrorHandler";
 import type { ZodInferSchema } from "../../../types";
-import { NivelMallaService } from "../../NivelMalla/Application/Service";
-import type { INivelMallaService } from "../../NivelMalla/Domain/INivelMallaService";
+import { ModalidadService } from "../../Modalidad/Application/Service";
+import type { IModalidadService } from "../../Modalidad/Domain/IModalidadService";
+import { ProgramaService } from "../../Programa/Application/Service";
+import type { IProgramaService } from "../../Programa/Domain/IProgramaService";
+import { SedeService } from "../../Sede/Application/Service";
+import type { ISedeService } from "../../Sede/Domain/ISedeService";
 import { TipoDocumentoService } from "../../TipoDocumento/Application/Service";
 import type { ITipoDocumentoService } from "../../TipoDocumento/Domain/ITipoDocumentoService";
 import type { IRequisitoMatriculacionController } from "../Domain/IRequisitoMatriculacionController";
@@ -22,15 +26,19 @@ export class RequisitoMatriculacionController
 	implements IRequisitoMatriculacionController
 {
 	private _requisitoMatriculacionService: IRequisitoMatriculacionService;
-	private _nivelMallaService: INivelMallaService;
 	private _tipoDocumentoService: ITipoDocumentoService;
+	private _modalidadService: IModalidadService;
+	private _programaService: IProgramaService;
+	private _sedeService: ISedeService;
 
 	constructor() {
 		this._requisitoMatriculacionService = StartupBuilder.resolve(
 			RequisitoMatriculacionService,
 		);
-		this._nivelMallaService = StartupBuilder.resolve(NivelMallaService);
 		this._tipoDocumentoService = StartupBuilder.resolve(TipoDocumentoService);
+		this._modalidadService = StartupBuilder.resolve(ModalidadService);
+		this._programaService = StartupBuilder.resolve(ProgramaService);
+		this._sedeService = StartupBuilder.resolve(SedeService);
 	}
 
 	async requisitosMatriculacionGetAll(
@@ -96,15 +104,42 @@ export class RequisitoMatriculacionController
 					status: 400,
 				};
 
-			const { nivelId, tipoDocumentoId, ...data } = bodyVal.data;
+			const { tipoDocumentoId, sedeId, programaId, modalidadId, ...data } =
+				bodyVal.data;
 
-			if (nivelId && nivelId !== requisito.nivelId) {
-				const nivel = await this._nivelMallaService.getNivelMallaById(nivelId);
+			if (sedeId && sedeId !== requisito.sedeId) {
+				const sede = await this._sedeService.getSedeById(sedeId);
 
-				if (!nivel)
+				if (!sede)
 					return {
 						jsonBody: {
-							message: "El nivel no existe",
+							message: "La sede no existe",
+						},
+						status: 400,
+					};
+			}
+
+			if (programaId && programaId !== requisito.programaId) {
+				const programa =
+					await this._programaService.getProgramaById(programaId);
+
+				if (!programa)
+					return {
+						jsonBody: {
+							message: "El programa no existe",
+						},
+						status: 400,
+					};
+			}
+
+			if (modalidadId && modalidadId !== requisito.modalidadId) {
+				const modalidad =
+					await this._modalidadService.getModalidadById(modalidadId);
+
+				if (!modalidad)
+					return {
+						jsonBody: {
+							message: "La modalidad no existe",
 						},
 						status: 400,
 					};
@@ -129,7 +164,7 @@ export class RequisitoMatriculacionController
 				await this._requisitoMatriculacionService.updateRequisitoMatriculacionById(
 					{
 						id: requisitoMatriculacionId,
-						data: { ...data, tipoDocumentoId, nivelId },
+						data: { ...data, tipoDocumentoId, sedeId, programaId, modalidadId },
 					},
 				);
 
@@ -170,6 +205,11 @@ const updateBodySchema = z.object<
 	repitenMaterias: z.boolean().optional(),
 	descripcion: z.string().nullable().optional(),
 
-	nivelId: z.string().optional(),
+	nivel: z.number().nullable().optional(),
+	nombre: z.string().optional(),
+
+	programaId: z.string().nullable().optional(),
+	sedeId: z.string().optional(),
+	modalidadId: z.string().nullable().optional(),
 	tipoDocumentoId: z.string().optional(),
 });

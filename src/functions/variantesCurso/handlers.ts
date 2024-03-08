@@ -22,17 +22,23 @@ app.deleteRequest("variantesCursoDeleteById", {
 	route: "variantes-curso/{varianteCursoId}",
 });
 
-app.post("createAsignaturaEnVarianteCurso", {
-	authLevel: "anonymous",
-	handler: (req, ctx) =>
-		controller.variantesCursoByIdCreateAsignatura(req, ctx),
-	route: "variantes-curso/{varianteCursoId}/asignaturas/{asignaturaId}",
-});
-
 // curso escuelas
 app.post("variantesCursoByIdCreateCursoEscuela", {
 	authLevel: "anonymous",
 	handler: (req, ctx) =>
 		controller.variantesCursoByIdCreateCursoEscuela(req, ctx),
 	route: "variantes-curso/{varianteCursoId}/curso-escuelas",
+});
+
+// programas
+app.get("variantesCursoByIdGetProgramas", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.variantesCursoByIdGetProgramas(req, ctx),
+	route: "variantes-curso/{varianteCursoId}/programas",
+});
+app.post("variantesCursoByIdCreateProgramaEnVariante", {
+	authLevel: "anonymous",
+	handler: (req, ctx) =>
+		controller.variantesCursoByIdCreateProgramaEnVariante(req, ctx),
+	route: "variantes-curso/{varianteCursoId}/programas",
 });

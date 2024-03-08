@@ -7,7 +7,11 @@ import type { ICreateCronogramaMatriculacion } from "../../Domain/ICreateCronogr
 const schema = z.object<ZodInferSchema<ICreateCronogramaMatriculacion>>({
 	fechaFin: z.date(),
 	fechaInicio: z.date(),
-	nivelId: z.string().uuid(),
+	nivel: z.number().int().min(0).max(10).nullable(),
+
+	modalidadId: z.string().uuid().nullable(),
+	programaId: z.string().uuid(),
+	sedeId: z.string().uuid(),
 	periodoId: z.string().uuid(),
 });
 

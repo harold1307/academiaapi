@@ -10,6 +10,7 @@ import type {
 } from "../../Domain/IVarianteCursoRepository";
 import type { IVarianteCursoWithAsignaturas } from "../../Domain/IVarianteCursoWithAsignaturas";
 import type { IVarianteCursoWithCurso } from "../../Domain/IVarianteCursoWithCurso";
+import type { IVarianteCursoWIthProgramas } from "../../Domain/IVarianteCursoWIthProgramas";
 
 @injectable()
 export class VarianteCursoRepository implements IVarianteCursoRepository {
@@ -96,6 +97,23 @@ export class VarianteCursoRepository implements IVarianteCursoRepository {
 		return this._client.varianteCurso.update({
 			where: { id },
 			data,
+		});
+	}
+
+	withProgramasGetById(
+		id: string,
+	): Promise<IVarianteCursoWIthProgramas | null> {
+		return this._client.varianteCurso.findUnique({
+			where: { id },
+			include: {
+				programas: {
+					include: {
+						programa: true,
+						modalidad: true,
+						malla: true,
+					},
+				},
+			},
 		});
 	}
 }

@@ -14,10 +14,19 @@ import type { IAsignaturaService } from "../../Asignatura/Domain/IAsignaturaServ
 import { AsignaturaEnCursoEscuelaService } from "../../AsignaturaEnCursoEscuela/Application/Service";
 import type { IAsignaturaEnCursoEscuelaService } from "../../AsignaturaEnCursoEscuela/Domain/IAsignaturaEnCursoEscuelaService";
 import type { ICreateAsignaturaEnCursoEscuela } from "../../AsignaturaEnCursoEscuela/Domain/ICreateAsignaturaEnCursoEscuela";
+import { MallaCurricularService } from "../../MallaCurricular/Application/Service";
+import type { IMallaCurricularService } from "../../MallaCurricular/Domain/IMallaCurricularService";
+import { ModalidadService } from "../../Modalidad/Application/Service";
+import type { IModalidadService } from "../../Modalidad/Domain/IModalidadService";
 import { ModeloEvaluativoService } from "../../ModeloEvaluativo/Application/Service";
 import type { IModeloEvaluativoService } from "../../ModeloEvaluativo/Domain/IModeloEvaluativoService";
 import { ParaleloService } from "../../Paralelo/Application/Service";
 import type { IParaleloService } from "../../Paralelo/Domain/IParaleloService";
+import { ProgramaService } from "../../Programa/Application/Service";
+import type { IProgramaService } from "../../Programa/Domain/IProgramaService";
+import { ProgramaEnCursoEscuelaService } from "../../ProgramaEnCursoEscuela/Application/Service";
+import type { ICreateProgramaEnCursoEscuela } from "../../ProgramaEnCursoEscuela/Domain/ICreateProgramaEnCursoEscuela";
+import type { IProgramaEnCursoEscuelaService } from "../../ProgramaEnCursoEscuela/Domain/IProgramaEnCursoEscuelaService";
 import { SesionService } from "../../Sesion/Application/Service";
 import type { ISesionService } from "../../Sesion/Domain/ISesionService";
 import type { ICreateCursoEscuela } from "../Domain/ICreateCursoEscuela";
@@ -32,6 +41,10 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 	private _modeloEvaluativoService: IModeloEvaluativoService;
 	private _sesionService: ISesionService;
 	private _paraleloService: IParaleloService;
+	private _programaEnCursoEscuelaService: IProgramaEnCursoEscuelaService;
+	private _programaService: IProgramaService;
+	private _mallaCurricularService: IMallaCurricularService;
+	private _modalidadService: IModalidadService;
 
 	constructor() {
 		this._cursoEscuelaService = StartupBuilder.resolve(CursoEscuelaService);
@@ -44,6 +57,14 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 		);
 		this._sesionService = StartupBuilder.resolve(SesionService);
 		this._paraleloService = StartupBuilder.resolve(ParaleloService);
+		this._programaEnCursoEscuelaService = StartupBuilder.resolve(
+			ProgramaEnCursoEscuelaService,
+		);
+		this._programaService = StartupBuilder.resolve(ProgramaService);
+		this._mallaCurricularService = StartupBuilder.resolve(
+			MallaCurricularService,
+		);
+		this._modalidadService = StartupBuilder.resolve(ModalidadService);
 	}
 
 	async cursoEscuelasGetAll(
@@ -55,10 +76,7 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 
 			const cursos = await this._cursoEscuelaService.getAllCursoEscuelas();
 
-			return {
-				jsonBody: { data: cursos, message: "Solicitud exitosa" },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: cursos });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -72,22 +90,12 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const cursoEscuelaId = req.params.cursoEscuelaId;
 
-			if (!cursoEscuelaId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!cursoEscuelaId) return CommonResponse.invalidId();
 
 			const curso =
 				await this._cursoEscuelaService.getCursoEscuelaById(cursoEscuelaId);
 
-			return {
-				jsonBody: { data: curso, message: "Solicitud exitosa." },
-				status: 200,
-			};
+			return CommonResponse.successful({ data: curso });
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -99,17 +107,11 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 	): Promise<HttpResponseInit> {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
-			const body = await req.json();
 
+			const body = await req.json();
 			const bodyVal = createBodySchema.safeParse(body);
 
-			if (!bodyVal.success) {
-				ctx.error(bodyVal.error);
-				return {
-					jsonBody: { message: "Peticion invalida" },
-					status: 400,
-				};
-			}
+			if (!bodyVal.success) return CommonResponse.invalidBody();
 
 			const { data } = bodyVal;
 
@@ -143,7 +145,7 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 
 			ctx.log({ newCurso });
 
-			return { jsonBody: { message: "Creacion exitosa." }, status: 201 };
+			return CommonResponse.successful({ status: 201 });
 		} catch (error) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -157,21 +159,11 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 			const cursoEscuelaId = req.params.cursoEscuelaId;
 
-			if (!cursoEscuelaId) {
-				return {
-					jsonBody: {
-						message: "El ID es invalido o no ha sido proporcionado.",
-					},
-					status: 400,
-				};
-			}
+			if (!cursoEscuelaId) return CommonResponse.invalidId();
 
 			await this._cursoEscuelaService.deleteCursoEscuelaById(cursoEscuelaId);
 
-			return {
-				jsonBody: { message: "Recurso eliminado con exito." },
-				status: 200,
-			};
+			return CommonResponse.successful();
 		} catch (error: any) {
 			return ErrorHandler.handle({ ctx, error });
 		}
@@ -255,6 +247,113 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 			return ErrorHandler.handle({ ctx, error });
 		}
 	}
+
+	async cursoEscuelasGetByIdWithProgramas(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const cursoEscuelaId = req.params.cursoEscuelaId;
+
+			if (!cursoEscuelaId) return CommonResponse.invalidId();
+
+			const cursoEscuela =
+				await this._cursoEscuelaService.getCursoEscuelaWithProgramasById(
+					cursoEscuelaId,
+				);
+
+			return CommonResponse.successful({ data: cursoEscuela });
+		} catch (error) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
+
+	async cursoEscuelasCreateProgramaEnCurso(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const cursoEscuelaId = req.params.cursoEscuelaId;
+
+			if (!cursoEscuelaId) return CommonResponse.invalidId();
+
+			const body = await req.json();
+			const bodyVal = createProgramaEnCursoEscuelaBodySchema.safeParse(body);
+
+			if (!bodyVal.success) return CommonResponse.invalidBody();
+
+			const { mallaId, modalidadId, programaId, ...data } = bodyVal.data;
+
+			const cursoEscuela =
+				await this._cursoEscuelaService.getCursoEscuelaById(cursoEscuelaId);
+
+			if (!cursoEscuela)
+				return {
+					jsonBody: { message: "La variante de curso no existe" },
+					status: 400,
+				};
+
+			const programa = await this._programaService.getProgramaById(programaId);
+
+			if (!programa)
+				return {
+					jsonBody: {
+						message: "El programa no existe",
+					},
+					status: 400,
+				};
+
+			if (modalidadId) {
+				const modalidad =
+					await this._modalidadService.getModalidadById(modalidadId);
+
+				if (!modalidad)
+					return {
+						jsonBody: { message: "La modalidad no existe" },
+						status: 400,
+					};
+			}
+
+			if (mallaId) {
+				const malla =
+					await this._mallaCurricularService.getMallaCurricularById(mallaId);
+
+				if (!malla)
+					return { jsonBody: { message: "La malla no existe" }, status: 400 };
+
+				if (malla.programaId !== programaId)
+					return {
+						jsonBody: { message: "La malla no pertenece al programa" },
+						status: 400,
+					};
+
+				if (modalidadId && malla.modalidadId !== modalidadId)
+					return {
+						jsonBody: { message: "La malla no pertenece a la modalidad" },
+						status: 400,
+					};
+			}
+
+			const newProgramaEnCurso =
+				await this._programaEnCursoEscuelaService.createProgramaEnCursoEscuela({
+					...data,
+					cursoEscuelaId,
+					programaId,
+					mallaId,
+					modalidadId,
+				});
+
+			ctx.log({ newProgramaEnCurso });
+
+			return CommonResponse.successful({ status: 201 });
+		} catch (error: any) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
 }
 
 const createAsignaturaBodySchema = z.object<
@@ -316,4 +415,15 @@ const createBodySchema = z.object<
 	cumpleRequisitosMalla: z.boolean(),
 	pasarRecord: z.boolean(),
 	periodoId: z.string(),
+});
+
+const createProgramaEnCursoEscuelaBodySchema = z.object<
+	ZodInferSchema<Omit<ICreateProgramaEnCursoEscuela, "cursoEscuelaId">>
+>({
+	registroExterno: z.boolean(),
+	programaId: z.string(),
+	mallaId: z.string().nullable(),
+	modalidadId: z.string().nullable(),
+	nivelDesde: z.number().nullable(),
+	nivelHasta: z.number().nullable(),
 });

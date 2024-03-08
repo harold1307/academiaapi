@@ -1,4 +1,4 @@
-import type { HttpResponseInit } from "@azure/functions";
+import type { HttpResponseInit, InvocationContext } from "@azure/functions";
 
 type SuccessfulParams = Omit<HttpResponseInit, "jsonBody" | "body"> & {
 	/**
@@ -28,7 +28,8 @@ export class CommonResponse {
 		} as const;
 	}
 
-	static invalidBody() {
+	static invalidBody(ctx?: InvocationContext, error?: any) {
+		ctx?.error(error);
 		return {
 			jsonBody: { message: "Error en la peticion, el body es invalido" },
 			status: 400,

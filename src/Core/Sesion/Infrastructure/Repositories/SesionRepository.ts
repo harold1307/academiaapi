@@ -4,11 +4,11 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreateSesion } from "../../Domain/ICreateSesion";
 import type { ISesion } from "../../Domain/ISesion";
+import type { ISesionQueryFilter } from "../../Domain/ISesionQueryFilter";
 import type {
 	ISesionRepository,
 	UpdateSesionParams,
 } from "../../Domain/ISesionRepository";
-import type { ISesionQueryFilter } from "../../Domain/ISesionQueryFilter";
 
 @injectable()
 export class SesionRepository implements ISesionRepository {
@@ -21,7 +21,13 @@ export class SesionRepository implements ISesionRepository {
 				cursoEscuelas: {
 					take: 1,
 				},
-				turnos: true,
+				turnos: {
+					include: {
+						materiasEnHorario: {
+							take: 1,
+						},
+					},
+				},
 				nivelesAcademicos: {
 					take: 1,
 				},
@@ -32,7 +38,10 @@ export class SesionRepository implements ISesionRepository {
 		return sesiones.map(
 			({ cursoEscuelas, turnos, nivelesAcademicos, sede, ...rest }) => ({
 				...rest,
-				turnos: turnos.map(t => ({ ...t, enUso: true })),
+				turnos: turnos.map(({ materiasEnHorario, ...t }) => ({
+					...t,
+					enUso: materiasEnHorario.length > 0,
+				})),
 				sede: { ...sede, enUso: true },
 				enUso:
 					cursoEscuelas.length > 0 ||
@@ -48,7 +57,13 @@ export class SesionRepository implements ISesionRepository {
 				cursoEscuelas: {
 					take: 1,
 				},
-				turnos: true,
+				turnos: {
+					include: {
+						materiasEnHorario: {
+							take: 1,
+						},
+					},
+				},
 				nivelesAcademicos: {
 					take: 1,
 				},
@@ -62,7 +77,10 @@ export class SesionRepository implements ISesionRepository {
 
 		return {
 			...rest,
-			turnos: turnos.map(t => ({ ...t, enUso: true })),
+			turnos: turnos.map(({ materiasEnHorario, ...t }) => ({
+				...t,
+				enUso: materiasEnHorario.length > 0,
+			})),
 			sede: { ...sede, enUso: true },
 			enUso:
 				cursoEscuelas.length > 0 ||
@@ -120,7 +138,13 @@ export class SesionRepository implements ISesionRepository {
 				cursoEscuelas: {
 					take: 1,
 				},
-				turnos: true,
+				turnos: {
+					include: {
+						materiasEnHorario: {
+							take: 1,
+						},
+					},
+				},
 				nivelesAcademicos: {
 					take: 1,
 				},
@@ -132,7 +156,10 @@ export class SesionRepository implements ISesionRepository {
 
 		return {
 			...rest,
-			turnos: turnos.map(t => ({ ...t, enUso: true })),
+			turnos: turnos.map(({ materiasEnHorario, ...t }) => ({
+				...t,
+				enUso: materiasEnHorario.length > 0,
+			})),
 			sede: { ...sede, enUso: true },
 			enUso:
 				cursoEscuelas.length > 0 ||

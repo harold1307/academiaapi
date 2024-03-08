@@ -7,8 +7,12 @@ import type {
 	IProgramaRepository,
 	UpdateProgramaParams,
 } from "../Domain/IProgramaRepository";
-import type { IProgramaService } from "../Domain/IProgramaService";
+import type {
+	GetAllProgramasParams,
+	IProgramaService,
+} from "../Domain/IProgramaService";
 import { CreateProgramaDTO } from "../Infrastructure/DTOs/CreateProgramaDTO";
+import { ProgramaQueryFilterDTO } from "../Infrastructure/DTOs/ProgramaQueryFIlterDTO";
 import { UpdateProgramaDTO } from "../Infrastructure/DTOs/UpdateProgramaDTO";
 
 @injectable()
@@ -18,8 +22,14 @@ export class ProgramaService implements IProgramaService {
 		private _programaRepository: IProgramaRepository,
 	) {}
 
-	getAllProgramas(): Promise<IPrograma[]> {
-		return this._programaRepository.getAll();
+	getAllProgramas(params?: GetAllProgramasParams): Promise<IPrograma[]> {
+		const { filters } = params || {};
+
+		const filterDTO = new ProgramaQueryFilterDTO(filters);
+
+		return this._programaRepository.getAll({
+			filters: filterDTO.getData(),
+		});
 	}
 
 	getProgramaById(id: string): Promise<IPrograma | null> {

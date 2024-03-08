@@ -21,14 +21,19 @@ export class TurnoRepository implements ITurnoRepository {
 						sede: true,
 					},
 				},
+				materiasEnHorario: {
+					take: 1,
+				},
 			},
 		});
 
-		return turnos.map(({ sesion: { sede, ...sesion }, ...rest }) => ({
-			...rest,
-			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
-			enUso: false,
-		}));
+		return turnos.map(
+			({ sesion: { sede, ...sesion }, materiasEnHorario, ...rest }) => ({
+				...rest,
+				sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
+				enUso: materiasEnHorario.length > 0,
+			}),
+		);
 	}
 	async getById(id: string): Promise<ITurno | null> {
 		const turno = await this._client.turno.findUnique({
@@ -39,6 +44,9 @@ export class TurnoRepository implements ITurnoRepository {
 						sede: true,
 					},
 				},
+				materiasEnHorario: {
+					take: 1,
+				},
 			},
 		});
 
@@ -46,13 +54,14 @@ export class TurnoRepository implements ITurnoRepository {
 
 		const {
 			sesion: { sede, ...sesion },
+			materiasEnHorario,
 			...rest
 		} = turno;
 
 		return {
 			...rest,
 			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
-			enUso: false,
+			enUso: materiasEnHorario.length > 0,
 		};
 	}
 	async deleteById(id: string): Promise<ITurno> {
@@ -120,18 +129,22 @@ export class TurnoRepository implements ITurnoRepository {
 						sede: true,
 					},
 				},
+				materiasEnHorario: {
+					take: 1,
+				},
 			},
 		});
 
 		const {
 			sesion: { sede, ...sesion },
+			materiasEnHorario,
 			...rest
 		} = turno;
 
 		return {
 			...rest,
 			sesion: { ...sesion, sede: { ...sede, enUso: true }, enUso: true },
-			enUso: false,
+			enUso: materiasEnHorario.length > 0,
 		};
 	}
 }

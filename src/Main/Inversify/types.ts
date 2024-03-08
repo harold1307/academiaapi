@@ -135,4 +135,40 @@ export const TYPES = {
 	CentroInformacionService: Symbol.for("CentroInformacionService"),
 	UsuarioRepository: Symbol.for("UsuarioRepository"),
 	UsuarioService: Symbol.for("UsuarioService"),
+	InscripcionRepository: Symbol.for("InscripcionRepository"),
+	InscripcionService: Symbol.for("InscripcionService"),
+	UsuarioEnGrupoRepository: Symbol.for("UsuarioEnGrupoRepository"),
+	UsuarioEnGrupoService: Symbol.for("UsuarioEnGrupoService"),
+	ProgramaEnVarianteCursoRepository: Symbol.for(
+		"ProgramaEnVarianteCursoRepository",
+	),
+	ProgramaEnVarianteCursoService: Symbol.for("ProgramaEnVarianteCursoService"),
+	ProgramaEnCursoEscuelaRepository: Symbol.for(
+		"ProgramaEnCursoEscuelaRepository",
+	),
+	ProgramaEnCursoEscuelaService: Symbol.for("ProgramaEnCursoEscuelaService"),
+	AsesorCrmRepository: Symbol.for("AsesorCrmRepository"),
+	AsesorCrmService: Symbol.for("AsesorCrmService"),
+	AsesorCrmEnCentroInformacionRepository: Symbol.for(
+		"AsesorCrmEnCentroInformacionRepository",
+	),
+	AsesorCrmEnCentroInformacionService: Symbol.for(
+		"AsesorCrmEnCentroInformacionService",
+	),
+	ResponsableCrmRepository: Symbol.for("ResponsableCrmRepository"),
+	ResponsableCrmService: Symbol.for("ResponsableCrmService"),
+	AsesorEstudianteRepository: Symbol.for("AsesorEstudianteRepository"),
+	AsesorEstudianteService: Symbol.for("AsesorEstudianteService"),
+	ResponsableAsesorEstudianteRepository: Symbol.for(
+		"ResponsableAsesorEstudianteRepository",
+	),
+	ResponsableAsesorEstudianteService: Symbol.for(
+		"ResponsableAsesorEstudianteService",
+	),
+	ResponsableEnAsesorEstudianteRepository: Symbol.for(
+		"ResponsableEnAsesorEstudianteRepository",
+	),
+	ResponsableEnAsesorEstudianteService: Symbol.for(
+		"ResponsableEnAsesorEstudianteService",
+	),
 } as const;

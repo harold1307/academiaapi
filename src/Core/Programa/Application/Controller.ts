@@ -57,7 +57,9 @@ export class ProgramaController implements IProgramaController {
 		try {
 			ctx.log(`Http function processed request for url '${req.url}'`);
 
-			const programas = await this._programaService.getAllProgramas();
+			const programas = await this._programaService.getAllProgramas({
+				filters: Object.fromEntries(req.query.entries()),
+			});
 
 			return CommonResponse.successful({ data: programas });
 		} catch (error) {

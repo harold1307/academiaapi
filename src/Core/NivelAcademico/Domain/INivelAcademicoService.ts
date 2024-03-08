@@ -2,9 +2,15 @@ import type { INivelAcademico } from "./INivelAcademico";
 import type { ICreateNivelAcademico } from "./ICreateNivelAcademico";
 import type { UpdateNivelAcademicoParams } from "./INivelAcademicoRepository";
 
+export type GetAllNivelesAcademicosParams = {
+	filters?: Record<string, string | undefined>;
+};
+
 export type INivelAcademicoService = {
 	createNivelAcademico(data: ICreateNivelAcademico): Promise<INivelAcademico>;
-	getAllNivelAcademicos(): Promise<INivelAcademico[]>;
+	getAllNivelesAcademicos(
+		params?: GetAllNivelesAcademicosParams,
+	): Promise<INivelAcademico[]>;
 	getNivelAcademicoById(id: string): Promise<INivelAcademico | null>;
 	updateNivelAcademicoById(
 		params: UpdateNivelAcademicoParams,

@@ -279,6 +279,72 @@ import type { ICentroInformacionRepository } from "../../Core/CentroInformacion/
 import type { ICentroInformacionService } from "../../Core/CentroInformacion/Domain/ICentroInformacionService";
 import { CentroInformacionRepository } from "../../Core/CentroInformacion/Infrastructure/Repositories/CentroInformacionRepository";
 
+// inscripciones
+import { InscripcionService } from "../../Core/Inscripcion/Application/Service";
+import type { IInscripcionRepository } from "../../Core/Inscripcion/Domain/IInscripcionRepository";
+import type { IInscripcionService } from "../../Core/Inscripcion/Domain/IInscripcionService";
+import { InscripcionRepository } from "../../Core/Inscripcion/Infrastructure/Repositories/InscripcionRepository";
+
+// usuarios
+import { UsuarioService } from "../../Core/Usuario/Application/Service";
+import type { IUsuarioRepository } from "../../Core/Usuario/Domain/IUsuarioRepository";
+import type { IUsuarioService } from "../../Core/Usuario/Domain/IUsuarioService";
+import { UsuarioRepository } from "../../Core/Usuario/Infrastructure/Repositories/UsuarioRepository";
+
+// usuarios en grupos
+import { UsuarioEnGrupoService } from "../../Core/UsuarioEnGrupo/Application/Service";
+import type { IUsuarioEnGrupoRepository } from "../../Core/UsuarioEnGrupo/Domain/IUsuarioEnGrupoRepository";
+import type { IUsuarioEnGrupoService } from "../../Core/UsuarioEnGrupo/Domain/IUsuarioEnGrupoService";
+import { UsuarioEnGrupoRepository } from "../../Core/UsuarioEnGrupo/Infrastructure/Repositories/UsuarioEnGrupoRepository";
+
+// programas en variante de curso
+import { ProgramaEnVarianteCursoService } from "../../Core/ProgramaEnVarianteCurso/Application/Service";
+import type { IProgramaEnVarianteCursoRepository } from "../../Core/ProgramaEnVarianteCurso/Domain/IProgramaEnVarianteCursoRepository";
+import type { IProgramaEnVarianteCursoService } from "../../Core/ProgramaEnVarianteCurso/Domain/IProgramaEnVarianteCursoService";
+import { ProgramaEnVarianteCursoRepository } from "../../Core/ProgramaEnVarianteCurso/Infrastructure/Repositories/ProgramaEnVarianteCursoRepository";
+
+// programas en cursos escuela
+import { ProgramaEnCursoEscuelaService } from "../../Core/ProgramaEnCursoEscuela/Application/Service";
+import type { IProgramaEnCursoEscuelaRepository } from "../../Core/ProgramaEnCursoEscuela/Domain/IProgramaEnCursoEscuelaRepository";
+import type { IProgramaEnCursoEscuelaService } from "../../Core/ProgramaEnCursoEscuela/Domain/IProgramaEnCursoEscuelaService";
+import { ProgramaEnCursoEscuelaRepository } from "../../Core/ProgramaEnCursoEscuela/Infrastructure/Repositories/ProgramaEnCursoEscuelaRepository";
+
+// asesores de crm
+import { AsesorCrmService } from "../../Core/AsesorCrm/Application/Service";
+import type { IAsesorCrmRepository } from "../../Core/AsesorCrm/Domain/IAsesorCrmRepository";
+import type { IAsesorCrmService } from "../../Core/AsesorCrm/Domain/IAsesorCrmService";
+import { AsesorCrmRepository } from "../../Core/AsesorCrm/Infrastructure/Repositories/AsesorCrmRepository";
+
+// asesores de crm en centros de informacion
+import { AsesorCrmEnCentroInformacionService } from "../../Core/AsesorCrmEnCentroInformacion/Application/Service";
+import type { IAsesorCrmEnCentroInformacionRepository } from "../../Core/AsesorCrmEnCentroInformacion/Domain/IAsesorCrmEnCentroInformacionRepository";
+import type { IAsesorCrmEnCentroInformacionService } from "../../Core/AsesorCrmEnCentroInformacion/Domain/IAsesorCrmEnCentroInformacionService";
+import { AsesorCrmEnCentroInformacionRepository } from "../../Core/AsesorCrmEnCentroInformacion/Infrastructure/Repositories/AsesorCrmEnCentroInformacionRepository";
+
+// responsables de crm
+import { ResponsableCrmService } from "../../Core/ResponsableCrm/Application/Service";
+import type { IResponsableCrmRepository } from "../../Core/ResponsableCrm/Domain/IResponsableCrmRepository";
+import type { IResponsableCrmService } from "../../Core/ResponsableCrm/Domain/IResponsableCrmService";
+import { ResponsableCrmRepository } from "../../Core/ResponsableCrm/Infrastructure/Repositories/ResponsableCrmRepository";
+
+// asesores de estudiante
+import { AsesorEstudianteService } from "../../Core/AsesorEstudiante/Application/Service";
+import type { IAsesorEstudianteRepository } from "../../Core/AsesorEstudiante/Domain/IAsesorEstudianteRepository";
+import type { IAsesorEstudianteService } from "../../Core/AsesorEstudiante/Domain/IAsesorEstudianteService";
+import { AsesorEstudianteRepository } from "../../Core/AsesorEstudiante/Infrastructure/Repositories/AsesorEstudianteRepository";
+
+// responsables de asesores de estudiante
+import { ResponsableAsesorEstudianteService } from "../../Core/ResponsableAsesorEstudiante/Application/Service";
+import type { IResponsableAsesorEstudianteRepository } from "../../Core/ResponsableAsesorEstudiante/Domain/IResponsableAsesorEstudianteRepository";
+import type { IResponsableAsesorEstudianteService } from "../../Core/ResponsableAsesorEstudiante/Domain/IResponsableAsesorEstudianteService";
+import { ResponsableAsesorEstudianteRepository } from "../../Core/ResponsableAsesorEstudiante/Infrastructure/Repositories/ResponsableAsesorEstudianteRepository";
+
+// responsables en asesores de estudiante
+import { ResponsableEnAsesorEstudianteService } from "../../Core/ResponsableEnAsesorEstudiante/Application/Service";
+import type { IResponsableEnAsesorEstudianteRepository } from "../../Core/ResponsableEnAsesorEstudiante/Domain/IResponsableEnAsesorEstudianteRepository";
+import type { IResponsableEnAsesorEstudianteService } from "../../Core/ResponsableEnAsesorEstudiante/Domain/IResponsableEnAsesorEstudianteService";
+import { ResponsableEnAsesorEstudianteRepository } from "../../Core/ResponsableEnAsesorEstudiante/Infrastructure/Repositories/ResponsableEnAsesorEstudianteRepository";
+
 import { AsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Application/Service";
 import type { IAsignaturaEnVarianteCursoService } from "../../Core/AsignaturaEnVarianteCurso/Domain/IAsignaturaEnVarianteCursoService";
 import { VarianteCursoService } from "../../Core/VarianteCurso/Application/Service";
@@ -734,6 +800,116 @@ StartupBuilder.bind<ICentroInformacionRepository>(
 	.inSingletonScope();
 StartupBuilder.bind<ICentroInformacionService>(TYPES.CentroInformacionService)
 	.to(CentroInformacionService)
+	.inSingletonScope();
+
+// inscripciones
+StartupBuilder.bind<IInscripcionRepository>(TYPES.InscripcionRepository)
+	.to(InscripcionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IInscripcionService>(TYPES.InscripcionService)
+	.to(InscripcionService)
+	.inSingletonScope();
+
+// usuarios en grupos
+StartupBuilder.bind<IUsuarioEnGrupoRepository>(TYPES.UsuarioEnGrupoRepository)
+	.to(UsuarioEnGrupoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IUsuarioEnGrupoService>(TYPES.UsuarioEnGrupoService)
+	.to(UsuarioEnGrupoService)
+	.inSingletonScope();
+
+// usuarios
+StartupBuilder.bind<IUsuarioRepository>(TYPES.UsuarioRepository)
+	.to(UsuarioRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IUsuarioService>(TYPES.UsuarioService)
+	.to(UsuarioService)
+	.inSingletonScope();
+
+// programas en variante de curso
+StartupBuilder.bind<IProgramaEnVarianteCursoRepository>(
+	TYPES.ProgramaEnVarianteCursoRepository,
+)
+	.to(ProgramaEnVarianteCursoRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IProgramaEnVarianteCursoService>(
+	TYPES.ProgramaEnVarianteCursoService,
+)
+	.to(ProgramaEnVarianteCursoService)
+	.inSingletonScope();
+
+// programas en cursos escuela
+StartupBuilder.bind<IProgramaEnCursoEscuelaRepository>(
+	TYPES.ProgramaEnCursoEscuelaRepository,
+)
+	.to(ProgramaEnCursoEscuelaRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IProgramaEnCursoEscuelaService>(
+	TYPES.ProgramaEnCursoEscuelaService,
+)
+	.to(ProgramaEnCursoEscuelaService)
+	.inSingletonScope();
+
+// asesores de crm
+StartupBuilder.bind<IAsesorCrmRepository>(TYPES.AsesorCrmRepository)
+	.to(AsesorCrmRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsesorCrmService>(TYPES.AsesorCrmService)
+	.to(AsesorCrmService)
+	.inSingletonScope();
+
+// asesores de crm en centros de informacion
+StartupBuilder.bind<IAsesorCrmEnCentroInformacionRepository>(
+	TYPES.AsesorCrmEnCentroInformacionRepository,
+)
+	.to(AsesorCrmEnCentroInformacionRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsesorCrmEnCentroInformacionService>(
+	TYPES.AsesorCrmEnCentroInformacionService,
+)
+	.to(AsesorCrmEnCentroInformacionService)
+	.inSingletonScope();
+
+// responsables de crm
+StartupBuilder.bind<IResponsableCrmRepository>(TYPES.ResponsableCrmRepository)
+	.to(ResponsableCrmRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IResponsableCrmService>(TYPES.ResponsableCrmService)
+	.to(ResponsableCrmService)
+	.inSingletonScope();
+
+// asesores de estudiante
+StartupBuilder.bind<IAsesorEstudianteRepository>(
+	TYPES.AsesorEstudianteRepository,
+)
+	.to(AsesorEstudianteRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IAsesorEstudianteService>(TYPES.AsesorEstudianteService)
+	.to(AsesorEstudianteService)
+	.inSingletonScope();
+
+// responsables de asesores de estudiante
+StartupBuilder.bind<IResponsableAsesorEstudianteRepository>(
+	TYPES.ResponsableAsesorEstudianteRepository,
+)
+	.to(ResponsableAsesorEstudianteRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IResponsableAsesorEstudianteService>(
+	TYPES.ResponsableAsesorEstudianteService,
+)
+	.to(ResponsableAsesorEstudianteService)
+	.inSingletonScope();
+
+// responsables en asesores de estudiante
+StartupBuilder.bind<IResponsableEnAsesorEstudianteRepository>(
+	TYPES.ResponsableEnAsesorEstudianteRepository,
+)
+	.to(ResponsableEnAsesorEstudianteRepository)
+	.inSingletonScope();
+StartupBuilder.bind<IResponsableEnAsesorEstudianteService>(
+	TYPES.ResponsableEnAsesorEstudianteService,
+)
+	.to(ResponsableEnAsesorEstudianteService)
 	.inSingletonScope();
 
 export { StartupBuilder };

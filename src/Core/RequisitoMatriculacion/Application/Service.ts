@@ -56,6 +56,7 @@ export class RequisitoMatriculacionService
 		data,
 	}: UpdateRequisitoMatriculacionParams): Promise<IRequisitoMatriculacion> {
 		const dto = new UpdateRequisitoMatriculacionDTO(data);
+		const valid = dto.getData();
 
 		const requisito = await this._requisitoMatriculacionRepository.getById(id);
 
@@ -64,9 +65,22 @@ export class RequisitoMatriculacionService
 				"El requisito de matriculacion no existe",
 			);
 
+		if (valid.sedeId === requisito.sedeId) {
+			valid.sedeId = undefined;
+		}
+		if (valid.programaId === requisito.programaId) {
+			valid.programaId = undefined;
+		}
+		if (valid.modalidadId === requisito.modalidadId) {
+			valid.modalidadId = undefined;
+		}
+		if (valid.tipoDocumentoId === requisito.tipoDocumentoId) {
+			valid.tipoDocumentoId = undefined;
+		}
+
 		return this._requisitoMatriculacionRepository.update({
 			id,
-			data: dto.getData(),
+			data: valid,
 		});
 	}
 }

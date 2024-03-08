@@ -6,6 +6,7 @@ import { TYPES } from "../../../../Main/Inversify/types";
 // import type { ICreateNivelAcademico } from "../../Domain/ICreateNivelAcademico";
 import type { INivelAcademico } from "../../Domain/INivelAcademico";
 import type {
+	GetAllNivelesAcademicosParams,
 	INivelAcademicoRepository,
 	UpdateNivelAcademicoParams,
 } from "../../Domain/INivelAcademicoRepository";
@@ -14,8 +15,22 @@ import type {
 export class NivelAcademicoRepository implements INivelAcademicoRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	async getAll(): Promise<INivelAcademico[]> {
+	async getAll(
+		params?: GetAllNivelesAcademicosParams,
+	): Promise<INivelAcademico[]> {
+		const { filters } = params || {};
+		const { mallaId, nivelMallaId, ...plainFilters } = filters || {};
+
 		const niveles = await this._client.nivelAcademico.findMany({
+			where: filters
+				? {
+						...plainFilters,
+						nivelMalla: {
+							id: nivelMallaId,
+							mallaId,
+						},
+					}
+				: undefined,
 			include: {
 				sesion: {
 					include: {

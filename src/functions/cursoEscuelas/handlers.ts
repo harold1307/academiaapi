@@ -1,4 +1,5 @@
 import { app } from "@azure/functions";
+
 import { CursoEscuelaController } from "../../Core/CursoEscuela/Application/Controller";
 
 const controller = new CursoEscuelaController();
@@ -38,4 +39,17 @@ app.post("cursoEscuelasCreateAsignatura", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.cursoEscuelasCreateAsignatura(req, ctx),
 	route: "curso-escuelas/{cursoEscuelaId}/asignaturas/{asignaturaId}",
+});
+
+// programas
+app.post("cursoEscuelasCreateProgramaEnCurso", {
+	authLevel: "anonymous",
+	handler: (req, ctx) =>
+		controller.cursoEscuelasCreateProgramaEnCurso(req, ctx),
+	route: "curso-escuelas/{cursoEscuelaId}/programas",
+});
+app.get("cursoEscuelasGetByIdWithProgramas", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.cursoEscuelasGetByIdWithProgramas(req, ctx),
+	route: "curso-escuelas/{cursoEscuelaId}/programas",
 });

@@ -1,4 +1,6 @@
 import type { ICronogramaMatriculacion } from "../../CronogramaMatriculacion/Domain/ICronogramaMatriculacion";
+import type { IRequisitoMatriculacion } from "../../RequisitoMatriculacion/Domain/IRequisitoMatriculacion";
+import type { ISubPeriodoLectivo } from "../../SubPeriodoLectivo/Domain/ISubPeriodoLectivo";
 import type { ICreatePeriodoLectivo } from "./ICreatePeriodoLectivo";
 import type { IPeriodoLectivo } from "./IPeriodoLectivo";
 import type { UpdatePeriodoLectivoParams } from "./IPeriodoLectivoRepository";
@@ -14,10 +16,19 @@ export type IPeriodoLectivoService = {
 
 	getPeriodoLectivoByIdWithCronogramasMatriculacion(id: string): Promise<
 		| (IPeriodoLectivo & {
-				cronogramasMatriculacion: Omit<
-					ICronogramaMatriculacion,
-					"sede" | "programa" | "modalidad" | "nivel"
-				>[];
+				cronogramasMatriculacion: ICronogramaMatriculacion[];
+		  })
+		| null
+	>;
+	getPeriodoLectivoByIdWithSubPeriodos(id: string): Promise<
+		| (IPeriodoLectivo & {
+				subPeriodos: ISubPeriodoLectivo[];
+		  })
+		| null
+	>;
+	getPeriodoLectivoByIdWithRequisitosMatriculacion(id: string): Promise<
+		| (IPeriodoLectivo & {
+				requisitosMatriculacion: IRequisitoMatriculacion[];
 		  })
 		| null
 	>;

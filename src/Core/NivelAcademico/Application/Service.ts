@@ -7,8 +7,12 @@ import type {
 	INivelAcademicoRepository,
 	UpdateNivelAcademicoParams,
 } from "../Domain/INivelAcademicoRepository";
-import type { INivelAcademicoService } from "../Domain/INivelAcademicoService";
+import type {
+	GetAllNivelesAcademicosParams,
+	INivelAcademicoService,
+} from "../Domain/INivelAcademicoService";
 import { CreateNivelAcademicoDTO } from "../Infrastructure/DTOs/CreateNivelAcademicoDTO";
+import { NivelAcademicoQueryFilterDTO } from "../Infrastructure/DTOs/NivelAcademicoQueryFilterDTO";
 import { UpdateNivelAcademicoDTO } from "../Infrastructure/DTOs/UpdateNivelAcademicoDTO";
 
 @injectable()
@@ -18,8 +22,16 @@ export class NivelAcademicoService implements INivelAcademicoService {
 		private _nivelAcademicoRepository: INivelAcademicoRepository,
 	) {}
 
-	getAllNivelAcademicos(): Promise<INivelAcademico[]> {
-		return this._nivelAcademicoRepository.getAll();
+	getAllNivelesAcademicos(
+		params?: GetAllNivelesAcademicosParams,
+	): Promise<INivelAcademico[]> {
+		const { filters } = params || {};
+
+		const filterDTO = new NivelAcademicoQueryFilterDTO(filters);
+
+		return this._nivelAcademicoRepository.getAll({
+			filters: filterDTO.getData(),
+		});
 	}
 
 	getNivelAcademicoById(id: string): Promise<INivelAcademico | null> {

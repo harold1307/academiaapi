@@ -30,4 +30,12 @@ export type ICursoEscuelaController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
+	cursoEscuelasCreateProgramaEnCurso(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
+	cursoEscuelasGetByIdWithProgramas(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 };

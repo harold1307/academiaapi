@@ -9,9 +9,9 @@ const schema = z
 		tipo: z
 			.enum(["AULA", "LABORATORIO", "TALLER", "SALON"] as const)
 			.optional(),
-		estado: z.boolean().optional(),
-		capacidad: z.number().min(0).int().optional(),
-		entornoVirtual: z.boolean().optional(),
+		estado: z.boolean({ coerce: true }).optional(),
+		capacidad: z.number({ coerce: true }).min(0).int().optional(),
+		entornoVirtual: z.boolean({ coerce: true }).optional(),
 		nombre: z.string().min(1).optional(),
 		sedeId: z.string().uuid().optional(),
 	})

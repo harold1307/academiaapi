@@ -3,6 +3,7 @@ import type { DefaultArgs } from "@prisma/client/runtime/library";
 
 import type { ICreateCursoEscuela } from "./ICreateCursoEscuela";
 import type { ICursoEscuela } from "./ICursoEscuela";
+import type { ICursoEscuelaWithProgramas } from "./ICursoEscuelaWithProgramas";
 import type { IUpdateCursoEscuela } from "./IUpdateCursoEscuela";
 
 export type UpdateCursoEscuelaParams = {
@@ -30,4 +31,5 @@ export type ICursoEscuelaRepository = {
 			>,
 		) => Promise<ICursoEscuela>,
 	): Promise<ICursoEscuela>;
+	withProgramasGetById(id: string): Promise<ICursoEscuelaWithProgramas | null>;
 };
