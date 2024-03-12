@@ -40,6 +40,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 						sede: true,
 					},
 				},
+				nivelMalla: true,
 			},
 		});
 
@@ -64,6 +65,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 						sede: true,
 					},
 				},
+				nivelMalla: true,
 			},
 		});
 
@@ -95,6 +97,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 						sede: true,
 					},
 				},
+				nivelMalla: true,
 			},
 		});
 
@@ -168,6 +171,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 						sede: true,
 					},
 				},
+				nivelMalla: true,
 			},
 		});
 

@@ -6,5 +6,5 @@ import type { IUbicacion } from "../../Ubicacion/Domain/IUbicacion";
 export type IMateriaEnHorario = MateriaEnHorario & {
 	ubicacion: IUbicacion;
 	turno: ITurno;
-	nivelAcademico: INivelAcademico;
+	nivelAcademico: Omit<INivelAcademico, "nivelMalla">;
 };

@@ -99,6 +99,7 @@ export class NivelAcademicoService implements INivelAcademicoService {
 							sede: true,
 						},
 					},
+					nivelMalla: true,
 				},
 			});
 
