@@ -19,7 +19,8 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 		params?: GetAllNivelesAcademicosParams,
 	): Promise<INivelAcademico[]> {
 		const { filters } = params || {};
-		const { mallaId, nivelMallaId, ...plainFilters } = filters || {};
+		const { mallaId, nivelMallaId, programaId, ...plainFilters } =
+			filters || {};
 
 		const niveles = await this._client.nivelAcademico.findMany({
 			where: filters
@@ -28,6 +29,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 						nivelMalla: {
 							id: nivelMallaId,
 							mallaId,
+							...(programaId ? { malla: { programaId } } : {}),
 						},
 					}
 				: undefined,
