@@ -9,42 +9,23 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-model PracticaPreProfesionalEnMalla {
-  id                           String          @id @default(uuid())
-  requiereAutorizacion         Boolean
-  horas                        Int?
-  creditos                     Float?
-  registroDesdeNivelId         String?         @unique
-  registroPracticasAdelantadas Boolean
-  mallaCurricularId            String          @unique
-  createdAt                    DateTime        @default(now())
-  updatedAt                    DateTime        @default(now()) @updatedAt
-  mallaCurricular              MallaCurricular @relation(fields: [mallaCurricularId], references: [id], onDelete: Cascade)
-  registroDesdeNivel           NivelMalla?     @relation(fields: [registroDesdeNivelId], references: [id], onDelete: Cascade)
-
-  @@map("practicas_pre_profesionales_mallas")
-}
-
-model PracticaComunitariaEnMalla {
-  id                           String          @id @default(uuid())
-  requiereAutorizacion         Boolean
-  horas                        Int?
-  creditos                     Float?
-  registroDesdeNivelId         String?         @unique
-  registroPracticasAdelantadas Boolean
-  registroMultiple             Boolean
-  mallaCurricularId            String          @unique
-  createdAt                    DateTime        @default(now())
-  updatedAt                    DateTime        @default(now()) @updatedAt
-  mallaCurricular              MallaCurricular @relation(fields: [mallaCurricularId], references: [id], onDelete: Cascade)
-  registroDesdeNivel           NivelMalla?     @relation(fields: [registroDesdeNivelId], references: [id], onDelete: Cascade)
-
-  @@map("practicas_comunitarias_mallas")
-}
-
 model MallaCurricular {
-  id                                      String                         @id @default(uuid())
-  estado                                  Boolean                        @default(true)
+  id String @id @default(uuid())
+
+  practicaComunitariaRequiereAutorizacion         Boolean?
+  practicaComunitariaHoras                        Float?
+  practicaComunitariaCreditos                     Float?
+  practicaComunitariaRegistroDesdeNivel           Int?
+  practicaComunitariaRegistroPracticasAdelantadas Boolean?
+  practicaComunitariaRegistroMultiple             Boolean?
+
+  practicaPreProfesionalRequiereAutorizacion         Boolean?
+  practicaPreProfesionalHoras                        Float?
+  practicaPreProfesionalCreditos                     Float?
+  practicaPreProfesionalRegistroDesdeNivel           Int?
+  practicaPreProfesionalRegistroPracticasAdelantadas Boolean?
+
+  estado                                  Boolean                   @default(true)
   tipoDuracion                            TipoDuracion?
   codigo                                  String?
   fechaAprobacion                         DateTime
@@ -62,16 +43,14 @@ model MallaCurricular {
   tituloObtenidoId                        String?
   modalidadId                             String
   programaId                              String
-  createdAt                               DateTime                       @default(now())
-  updatedAt                               DateTime                       @default(now()) @updatedAt
+  createdAt                               DateTime                  @default(now())
+  updatedAt                               DateTime                  @default(now()) @updatedAt
   modulos                                 AsignaturaModuloEnMalla[]
   lugaresEjecucion                        LugarEjecucion[]
-  modalidad                               Modalidad                      @relation(fields: [modalidadId], references: [id])
-  programa                                Programa                       @relation(fields: [programaId], references: [id])
-  tituloObtenido                          TituloObtenido?                @relation(fields: [tituloObtenidoId], references: [id])
+  modalidad                               Modalidad                 @relation(fields: [modalidadId], references: [id])
+  programa                                Programa                  @relation(fields: [programaId], references: [id])
+  tituloObtenido                          TituloObtenido?           @relation(fields: [tituloObtenidoId], references: [id])
   niveles                                 NivelMalla[]
-  practicaComunitaria                     PracticaComunitariaEnMalla?
-  practicaPreProfesional                  PracticaPreProfesionalEnMalla?
   filtrosVariantesCurso                   ProgramaEnVarianteCurso[]
   filtrosCursoEscuela                     ProgramaEnCursoEscuela[]
 
@@ -138,18 +117,16 @@ model AsignaturaEnNivelMalla {
 }
 
 model NivelMalla {
-  id                     String                         @id @default(uuid())
-  nivel                  Int
-  mallaId                String
-  tituloObtenidoId       String?
-  createdAt              DateTime                       @default(now())
-  updatedAt              DateTime                       @default(now()) @updatedAt
-  asignaturas            AsignaturaEnNivelMalla[]
-  nivelesAcademicos      NivelAcademico[]
-  malla                  MallaCurricular                @relation(fields: [mallaId], references: [id], onDelete: Cascade)
-  tituloObtenido         TituloObtenido?                @relation(fields: [tituloObtenidoId], references: [id])
-  practicaComunitaria    PracticaComunitariaEnMalla?
-  practicaPreProfesional PracticaPreProfesionalEnMalla?
+  id                String                   @id @default(uuid())
+  nivel             Int
+  mallaId           String
+  tituloObtenidoId  String?
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @default(now()) @updatedAt
+  asignaturas       AsignaturaEnNivelMalla[]
+  nivelesAcademicos NivelAcademico[]
+  malla             MallaCurricular          @relation(fields: [mallaId], references: [id], onDelete: Cascade)
+  tituloObtenido    TituloObtenido?          @relation(fields: [tituloObtenidoId], references: [id])
 
   @@unique([nivel, mallaId])
   @@index([mallaId], map: "niveles_mallas_mallaId_fkey")
