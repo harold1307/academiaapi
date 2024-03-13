@@ -19,7 +19,7 @@ export type IVarianteCursoService = {
 	createVarianteCurso(
 		params: ICreateVarianteCursoParams,
 	): Promise<IVarianteCursoWithCurso>;
-
+	getAllVariantesCurso(): Promise<IVarianteCurso[]>;
 	updateVarianteCurso(
 		params: IUpdateVarianteCursoByIdParams,
 	): Promise<IVarianteCurso>;

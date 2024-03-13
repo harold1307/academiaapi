@@ -13,6 +13,10 @@ export type IVarianteCursoController = {
 		req: HttpRequest,
 		ctx: InvocationContext,
 	): Promise<HttpResponseInit>;
+	variantesCursoGetAll(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit>;
 
 	variantesCursoByIdGetAsignaturas(
 		req: HttpRequest,

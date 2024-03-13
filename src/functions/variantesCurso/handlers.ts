@@ -10,6 +10,12 @@ app.get("byIdGetAsignaturas", {
 	route: "variantes-curso/{varianteCursoId}/asignaturas",
 });
 
+app.get("variantesCursoGetAll", {
+	authLevel: "anonymous",
+	handler: (req, ctx) => controller.variantesCursoGetAll(req, ctx),
+	route: "variantes-curso",
+});
+
 app.patch("variantesCursoUpdateById", {
 	authLevel: "anonymous",
 	handler: (req, ctx) => controller.variantesCursoUpdateById(req, ctx),

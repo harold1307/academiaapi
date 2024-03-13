@@ -5,7 +5,7 @@ import type { ZodInferSchema } from "../../../../types";
 import type { ICreateCorte } from "../../Domain/ICreateCorte";
 
 const schema = z.object<ZodInferSchema<ICreateCorte>>({
-	nombre: z.string(),
+	nombre: z.string().toUpperCase(),
 });
 
 class CreateCorteDTOError extends BaseDTOError<ICreateCorte> {

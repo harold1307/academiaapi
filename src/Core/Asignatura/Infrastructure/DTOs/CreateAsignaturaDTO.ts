@@ -5,8 +5,8 @@ import type { ZodInferSchema } from "../../../../types";
 import type { ICreateAsignatura } from "../../Domain/ICreateAsignatura";
 
 const schema = z.object<ZodInferSchema<ICreateAsignatura>>({
-	nombre: z.string(),
-	codigo: z.string().nullable(),
+	nombre: z.string().toUpperCase(),
+	codigo: z.string().toUpperCase().nullable(),
 });
 
 class CreateAsignaturaDTOError extends BaseDTOError<ICreateAsignatura> {

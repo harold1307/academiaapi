@@ -46,6 +46,10 @@ export class VarianteCursoRepository implements IVarianteCursoRepository {
 		};
 	}
 
+	getAll(): Promise<IVarianteCurso[]> {
+		return this._client.varianteCurso.findMany();
+	}
+
 	getById(id: string): Promise<IVarianteCurso | null> {
 		return this._client.varianteCurso.findUnique({
 			where: {

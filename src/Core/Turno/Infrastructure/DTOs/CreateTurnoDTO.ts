@@ -5,7 +5,7 @@ import type { ZodInferSchema } from "../../../../types";
 import type { ICreateTurno } from "../../Domain/ICreateTurno";
 
 const schema = z.object<ZodInferSchema<ICreateTurno>>({
-	horas: z.number().int(),
+	horas: z.number(),
 	comienza: z.date(),
 	termina: z.date(),
 	sesionId: z.string().uuid(),

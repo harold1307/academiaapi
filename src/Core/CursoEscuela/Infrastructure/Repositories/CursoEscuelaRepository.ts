@@ -6,6 +6,7 @@ import { TYPES } from "../../../../Main/Inversify/types";
 import type { ICreateCursoEscuela } from "../../Domain/ICreateCursoEscuela";
 import type { ICursoEscuela } from "../../Domain/ICursoEscuela";
 import type {
+	GetAllCursoEscuelasParams,
 	ICursoEscuelaRepository,
 	UpdateCursoEscuelaParams,
 } from "../../Domain/ICursoEscuelaRepository";
@@ -15,8 +16,11 @@ import type { ICursoEscuelaWithProgramas } from "../../Domain/ICursoEscuelaWithP
 export class CursoEscuelaRepository implements ICursoEscuelaRepository {
 	constructor(@inject(TYPES.PrismaClient) private _client: PrismaClient) {}
 
-	async getAll(): Promise<ICursoEscuela[]> {
-		const cursos = await this._client.cursoEscuela.findMany();
+	async getAll(params?: GetAllCursoEscuelasParams): Promise<ICursoEscuela[]> {
+		const { filters } = params || {};
+		const cursos = await this._client.cursoEscuela.findMany({
+			where: filters,
+		});
 
 		return cursos.map(({ ...rest }) => ({
 			...rest,

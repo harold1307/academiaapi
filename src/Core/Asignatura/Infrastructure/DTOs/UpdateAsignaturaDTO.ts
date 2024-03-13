@@ -5,8 +5,8 @@ import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateAsignatura } from "../../Domain/IUpdateAsignatura";
 
 const schema = z.object<ZodInferSchema<IUpdateAsignatura>>({
-	codigo: z.string().nullable().optional(),
-	nombre: z.string().optional(),
+	codigo: z.string().toUpperCase().nullable().optional(),
+	nombre: z.string().toUpperCase().optional(),
 });
 
 class UpdateAsignaturaDTOError extends BaseDTOError<IUpdateAsignatura> {
