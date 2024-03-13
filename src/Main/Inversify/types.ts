@@ -91,18 +91,6 @@ export const TYPES = {
 		"AsignaturaModuloEnMallaRepository",
 	),
 	AsignaturaModuloEnMallaService: Symbol.for("AsignaturaModuloEnMallaService"),
-	PracticaPreProfesionalEnMallaRepository: Symbol.for(
-		"PracticaPreProfesionalEnMallaRepository",
-	),
-	PracticaPreProfesionalEnMallaService: Symbol.for(
-		"PracticaPreProfesionalEnMallaService",
-	),
-	PracticaComunitariaEnMallaRepository: Symbol.for(
-		"PracticaComunitariaEnMallaRepository",
-	),
-	PracticaComunitariaEnMallaService: Symbol.for(
-		"PracticaComunitariaEnMallaService",
-	),
 	NivelAcademicoRepository: Symbol.for("NivelAcademicoRepository"),
 	NivelAcademicoService: Symbol.for("NivelAcademicoService"),
 	MateriaEnNivelAcademicoRepository: Symbol.for(

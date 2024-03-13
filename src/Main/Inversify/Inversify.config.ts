@@ -195,18 +195,6 @@ import type { IAsignaturaModuloEnMallaRepository } from "../../Core/AsignaturaMo
 import type { IAsignaturaModuloEnMallaService } from "../../Core/AsignaturaModuloEnMalla/Domain/IAsignaturaModuloEnMallaService";
 import { AsignaturaModuloEnMallaRepository } from "../../Core/AsignaturaModuloEnMalla/Infrastructure/Repositories/AsignaturaModuloEnMallaRepository";
 
-// practicas comunitarias en malla
-import { PracticaComunitariaEnMallaService } from "../../Core/PracticaComunitariaEnMalla/Application/Service";
-import type { IPracticaComunitariaEnMallaRepository } from "../../Core/PracticaComunitariaEnMalla/Domain/IPracticaComunitariaEnMallaRepository";
-import type { IPracticaComunitariaEnMallaService } from "../../Core/PracticaComunitariaEnMalla/Domain/IPracticaComunitariaEnMallaService";
-import { PracticaComunitariaEnMallaRepository } from "../../Core/PracticaComunitariaEnMalla/Infrastructure/Repositories/PracticaComunitariaEnMallaRepository";
-
-// practicas pre profesionales en malla
-import { PracticaPreProfesionalEnMallaService } from "../../Core/PracticaPreProfesionalEnMalla/Application/Service";
-import type { IPracticaPreProfesionalEnMallaRepository } from "../../Core/PracticaPreProfesionalEnMalla/Domain/IPracticaPreProfesionalEnMallaRepository";
-import type { IPracticaPreProfesionalEnMallaService } from "../../Core/PracticaPreProfesionalEnMalla/Domain/IPracticaPreProfesionalEnMallaService";
-import { PracticaPreProfesionalEnMallaRepository } from "../../Core/PracticaPreProfesionalEnMalla/Infrastructure/Repositories/PracticaPreProfesionalEnMallaRepository";
-
 // niveles academicos
 import { NivelAcademicoService } from "../../Core/NivelAcademico/Application/Service";
 import type { INivelAcademicoRepository } from "../../Core/NivelAcademico/Domain/INivelAcademicoRepository";
@@ -662,30 +650,6 @@ StartupBuilder.bind<IAsignaturaModuloEnMallaService>(
 	TYPES.AsignaturaModuloEnMallaService,
 )
 	.to(AsignaturaModuloEnMallaService)
-	.inSingletonScope();
-
-// practicas comunitarias en malla
-StartupBuilder.bind<IPracticaComunitariaEnMallaRepository>(
-	TYPES.PracticaComunitariaEnMallaRepository,
-)
-	.to(PracticaComunitariaEnMallaRepository)
-	.inSingletonScope();
-StartupBuilder.bind<IPracticaComunitariaEnMallaService>(
-	TYPES.PracticaComunitariaEnMallaService,
-)
-	.to(PracticaComunitariaEnMallaService)
-	.inSingletonScope();
-
-// practicas pre profesionales en malla
-StartupBuilder.bind<IPracticaPreProfesionalEnMallaRepository>(
-	TYPES.PracticaPreProfesionalEnMallaRepository,
-)
-	.to(PracticaPreProfesionalEnMallaRepository)
-	.inSingletonScope();
-StartupBuilder.bind<IPracticaPreProfesionalEnMallaService>(
-	TYPES.PracticaPreProfesionalEnMallaService,
-)
-	.to(PracticaPreProfesionalEnMallaService)
 	.inSingletonScope();
 
 // niveles academicos

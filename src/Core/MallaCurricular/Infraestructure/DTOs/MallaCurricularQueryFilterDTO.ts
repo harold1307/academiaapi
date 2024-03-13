@@ -33,6 +33,38 @@ const schema = z
 		observaciones: z.string().optional(),
 
 		tituloObtenidoId: z.string().uuid().optional(),
+
+		practicaComunitariaRequiereAutorizacion: z
+			.boolean({ coerce: true })
+			.optional(),
+		practicaComunitariaHoras: z.number().optional(),
+		practicaComunitariaCreditos: z.number().optional(),
+		practicaComunitariaRegistroDesdeNivel: z
+			.number()
+			.int()
+
+			.optional(),
+		practicaComunitariaRegistroPracticasAdelantadas: z
+			.boolean()
+
+			.optional(),
+		practicaComunitariaRegistroMultiple: z.boolean({ coerce: true }).optional(),
+
+		practicaPreProfesionalRequiereAutorizacion: z
+			.boolean()
+
+			.optional(),
+		practicaPreProfesionalHoras: z.number().optional(),
+		practicaPreProfesionalCreditos: z.number().optional(),
+		practicaPreProfesionalRegistroDesdeNivel: z
+			.number()
+			.int()
+
+			.optional(),
+		practicaPreProfesionalRegistroPracticasAdelantadas: z
+			.boolean()
+
+			.optional(),
 	})
 	.optional();
 

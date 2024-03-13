@@ -1,5 +1,3 @@
-import type { ICreatePracticaComunitariaEnMalla } from "../../PracticaComunitariaEnMalla/Domain/ICreatePracticaComunitariaEnMalla";
-import type { ICreatePracticaPreProfesionalEnMalla } from "../../PracticaPreProfesionalEnMalla/Domain/ICreatePracticaPreProfesionalEnMalla";
 import type { ICreateMallaCurricular } from "./ICreateMallaCurricular";
 import type { ILugarEjecucion } from "./ILugarEjecucion";
 import type { IMallaCurricular } from "./IMallaCurricular";
@@ -11,16 +9,7 @@ export type MallaCurricularWithLugaresEjecucion = IMallaCurricular & {
 
 export type IMallaCurricularService = {
 	createMallaCurricular: (
-		data: ICreateMallaCurricular & {
-			practicasPreProfesionales: Omit<
-				ICreatePracticaPreProfesionalEnMalla,
-				"mallaCurricularId"
-			> | null;
-			practicasComunitarias: Omit<
-				ICreatePracticaComunitariaEnMalla,
-				"mallaCurricularId"
-			> | null;
-		},
+		data: ICreateMallaCurricular,
 	) => Promise<IMallaCurricular>;
 	getAllMallasCurriculares(
 		filters?: Record<string, string>,

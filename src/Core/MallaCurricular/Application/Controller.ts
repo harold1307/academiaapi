@@ -401,6 +401,29 @@ const updateBodySchema = z.object<
 	observaciones: z.string().nullable().optional(),
 
 	tituloObtenidoId: z.string().uuid().nullable().optional(),
+
+	practicaComunitariaRequiereAutorizacion: z.boolean().nullable().optional(),
+	practicaComunitariaHoras: z.number().nullable().optional(),
+	practicaComunitariaCreditos: z.number().nullable().optional(),
+	practicaComunitariaRegistroDesdeNivel: z.number().int().nullable().optional(),
+	practicaComunitariaRegistroPracticasAdelantadas: z
+		.boolean()
+		.nullable()
+		.optional(),
+	practicaComunitariaRegistroMultiple: z.boolean().nullable().optional(),
+
+	practicaPreProfesionalRequiereAutorizacion: z.boolean().nullable().optional(),
+	practicaPreProfesionalHoras: z.number().nullable().optional(),
+	practicaPreProfesionalCreditos: z.number().nullable().optional(),
+	practicaPreProfesionalRegistroDesdeNivel: z
+		.number()
+		.int()
+		.nullable()
+		.optional(),
+	practicaPreProfesionalRegistroPracticasAdelantadas: z
+		.boolean()
+		.nullable()
+		.optional(),
 });
 
 const createLugarEjecucionBodySchema = z.object<
