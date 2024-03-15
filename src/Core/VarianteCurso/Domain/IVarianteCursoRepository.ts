@@ -17,6 +17,7 @@ export type ICreateVarianteCursoParams = {
 
 export type IVarianteCursoRepository = {
 	create(params: ICreateVarianteCursoParams): Promise<IVarianteCursoWithCurso>;
+	getAll(): Promise<IVarianteCurso[]>;
 	getById(id: string): Promise<IVarianteCurso | null>;
 	updateById(params: IUpdateVarianteCursoByIdParams): Promise<IVarianteCurso>;
 	deleteById(id: string): Promise<IVarianteCurso>;

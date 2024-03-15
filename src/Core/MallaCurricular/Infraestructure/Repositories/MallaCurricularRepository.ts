@@ -55,8 +55,6 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 				...(filters || {}),
 			},
 			include: {
-				practicaComunitaria: true,
-				practicaPreProfesional: true,
 				tituloObtenido: true,
 				niveles: {
 					include: {
@@ -142,8 +140,6 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 		const malla = await this._client.mallaCurricular.findUnique({
 			where: { id },
 			include: {
-				practicaComunitaria: true,
-				practicaPreProfesional: true,
 				tituloObtenido: true,
 				modalidad: true,
 				niveles: {
@@ -242,8 +238,6 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 			},
 			include: {
 				modalidad: true,
-				practicaComunitaria: true,
-				practicaPreProfesional: true,
 				tituloObtenido: true,
 				niveles: {
 					include: {
@@ -327,8 +321,6 @@ export class MallaCurricularRepository implements IMallaCurricularRepository {
 		const malla = await this._client.mallaCurricular.delete({
 			where: { id },
 			include: {
-				practicaComunitaria: true,
-				practicaPreProfesional: true,
 				tituloObtenido: true,
 				niveles: {
 					include: {

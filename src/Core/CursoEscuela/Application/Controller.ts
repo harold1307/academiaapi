@@ -74,7 +74,9 @@ export class CursoEscuelaController implements ICursoEscuelaController {
 		try {
 			ctx.log(`Http function processed request for url "${req.url}"`);
 
-			const cursos = await this._cursoEscuelaService.getAllCursoEscuelas();
+			const cursos = await this._cursoEscuelaService.getAllCursoEscuelas({
+				filters: Object.fromEntries(req.query.entries()),
+			});
 
 			return CommonResponse.successful({ data: cursos });
 		} catch (error) {

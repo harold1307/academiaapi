@@ -2,10 +2,6 @@ import type { PrismaClient } from "@prisma/client";
 import { inject, injectable } from "inversify";
 
 import { TYPES } from "../../../Main/Inversify/types";
-import type { ICreatePracticaComunitariaEnMalla } from "../../PracticaComunitariaEnMalla/Domain/ICreatePracticaComunitariaEnMalla";
-import { CreatePracticaComunitariaEnMallaDTO } from "../../PracticaComunitariaEnMalla/Infrastructure/DTOs/CreatePracticaComunitariaEnMallaDTO";
-import type { ICreatePracticaPreProfesionalEnMalla } from "../../PracticaPreProfesionalEnMalla/Domain/ICreatePracticaPreProfesionalEnMalla";
-import { CreatePracticaPreProfesionalEnMallaDTO } from "../../PracticaPreProfesionalEnMalla/Infrastructure/DTOs/CreatePracticaPreProfesionalEnMallaDTO";
 import type { ICreateMallaCurricular } from "../Domain/ICreateMallaCurricular";
 import type { ILugarEjecucion } from "../Domain/ILugarEjecucion";
 import type { ILugarEjecucionRepository } from "../Domain/ILugarEjecucionRepository";
@@ -34,20 +30,7 @@ export class MallaCurricularService implements IMallaCurricularService {
 		@inject(TYPES.PrismaClient) private _client: PrismaClient,
 	) {}
 
-	async createMallaCurricular({
-		practicasComunitarias,
-		practicasPreProfesionales,
-		...data
-	}: ICreateMallaCurricular & {
-		practicasPreProfesionales: Omit<
-			ICreatePracticaPreProfesionalEnMalla,
-			"mallaCurricularId"
-		> | null;
-		practicasComunitarias: Omit<
-			ICreatePracticaComunitariaEnMalla,
-			"mallaCurricularId"
-		> | null;
-	}) {
+	async createMallaCurricular(data: ICreateMallaCurricular) {
 		const dto = new CreateMallaCurricularDTO(data);
 		const {
 			niveles: nivelesNum,
@@ -80,75 +63,9 @@ export class MallaCurricularService implements IMallaCurricularService {
 				},
 			});
 
-			if (practicasPreProfesionales) {
-				const preProfesionalDto = new CreatePracticaPreProfesionalEnMallaDTO({
-					...practicasPreProfesionales,
-					mallaCurricularId: newMalla.id,
-				});
-
-				const {
-					mallaCurricularId: preProfesionalMallaId,
-					registroDesdeNivel: preProfesionalRegistroDesdeNivel,
-					...preProfesionalRest
-				} = preProfesionalDto.getData();
-
-				await tx.practicaPreProfesionalEnMalla.create({
-					data: {
-						...preProfesionalRest,
-						mallaCurricular: {
-							connect: {
-								id: preProfesionalMallaId,
-							},
-						},
-						registroDesdeNivel: preProfesionalRegistroDesdeNivel
-							? {
-									connect: {
-										nivel_mallaId: {
-											nivel: preProfesionalRegistroDesdeNivel,
-											mallaId: preProfesionalMallaId,
-										},
-									},
-								}
-							: undefined,
-					},
-				});
-			}
-
-			if (practicasComunitarias) {
-				const comunitariaDto = new CreatePracticaComunitariaEnMallaDTO({
-					...practicasComunitarias,
-					mallaCurricularId: newMalla.id,
-				});
-
-				const {
-					mallaCurricularId: comunitariaMallaId,
-					registroDesdeNivel: comunitariaRegistroDesdeNivel,
-					...comunitariaRest
-				} = comunitariaDto.getData();
-
-				await tx.practicaComunitariaEnMalla.create({
-					data: {
-						...comunitariaRest,
-						mallaCurricular: { connect: { id: comunitariaMallaId } },
-						registroDesdeNivel: comunitariaRegistroDesdeNivel
-							? {
-									connect: {
-										nivel_mallaId: {
-											nivel: comunitariaRegistroDesdeNivel,
-											mallaId: comunitariaMallaId,
-										},
-									},
-								}
-							: undefined,
-					},
-				});
-			}
-
 			const malla = await tx.mallaCurricular.findUnique({
 				where: { id: newMalla.id },
 				include: {
-					practicaComunitaria: true,
-					practicaPreProfesional: true,
 					tituloObtenido: true,
 					modalidad: true,
 					niveles: {
@@ -439,8 +356,6 @@ export class MallaCurricularService implements IMallaCurricularService {
 						sede: true,
 					},
 				},
-				practicaComunitaria: true,
-				practicaPreProfesional: true,
 				tituloObtenido: true,
 				modalidad: true,
 				niveles: {

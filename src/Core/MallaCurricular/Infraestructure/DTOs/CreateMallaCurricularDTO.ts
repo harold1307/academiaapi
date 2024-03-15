@@ -27,6 +27,19 @@ const schema = z
 		programaId: z.string().uuid(),
 
 		niveles: z.number().min(1).max(10),
+
+		practicaComunitariaRequiereAutorizacion: z.boolean().nullable(),
+		practicaComunitariaHoras: z.number().nullable(),
+		practicaComunitariaCreditos: z.number().nullable(),
+		practicaComunitariaRegistroDesdeNivel: z.number().int().nullable(),
+		practicaComunitariaRegistroPracticasAdelantadas: z.boolean().nullable(),
+		practicaComunitariaRegistroMultiple: z.boolean().nullable(),
+
+		practicaPreProfesionalRequiereAutorizacion: z.boolean().nullable(),
+		practicaPreProfesionalHoras: z.number().nullable(),
+		practicaPreProfesionalCreditos: z.number().nullable(),
+		practicaPreProfesionalRegistroDesdeNivel: z.number().int().nullable(),
+		practicaPreProfesionalRegistroPracticasAdelantadas: z.boolean().nullable(),
 	})
 	.superRefine(({ cantidadArrastres, porcentajeMinimoPasarNivel }, ctx) => {
 		if (cantidadArrastres && porcentajeMinimoPasarNivel) {

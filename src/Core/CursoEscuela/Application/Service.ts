@@ -9,10 +9,12 @@ import type {
 } from "../Domain/ICursoEscuelaRepository";
 import type {
 	CreateCursoEscuelaByPlantillaTransactionParams,
+	GetAllCursoEscuelasParams,
 	ICursoEscuelaService,
 } from "../Domain/ICursoEscuelaService";
 import type { ICursoEscuelaWithProgramas } from "../Domain/ICursoEscuelaWithProgramas";
 import { CreateCursoEscuelaDTO } from "../Infrastructure/DTOs/CreateCursoEscuelaDTO";
+import { CursoEscuelaQueryFilterDTO } from "../Infrastructure/DTOs/CursoEscuelaQueryFilterDTO";
 
 @injectable()
 export class CursoEscuelaService implements ICursoEscuelaService {
@@ -21,8 +23,16 @@ export class CursoEscuelaService implements ICursoEscuelaService {
 		private _cursoEscuelaRepository: ICursoEscuelaRepository,
 	) {}
 
-	getAllCursoEscuelas(): Promise<ICursoEscuela[]> {
-		return this._cursoEscuelaRepository.getAll();
+	getAllCursoEscuelas(
+		params?: GetAllCursoEscuelasParams,
+	): Promise<ICursoEscuela[]> {
+		const { filters } = params || {};
+
+		const filterDTO = new CursoEscuelaQueryFilterDTO(filters);
+
+		return this._cursoEscuelaRepository.getAll({
+			filters: filterDTO.getData(),
+		});
 	}
 
 	getCursoEscuelaById(id: string): Promise<ICursoEscuela | null> {

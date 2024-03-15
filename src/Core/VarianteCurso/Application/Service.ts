@@ -33,6 +33,10 @@ export class VarianteCursoService implements IVarianteCursoService {
 		});
 	}
 
+	getAllVariantesCurso(): Promise<IVarianteCurso[]> {
+		return this._varianteCursoRepository.getAll();
+	}
+
 	async updateVarianteCurso({
 		id,
 		data,

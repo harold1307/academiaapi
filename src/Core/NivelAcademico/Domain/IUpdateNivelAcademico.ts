@@ -10,5 +10,6 @@ export type IUpdateNivelAcademico = Partial<
 		| "id"
 		| "sesion"
 		| "periodoId"
+		| "nivelMalla"
 	>
 >;

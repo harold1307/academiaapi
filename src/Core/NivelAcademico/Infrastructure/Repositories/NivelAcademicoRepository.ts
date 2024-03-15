@@ -10,6 +10,7 @@ import type {
 	INivelAcademicoRepository,
 	UpdateNivelAcademicoParams,
 } from "../../Domain/INivelAcademicoRepository";
+import type { INivelAcademicoWithMaterias } from "../../Domain/INivelAcademicoWithMaterias";
 
 @injectable()
 export class NivelAcademicoRepository implements INivelAcademicoRepository {
@@ -19,7 +20,8 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 		params?: GetAllNivelesAcademicosParams,
 	): Promise<INivelAcademico[]> {
 		const { filters } = params || {};
-		const { mallaId, nivelMallaId, ...plainFilters } = filters || {};
+		const { mallaId, nivelMallaId, programaId, ...plainFilters } =
+			filters || {};
 
 		const niveles = await this._client.nivelAcademico.findMany({
 			where: filters
@@ -28,6 +30,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 						nivelMalla: {
 							id: nivelMallaId,
 							mallaId,
+							...(programaId ? { malla: { programaId } } : {}),
 						},
 					}
 				: undefined,
@@ -38,6 +41,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 						sede: true,
 					},
 				},
+				nivelMalla: true,
 			},
 		});
 
@@ -62,6 +66,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 						sede: true,
 					},
 				},
+				nivelMalla: true,
 			},
 		});
 
@@ -83,6 +88,86 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 		};
 	}
 
+	async getByIdWithMaterias(
+		id: string,
+	): Promise<INivelAcademicoWithMaterias | null> {
+		const nivel = await this._client.nivelAcademico.findUnique({
+			where: { id },
+			include: {
+				sesion: {
+					include: {
+						turnos: true,
+						sede: true,
+					},
+				},
+				nivelMalla: true,
+				materias: {
+					include: {
+						asignaturaEnNivelMalla: {
+							include: {
+								asignatura: true,
+							},
+						},
+						asignaturaModulo: {
+							include: { asignatura: true },
+						},
+						modeloEvaluativo: true,
+					},
+				},
+			},
+		});
+
+		if (!nivel) return null;
+
+		const {
+			sesion: { sede, ...sesion },
+			materias,
+			...rest
+		} = nivel;
+
+		return {
+			...rest,
+			sesion: {
+				...sesion,
+				sede: { ...sede, enUso: true },
+				turnos: sesion.turnos.map(t => ({ ...t, enUso: true })),
+				enUso: true,
+			},
+			materias: materias.map(
+				({
+					asignaturaEnNivelMalla,
+					asignaturaModulo,
+					modeloEvaluativo,
+					...m
+				}) => ({
+					...m,
+					asignaturaEnNivelMalla: asignaturaEnNivelMalla
+						? {
+								...asignaturaEnNivelMalla,
+								asignatura: {
+									...asignaturaEnNivelMalla.asignatura,
+									enUso: true,
+								},
+							}
+						: null,
+					asignaturaModulo: asignaturaModulo
+						? {
+								...asignaturaModulo,
+								asignatura: {
+									...asignaturaModulo.asignatura,
+									enUso: true,
+								},
+							}
+						: null,
+					modeloEvaluativo: {
+						...modeloEvaluativo,
+						enUso: true,
+					},
+				}),
+			),
+		};
+	}
+
 	async deleteById(id: string): Promise<INivelAcademico> {
 		const nivel = await this._client.nivelAcademico.delete({
 			where: { id },
@@ -93,6 +178,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 						sede: true,
 					},
 				},
+				nivelMalla: true,
 			},
 		});
 
@@ -166,6 +252,7 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 						sede: true,
 					},
 				},
+				nivelMalla: true,
 			},
 		});
 

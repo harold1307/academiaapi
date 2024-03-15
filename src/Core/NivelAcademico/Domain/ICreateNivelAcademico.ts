@@ -12,4 +12,5 @@ export type ICreateNivelAcademico = Omit<
 	| "updatedAt"
 	| "id"
 	| "sesion"
+	| "nivelMalla"
 >;

@@ -8,9 +8,15 @@ export type CreateCursoEscuelaByPlantillaTransactionParams = {
 	cursoPlantillaId: string;
 };
 
+export type GetAllCursoEscuelasParams = {
+	filters?: Record<string, string[] | undefined | string>;
+};
+
 export type ICursoEscuelaService = {
 	createCursoEscuela(data: ICreateCursoEscuela): Promise<ICursoEscuela>;
-	getAllCursoEscuelas(): Promise<ICursoEscuela[]>;
+	getAllCursoEscuelas(
+		params?: GetAllCursoEscuelasParams,
+	): Promise<ICursoEscuela[]>;
 	getCursoEscuelaById(id: string): Promise<ICursoEscuela | null>;
 	updateCursoEscuelaById(
 		params: UpdateCursoEscuelaParams,

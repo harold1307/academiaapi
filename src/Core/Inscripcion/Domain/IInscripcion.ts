@@ -25,5 +25,5 @@ export type IInscripcion = Inscripcion & {
 		| "niveles"
 		| "modulos"
 	>;
-	sesion: Omit<INivelAcademico, "sesion">;
+	sesion: Omit<INivelAcademico, "sesion" | "nivelMalla">;
 };

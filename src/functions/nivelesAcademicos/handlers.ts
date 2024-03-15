@@ -34,6 +34,12 @@ app.post("nivelesAcademicosCreateMaterias", {
 	handler: (req, ctx) => controller.nivelesAcademicosCreateMaterias(req, ctx),
 	route: "niveles-academicos/{nivelAcademicoId}/materias",
 });
+app.get("nivelesAcademicosGetByIdWithMaterias", {
+	authLevel: "anonymous",
+	handler: (req, ctx) =>
+		controller.nivelesAcademicosGetByIdWithMaterias(req, ctx),
+	route: "niveles-academicos/{nivelAcademicoId}/materias",
+});
 
 app.post("nivelesAcademicosCreateMateriaEnHorario", {
 	authLevel: "anonymous",

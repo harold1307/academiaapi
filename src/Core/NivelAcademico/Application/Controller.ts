@@ -83,6 +83,27 @@ export class NivelAcademicoController implements INivelAcademicoController {
 		}
 	}
 
+	async nivelesAcademicosGetByIdWithMaterias(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+			const nivelAcademicoId = req.params.nivelAcademicoId;
+
+			if (!nivelAcademicoId) return CommonResponse.invalidId();
+
+			const nivelAcademico =
+				await this._nivelAcademicoService.getNivelAcademicoByIdWithMaterias(
+					nivelAcademicoId,
+				);
+
+			return CommonResponse.successful({ data: nivelAcademico });
+		} catch (error) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
+
 	async nivelesAcademicosUpdateById(
 		req: HttpRequest,
 		ctx: InvocationContext,

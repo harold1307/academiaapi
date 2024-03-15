@@ -51,6 +51,7 @@ const schema = z
 		cuposMaterias: z.boolean({ coerce: true }).optional(),
 		planificacionProfesores: z.boolean({ coerce: true }).optional(),
 		matriculacion: z.boolean({ coerce: true }).optional(),
+		programaId: z.string().uuid().optional(),
 	})
 	.optional();
 

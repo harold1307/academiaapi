@@ -14,8 +14,6 @@ import { type ICreateMallaCurricular } from "../../MallaCurricular/Domain/ICreat
 import type { IMallaCurricularService } from "../../MallaCurricular/Domain/IMallaCurricularService";
 import { ModalidadService } from "../../Modalidad/Application/Service";
 import type { IModalidadService } from "../../Modalidad/Domain/IModalidadService";
-import type { ICreatePracticaComunitariaEnMalla } from "../../PracticaComunitariaEnMalla/Domain/ICreatePracticaComunitariaEnMalla";
-import type { ICreatePracticaPreProfesionalEnMalla } from "../../PracticaPreProfesionalEnMalla/Domain/ICreatePracticaPreProfesionalEnMalla";
 import { TipoDocumentoService } from "../../TipoDocumento/Application/Service";
 import type { ITipoDocumentoService } from "../../TipoDocumento/Domain/ITipoDocumentoService";
 import { TipoDocumentoEnProgramaService } from "../../TipoDocumentoEnPrograma/Application/Service";
@@ -230,9 +228,9 @@ export class ProgramaController implements IProgramaController {
 				fechaLimiteVigencia,
 				modalidadId,
 				tituloObtenidoId,
-				practicasComunitarias,
-				practicasPreProfesionales,
 				niveles,
+				practicaPreProfesionalRegistroDesdeNivel,
+				practicaComunitariaRegistroDesdeNivel,
 				...data
 			} = bodyVal.data;
 
@@ -251,9 +249,8 @@ export class ProgramaController implements IProgramaController {
 				};
 
 			if (
-				practicasComunitarias &&
-				practicasComunitarias.registroDesdeNivel &&
-				practicasComunitarias.registroDesdeNivel > niveles
+				practicaComunitariaRegistroDesdeNivel !== null &&
+				practicaComunitariaRegistroDesdeNivel > niveles
 			) {
 				return {
 					jsonBody: {
@@ -265,9 +262,8 @@ export class ProgramaController implements IProgramaController {
 			}
 
 			if (
-				practicasPreProfesionales &&
-				practicasPreProfesionales.registroDesdeNivel &&
-				practicasPreProfesionales.registroDesdeNivel > niveles
+				practicaPreProfesionalRegistroDesdeNivel !== null &&
+				practicaPreProfesionalRegistroDesdeNivel > niveles
 			) {
 				return {
 					jsonBody: {
@@ -318,9 +314,9 @@ export class ProgramaController implements IProgramaController {
 					programaId,
 					modalidadId,
 					tituloObtenidoId,
-					practicasComunitarias,
-					practicasPreProfesionales,
 					niveles,
+					practicaComunitariaRegistroDesdeNivel,
+					practicaPreProfesionalRegistroDesdeNivel,
 				});
 
 			ctx.log({ newMallaCurricular });
@@ -361,16 +357,6 @@ const createMallaCurricularBodySchema = z.object<
 		> & {
 			fechaAprobacion: string;
 			fechaLimiteVigencia: string;
-			practicasPreProfesionales:
-				| (Omit<ICreatePracticaPreProfesionalEnMalla, "mallaCurricularId"> & {
-						registroDesdeNivel: number | null;
-				  })
-				| null;
-			practicasComunitarias:
-				| (Omit<ICreatePracticaComunitariaEnMalla, "mallaCurricularId"> & {
-						registroDesdeNivel: number | null;
-				  })
-				| null;
 		}
 	>
 >({
@@ -394,23 +380,17 @@ const createMallaCurricularBodySchema = z.object<
 	modalidadId: z.string(),
 
 	niveles: z.number(),
-	practicasComunitarias: z
-		.object({
-			requiereAutorizacion: z.boolean(),
-			creditos: z.number().nullable(),
-			horas: z.number().nullable(),
-			registroDesdeNivel: z.number().min(0).max(10).nullable(),
-			registroPracticasAdelantadas: z.boolean(),
-			registroMultiple: z.boolean(),
-		})
-		.nullable(),
-	practicasPreProfesionales: z
-		.object({
-			requiereAutorizacion: z.boolean(),
-			creditos: z.number().nullable(),
-			horas: z.number().nullable(),
-			registroDesdeNivel: z.number().min(0).max(10).nullable(),
-			registroPracticasAdelantadas: z.boolean(),
-		})
-		.nullable(),
+
+	practicaComunitariaRequiereAutorizacion: z.boolean().nullable(),
+	practicaComunitariaHoras: z.number().nullable(),
+	practicaComunitariaCreditos: z.number().nullable(),
+	practicaComunitariaRegistroDesdeNivel: z.number().int().nullable(),
+	practicaComunitariaRegistroPracticasAdelantadas: z.boolean().nullable(),
+	practicaComunitariaRegistroMultiple: z.boolean().nullable(),
+
+	practicaPreProfesionalRequiereAutorizacion: z.boolean().nullable(),
+	practicaPreProfesionalHoras: z.number().nullable(),
+	practicaPreProfesionalCreditos: z.number().nullable(),
+	practicaPreProfesionalRegistroDesdeNivel: z.number().int().nullable(),
+	practicaPreProfesionalRegistroPracticasAdelantadas: z.boolean().nullable(),
 });

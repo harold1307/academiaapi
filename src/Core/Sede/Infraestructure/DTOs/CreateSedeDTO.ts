@@ -5,11 +5,11 @@ import type { ZodInferSchema } from "../../../../types";
 import type { ICreateSede } from "../../Domain/ICreateSede";
 
 const schema = z.object<ZodInferSchema<ICreateSede>>({
-	nombre: z.string(),
-	pais: z.string(),
-	provincia: z.string(),
-	canton: z.string(),
-	alias: z.string(),
+	nombre: z.string().toUpperCase(),
+	pais: z.string().toUpperCase(),
+	provincia: z.string().toUpperCase(),
+	canton: z.string().toUpperCase(),
+	alias: z.string().toUpperCase(),
 });
 
 class CreateSedeDTOError extends BaseDTOError<ICreateSede> {

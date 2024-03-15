@@ -64,6 +64,22 @@ export class VarianteCursoController implements IVarianteCursoController {
 		this._modalidadService = StartupBuilder.resolve(ModalidadService);
 	}
 
+	async variantesCursoGetAll(
+		req: HttpRequest,
+		ctx: InvocationContext,
+	): Promise<HttpResponseInit> {
+		try {
+			ctx.log(`Http function processed request for url '${req.url}'`);
+
+			const varianteCurso =
+				await this._varianteCursoService.getAllVariantesCurso();
+
+			return CommonResponse.successful({ data: varianteCurso });
+		} catch (error) {
+			return ErrorHandler.handle({ ctx, error });
+		}
+	}
+
 	async variantesCursoUpdateById(
 		req: HttpRequest,
 		ctx: InvocationContext,

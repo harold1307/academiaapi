@@ -5,8 +5,8 @@ import type { ZodInferSchema } from "../../../../types";
 import type { IUpdateModalidad } from "../../Domain/IUpdateModalidad";
 
 const schema = z.object<ZodInferSchema<IUpdateModalidad>>({
-	alias: z.string().nullable().optional(),
-	nombre: z.string().optional(),
+	alias: z.string().toUpperCase().nullable().optional(),
+	nombre: z.string().toUpperCase().optional(),
 });
 
 class UpdateModalidadDTOError extends BaseDTOError<IUpdateModalidad> {
