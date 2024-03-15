@@ -11,6 +11,7 @@ import type {
 	GetAllNivelesAcademicosParams,
 	INivelAcademicoService,
 } from "../Domain/INivelAcademicoService";
+import type { INivelAcademicoWithMaterias } from "../Domain/INivelAcademicoWithMaterias";
 import { CreateNivelAcademicoDTO } from "../Infrastructure/DTOs/CreateNivelAcademicoDTO";
 import { NivelAcademicoQueryFilterDTO } from "../Infrastructure/DTOs/NivelAcademicoQueryFilterDTO";
 import { UpdateNivelAcademicoDTO } from "../Infrastructure/DTOs/UpdateNivelAcademicoDTO";
@@ -36,6 +37,12 @@ export class NivelAcademicoService implements INivelAcademicoService {
 
 	getNivelAcademicoById(id: string): Promise<INivelAcademico | null> {
 		return this._nivelAcademicoRepository.getById(id);
+	}
+
+	getNivelAcademicoByIdWithMaterias(
+		id: string,
+	): Promise<INivelAcademicoWithMaterias | null> {
+		return this._nivelAcademicoRepository.getByIdWithMaterias(id);
 	}
 
 	async deleteNivelAcademicoById(id: string): Promise<INivelAcademico> {

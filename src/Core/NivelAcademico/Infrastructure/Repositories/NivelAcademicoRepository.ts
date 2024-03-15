@@ -10,6 +10,7 @@ import type {
 	INivelAcademicoRepository,
 	UpdateNivelAcademicoParams,
 } from "../../Domain/INivelAcademicoRepository";
+import type { INivelAcademicoWithMaterias } from "../../Domain/INivelAcademicoWithMaterias";
 
 @injectable()
 export class NivelAcademicoRepository implements INivelAcademicoRepository {
@@ -84,6 +85,86 @@ export class NivelAcademicoRepository implements INivelAcademicoRepository {
 				turnos: sesion.turnos.map(t => ({ ...t, enUso: true })),
 				enUso: true,
 			},
+		};
+	}
+
+	async getByIdWithMaterias(
+		id: string,
+	): Promise<INivelAcademicoWithMaterias | null> {
+		const nivel = await this._client.nivelAcademico.findUnique({
+			where: { id },
+			include: {
+				sesion: {
+					include: {
+						turnos: true,
+						sede: true,
+					},
+				},
+				nivelMalla: true,
+				materias: {
+					include: {
+						asignaturaEnNivelMalla: {
+							include: {
+								asignatura: true,
+							},
+						},
+						asignaturaModulo: {
+							include: { asignatura: true },
+						},
+						modeloEvaluativo: true,
+					},
+				},
+			},
+		});
+
+		if (!nivel) return null;
+
+		const {
+			sesion: { sede, ...sesion },
+			materias,
+			...rest
+		} = nivel;
+
+		return {
+			...rest,
+			sesion: {
+				...sesion,
+				sede: { ...sede, enUso: true },
+				turnos: sesion.turnos.map(t => ({ ...t, enUso: true })),
+				enUso: true,
+			},
+			materias: materias.map(
+				({
+					asignaturaEnNivelMalla,
+					asignaturaModulo,
+					modeloEvaluativo,
+					...m
+				}) => ({
+					...m,
+					asignaturaEnNivelMalla: asignaturaEnNivelMalla
+						? {
+								...asignaturaEnNivelMalla,
+								asignatura: {
+									...asignaturaEnNivelMalla.asignatura,
+									enUso: true,
+								},
+							}
+						: null,
+					asignaturaModulo: asignaturaModulo
+						? {
+								...asignaturaModulo,
+								asignatura: {
+									...asignaturaModulo.asignatura,
+									enUso: true,
+								},
+							}
+						: null,
+					modeloEvaluativo: {
+						...modeloEvaluativo,
+						enUso: true,
+					},
+				}),
+			),
 		};
 	}
 
